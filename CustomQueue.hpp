@@ -1,0 +1,27 @@
+//
+//  CustomQueue.hpp
+//  CSE7343 - Semester Project
+//
+//  Created by Eric Smith on 2/18/17.
+//  Copyright © 2017 Eric Smith. All rights reserved.
+//
+
+#ifndef CustomQueue_hpp
+#define CustomQueue_hpp
+
+#include <stdio.h>
+#include "ProcessControlBlock.hpp"
+
+class CustomQueue{
+private:
+    ProcessControlBlock* head;
+    ProcessControlBlock* tail;
+    
+public:
+    CustomQueue();
+    CustomQueue(ProcessControlBlock* head);
+    
+    ProcessControlBlock* pop();
+    void push(ProcessControlBlock* cur);
+};
+#endif /* CustomQueue_hpp */
