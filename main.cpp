@@ -7,9 +7,25 @@
 //
 
 #include <iostream>
+#include "ProcessControlBlock.hpp"
+#include "CustomQueue.hpp"
+
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    
+    ProcessControlBlock* x = new ProcessControlBlock(1, 123);
+    ProcessControlBlock* y = new ProcessControlBlock(2, 456);
+    
+    CustomQueue processes(x);
+    processes.push(y);
+    
+    processes.print();
+    processes.pop();
+    
+    processes.print();
+    
+    delete x;
+    delete y;
+    
     return 0;
 }

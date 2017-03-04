@@ -10,6 +10,7 @@
 #define ProcessControlBlock_hpp
 
 #include <stdio.h>
+#include <iostream> 
 
 class ProcessControlBlock{
 private:
@@ -31,6 +32,7 @@ public:
     void setNext(ProcessControlBlock* next);
     ProcessControlBlock* getPrev();
     void setPrev(ProcessControlBlock* prev);
+    void print();
 };
 
 #endif /* ProcessControlBlock_hpp */

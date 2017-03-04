@@ -49,3 +49,8 @@ ProcessControlBlock* ProcessControlBlock::getPrev(){
 void ProcessControlBlock::setPrev(ProcessControlBlock* prev){
     this->prev = prev;
 }
+
+void ProcessControlBlock::print(){
+    std::cout << "-- PCB: " << this->getPID() << "--" << std::endl;
+    std::cout << "- Priority: " << this->getPriority() << std::endl;
+}

@@ -10,6 +10,8 @@
 #define CustomQueue_hpp
 
 #include <stdio.h>
+#include <iostream>
+#include <stdlib.h> 
 #include "ProcessControlBlock.hpp"
 
 class CustomQueue{
@@ -23,5 +25,8 @@ public:
     
     ProcessControlBlock* pop();
     void push(ProcessControlBlock* cur);
+    ProcessControlBlock* peek();
+    bool isEmpty();
+    void print();
 };
 #endif /* CustomQueue_hpp */
