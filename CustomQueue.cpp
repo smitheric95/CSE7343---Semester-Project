@@ -70,13 +70,15 @@ void CustomQueue::remove(int PID){
                         
                     }
                 }
+                else{
+                    //PID not found
+                    if(cur->getNext() == this->tail){
+                        std::cout << "FAILED TO DELETE: PID " << PID << " NOT FOUND." << std::endl;
+                    }
+                }
                 cur = cur->getNext();
             }
             
-            //PID not found
-            if(cur == this->tail){
-                std::cout << "FAILED TO DELETE: PID " << PID << " NOT FOUND." << std::endl;
-            }
         }
     }
 }

@@ -20,7 +20,7 @@ int main(int argc, const char * argv[]) {
     CustomQueue processes(x);
     processes.push(y);
     processes.push(z);
-    processes.remove(789);
+    processes.remove(123);
     processes.print();
     
     delete x;
