@@ -24,6 +24,8 @@ public:
     CustomQueue(ProcessControlBlock* head);
     
     ProcessControlBlock* pop();
+    void remove(int PID = -1);
+    
     void push(ProcessControlBlock* cur);
     ProcessControlBlock* peek();
     bool isEmpty();

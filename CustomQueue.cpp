@@ -19,7 +19,7 @@ CustomQueue::CustomQueue(ProcessControlBlock* head){
     this->tail = this->head;
 }
 
-//remove PCB from queue
+//remove & return PCB from the end of the queue
 ProcessControlBlock* CustomQueue::pop(){
     if(this->head == nullptr){
         std::cout << "QUEUE IS EMPTY" << std::endl;
@@ -35,7 +35,53 @@ ProcessControlBlock* CustomQueue::pop(){
     return temp;
 }
 
-//add PCB to queue
+//remove PCB from queue, don't return
+void CustomQueue::remove(int PID){
+    //default behavior
+    if(PID == -1){
+        this->pop();
+    }
+    else{
+        ProcessControlBlock* cur = this->head;
+        
+        if(cur->getPID() == PID){
+            this->head = cur->getNext();
+            
+            //alter tail
+            if(this->head == nullptr || this->tail->getPID() == cur->getPID()){
+                this->tail = this->head;
+            }
+        }
+        else{
+            //loop till we find PID or the end
+            while(cur->getNext() != nullptr){
+                //PCB found, remove it
+                if(cur->getNext()->getPID() == PID){
+                    std::cout << "PCB FOUND" << std::endl;
+                    
+                    //PCB is at end
+                    if(cur->getNext()->getNext() == nullptr){
+                        cur->setNext(nullptr);
+                        this->tail = cur;
+                        break;
+                    }
+                    else{
+                        cur->setNext( cur->getNext()->getNext() );
+                        
+                    }
+                }
+                cur = cur->getNext();
+            }
+            
+            //PID not found
+            if(cur == this->tail){
+                std::cout << "FAILED TO DELETE: PID " << PID << " NOT FOUND." << std::endl;
+            }
+        }
+    }
+}
+
+//add PCB to front of the queue
 void CustomQueue::push(ProcessControlBlock* cur){
     if(this->tail != nullptr)
         this->tail->setNext(cur);
@@ -68,6 +114,11 @@ void CustomQueue::print(){
     ProcessControlBlock* cur = this->head;
     
     while(cur != nullptr){
+        if(cur == this->head)
+            std::cout << "Head: ";
+        if(cur == this->tail)
+            std::cout << "Tail: ";
+        
         cur->print();
         cur = cur->getNext();
     }
