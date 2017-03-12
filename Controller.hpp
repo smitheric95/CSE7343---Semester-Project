@@ -12,17 +12,21 @@
 #include <stdio.h>
 #include "ProcessControlBlock.hpp"
 #include "CustomQueue.hpp"
+#include <fstream>
 
 class Controller {
 private:
     CustomQueue* readyQueue;
     CustomQueue* waitingQueue;
+    std::ofstream file;
     
     void addQueues();
     
 public:
-    Controller();
+    Controller(std::string file);
     ~Controller();
+    
+    void setFile(std::string file);
 };
 
 #endif /* Controller_hpp */
