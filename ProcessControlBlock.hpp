@@ -15,6 +15,8 @@
 class ProcessControlBlock{
 private:
     int priority;
+    int arrivalTime;
+    int burstTime;
     int PID;
     
     ProcessControlBlock* next;
@@ -28,6 +30,11 @@ public:
     void setPriority(int priority);
     int getPID();
     void setPID(int PID);
+    int getArrivalTime();
+    void setArrivalTime(int arrivalTime);
+    int getBurstTime();
+    void setBurstTime(int burstTime);
+    
     ProcessControlBlock* getNext();
     void setNext(ProcessControlBlock* next);
     ProcessControlBlock* getPrev();

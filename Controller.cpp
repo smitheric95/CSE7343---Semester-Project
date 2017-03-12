@@ -9,18 +9,9 @@
 #include "Controller.hpp"
 
 Controller::Controller() {
-    
     //create all necessary queues
     addQueues();
     
-    ProcessControlBlock* x = new ProcessControlBlock(1, 123);
-    ProcessControlBlock* y = new ProcessControlBlock(2, 456);
-    ProcessControlBlock* z = new ProcessControlBlock(3, 789);
-    
-    readyQueue->add(x);
-    // readyQueue->add(y);
-    //readyQueue->add(z);
-    //readyQueue->print();
     
     // controller must keep track of pcb ids that have been added (table)
     // prevent from adding same pcb

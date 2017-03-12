@@ -9,7 +9,8 @@
 #include "CustomQueue.hpp"
 #include <typeinfo>
 
-CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name) {
+CustomQueue::CustomQueue(std::string name)
+    : head(nullptr), tail(head), name(name){
 }
 
 CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
@@ -20,7 +21,6 @@ CustomQueue::~CustomQueue() {
     ProcessControlBlock* cur = this->head;
     
     while (cur != nullptr) {
-        cur->print();
         ProcessControlBlock* next = cur->getNext();
         delete cur;
         cur = next;
@@ -113,7 +113,7 @@ bool CustomQueue::isEmpty() {
 }
 // print the contents of the queue
 void CustomQueue::print() {
-    std::cout << "###### " << this->getName() << " Queue ######" << std::endl;
+    std::cout << "######## " << this->getName() << " Queue ########" << std::endl;
     ProcessControlBlock* cur = this->head;
 
     while (cur != nullptr) {
@@ -122,7 +122,7 @@ void CustomQueue::print() {
         else if (cur == this->tail)
             std::cout << "## Tail: ";
         else
-            std::cout << "## ";
+            std::cout << "##       ";
 
         cur->print();
         cur = cur->getNext();
