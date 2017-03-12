@@ -7,6 +7,7 @@
 //
 
 #include "CustomQueue.hpp"
+#include <typeinfo>
 
 CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name) {
 }
@@ -17,17 +18,14 @@ CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
 
 CustomQueue::~CustomQueue() {
     ProcessControlBlock* cur = this->head;
-
-    if (cur != nullptr) {
-        while (cur != nullptr) {
-            ProcessControlBlock* next = cur->getNext();
-            delete cur;
-            cur = next;
-        }
+    
+    while (cur != nullptr) {
+        cur->print();
+        ProcessControlBlock* next = cur->getNext();
+        delete cur;
+        cur = next;
     }
-    this->head = nullptr;
-
-    this->print();
+    this->head = this->tail = nullptr;
 }
 
 // remove and return PCB from queue

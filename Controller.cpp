@@ -18,9 +18,9 @@ Controller::Controller() {
     ProcessControlBlock* z = new ProcessControlBlock(3, 789);
     
     readyQueue->add(x);
-    readyQueue->add(y);
-    readyQueue->add(z);
-    readyQueue->print();
+    // readyQueue->add(y);
+    //readyQueue->add(z);
+    //readyQueue->print();
     
     // controller must keep track of pcb ids that have been added (table)
     // prevent from adding same pcb

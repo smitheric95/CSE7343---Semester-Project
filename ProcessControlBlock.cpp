@@ -8,14 +8,12 @@
 
 #include "ProcessControlBlock.hpp"
 
-ProcessControlBlock::ProcessControlBlock() {
-    this->priority = 0;
-    this->PID = 0;
+ProcessControlBlock::ProcessControlBlock():
+    priority(0), PID(0), next(nullptr), prev(nullptr){
 }
 
-ProcessControlBlock::ProcessControlBlock(int priority, int PID) {
-    this->priority = priority;
-    this->PID = PID;
+ProcessControlBlock::ProcessControlBlock(int priority, int PID):
+    priority(priority), PID(PID), next(nullptr), prev(nullptr){
 }
 
 int ProcessControlBlock::getPriority() {
