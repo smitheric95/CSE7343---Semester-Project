@@ -1,5 +1,7 @@
 # CSE7343---Semester-Project
 
+
+
 Reference:
 	https://www.tutorialspoint.com/operating_system/os_process_scheduling.htm
 
@@ -26,6 +28,7 @@ Controller (OS):
 	- waitingQueue
 		- (able to move between queues)
 	- takes in file input or user input (error handling)
+	- takes user input
 
 Scheduler: 
 	(handles removal of running process from CPU and selection of another

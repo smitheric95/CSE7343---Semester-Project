@@ -8,49 +8,49 @@
 
 #include "ProcessControlBlock.hpp"
 
-ProcessControlBlock::ProcessControlBlock(){
+ProcessControlBlock::ProcessControlBlock() {
     this->priority = 0;
     this->PID = 0;
 }
 
-ProcessControlBlock::ProcessControlBlock(int priority, int PID){
+ProcessControlBlock::ProcessControlBlock(int priority, int PID) {
     this->priority = priority;
     this->PID = PID;
 }
 
-int ProcessControlBlock::getPriority(){
+int ProcessControlBlock::getPriority() {
     return this->priority;
 }
 
-void ProcessControlBlock::setPriority(int priority){
+void ProcessControlBlock::setPriority(int priority) {
     this->priority = priority;
 }
 
-int ProcessControlBlock::getPID(){
+int ProcessControlBlock::getPID() {
     return this->PID;
 }
 
-void ProcessControlBlock::setPID(int PID){
+void ProcessControlBlock::setPID(int PID) {
     this->PID = PID;
 }
 
-ProcessControlBlock* ProcessControlBlock::getNext(){
+ProcessControlBlock* ProcessControlBlock::getNext() {
     return this->next;
 }
 
-void ProcessControlBlock::setNext(ProcessControlBlock* next){
+void ProcessControlBlock::setNext(ProcessControlBlock* next) {
     this->next = next;
 }
 
-ProcessControlBlock* ProcessControlBlock::getPrev(){
+ProcessControlBlock* ProcessControlBlock::getPrev() {
     return this->prev;
 }
 
-void ProcessControlBlock::setPrev(ProcessControlBlock* prev){
+void ProcessControlBlock::setPrev(ProcessControlBlock* prev) {
     this->prev = prev;
 }
 
-void ProcessControlBlock::print(){
+void ProcessControlBlock::print() {
     std::cout << "-- PCB: " << this->getPID() << " --" << std::endl;
     std::cout << "- Priority: " << this->getPriority() << std::endl;
 }

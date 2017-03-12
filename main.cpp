@@ -18,11 +18,17 @@ int main(int argc, const char * argv[]) {
     ProcessControlBlock* z = new ProcessControlBlock(3, 789);
     
     CustomQueue processes(x);
-    processes.push(y);
-    processes.push(z);
-    processes.remove(123);
+    processes.add(y);
+    processes.add(z);
+    processes.remove()->print();
+    
+    //processes.push(y);
     processes.print();
     
+    // controller must keep track of pcb ids that have been added (table)
+    // prevent from adding same pcb
+    
+    delete z;
     delete x;
     delete y;
     
