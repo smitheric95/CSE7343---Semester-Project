@@ -23,6 +23,7 @@ private:
 public:
     CustomQueue(std::string name);
     CustomQueue(std::string name, ProcessControlBlock* head);
+    ~CustomQueue();
     
     ProcessControlBlock* remove(int PID = -1);
     void add(ProcessControlBlock* cur);

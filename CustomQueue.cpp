@@ -8,12 +8,26 @@
 
 #include "CustomQueue.hpp"
 
-CustomQueue::CustomQueue(std::string name)
-    : head(nullptr), tail(head), name(name) {
+CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name) {
 }
 
 CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
     : head(head), tail(head), name(name) {
+}
+
+CustomQueue::~CustomQueue() {
+    ProcessControlBlock* cur = this->head;
+
+    if (cur != nullptr) {
+        while (cur != nullptr) {
+            ProcessControlBlock* next = cur->getNext();
+            delete cur;
+            cur = next;
+        }
+    }
+    this->head = nullptr;
+
+    this->print();
 }
 
 // remove and return PCB from queue
@@ -42,7 +56,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
         while (cur->getNext() != nullptr) {
             // PCB found, remove it
             if (cur->getNext()->getPID() == PID) {
-                std::cout << "PCB FOUND" << std::endl;
+                std::cout << "PCB FOUND. REMOVED: ";
                 temp = cur->getNext();
 
                 // PCB is at end
@@ -111,11 +125,10 @@ void CustomQueue::print() {
             std::cout << "## Tail: ";
         else
             std::cout << "## ";
-        
+
         cur->print();
         cur = cur->getNext();
     }
-    
+
     std::cout << "#############################" << std::endl;
 }
-

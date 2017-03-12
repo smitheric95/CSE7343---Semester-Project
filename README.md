@@ -27,8 +27,10 @@ Controller (OS):
 	- readyQueue - always takes new processes
 	- waitingQueue
 		- (able to move between queues)
+	- must keep track of which pids have been added (with table)
 	- takes in file input or user input (error handling)
 	- takes user input
+	- has a scheduler
 
 Scheduler: 
 	(handles removal of running process from CPU and selection of another
