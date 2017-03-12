@@ -17,10 +17,10 @@ int main(int argc, const char * argv[]) {
     ProcessControlBlock* y = new ProcessControlBlock(2, 456);
     ProcessControlBlock* z = new ProcessControlBlock(3, 789);
     
-    CustomQueue processes(x);
+    CustomQueue processes("ready", x);
     processes.add(y);
     processes.add(z);
-    processes.remove()->print();
+    //processes.remove()->print();
     
     //processes.push(y);
     processes.print();

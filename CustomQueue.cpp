@@ -1,4 +1,3 @@
-
 //
 //  CustomQueue.cpp
 //  CSE7343 - Semester Project
@@ -9,14 +8,12 @@
 
 #include "CustomQueue.hpp"
 
-CustomQueue::CustomQueue() {
-    this->head = nullptr;
-    this->tail = this->head;
+CustomQueue::CustomQueue(std::string name)
+    : head(nullptr), tail(head), name(name) {
 }
 
-CustomQueue::CustomQueue(ProcessControlBlock* head) {
-    this->head = head;
-    this->tail = this->head;
+CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
+    : head(head), tail(head), name(name) {
 }
 
 // remove and return PCB from queue
@@ -27,13 +24,13 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
 
     // the head matches PID or no PID was specified
     if ((this->head != nullptr && cur->getPID() == PID) || PID == -1) {
-        this->head = cur->getNext(); // remove head
-        
+        this->head = cur->getNext();  // remove head
+
         // alter tail
         if (this->head == nullptr)
             this->tail = nullptr;
-        
-        temp = cur; // return head
+
+        temp = cur;  // return head
     }
     else {
         // queue is empty
@@ -47,7 +44,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
             if (cur->getNext()->getPID() == PID) {
                 std::cout << "PCB FOUND" << std::endl;
                 temp = cur->getNext();
-                
+
                 // PCB is at end
                 if (cur->getNext()->getNext() == nullptr) {
                     cur->setNext(nullptr);
@@ -93,22 +90,32 @@ ProcessControlBlock* CustomQueue::peek() {
     return this->head;
 }
 
+// return name of queue
+std::string CustomQueue::getName() {
+    return this->name;
+}
+
 // see if the queue is empty
 bool CustomQueue::isEmpty() {
     return this->head == nullptr;
 }
 // print the contents of the queue
 void CustomQueue::print() {
-    std::cout << "--- CustomQueue: ---" << std::endl;
+    std::cout << "###### " << this->getName() << " Queue ######" << std::endl;
     ProcessControlBlock* cur = this->head;
 
     while (cur != nullptr) {
         if (cur == this->head)
-            std::cout << "Head: ";
-        if (cur == this->tail)
-            std::cout << "Tail: ";
+            std::cout << "## Head: ";
+        else if (cur == this->tail)
+            std::cout << "## Tail: ";
+        else
+            std::cout << "## ";
         
         cur->print();
         cur = cur->getNext();
     }
+    
+    std::cout << "#############################" << std::endl;
 }
+

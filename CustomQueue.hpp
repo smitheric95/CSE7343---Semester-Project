@@ -18,14 +18,17 @@ class CustomQueue{
 private:
     ProcessControlBlock* head;
     ProcessControlBlock* tail;
+    std::string name;
     
 public:
-    CustomQueue();
-    CustomQueue(ProcessControlBlock* head);
+    CustomQueue(std::string name);
+    CustomQueue(std::string name, ProcessControlBlock* head);
     
     ProcessControlBlock* remove(int PID = -1);
     void add(ProcessControlBlock* cur);
     ProcessControlBlock* peek();
+    
+    std::string getName();
     
     bool isEmpty();
     void print();
