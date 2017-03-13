@@ -13,12 +13,14 @@
 #include "ProcessControlBlock.hpp"
 #include "CustomQueue.hpp"
 #include <fstream>
+#include <iostream>
+#include <regex>
 
 class Controller {
 private:
     CustomQueue* readyQueue;
     CustomQueue* waitingQueue;
-    std::ofstream file;
+    std::ifstream file;
     
     void addQueues();
     

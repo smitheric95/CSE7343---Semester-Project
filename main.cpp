@@ -13,9 +13,8 @@
 int main(int argc, const char * argv[]) {
     if (argv[1] == nullptr)
         std::cout << "No text file specified\nUsage: ./CSE7343\\ -\\ Semester\\ Project input.txt" << std::endl;
-    else{
+    else
         Controller main(argv[1]);
-        // std::cout << "Unable to open file: " << argv[1] << std::endl;
-    }
+    
     return 0;
 }

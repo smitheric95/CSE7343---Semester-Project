@@ -10,13 +10,36 @@
 
 Controller::Controller(std::string file) {
     // open input file
-    this->setFile(file);
+    this->file.open(file, std::ios::in);
 
-    // create all necessary queues
-    addQueues();
+    // if the file was found, parse it
+    if (this->file.is_open()) {
+        // create all necessary queues
+        addQueues();
 
-    // controller must keep track of pcb ids that have been added (table)
-    // prevent from adding same pcb
+        // go through each line
+        std::string line;
+        int lineCount = 1;
+
+        while (getline(this->file, line)) {
+            // check format of input
+            if (std::regex_match(line, std::regex("(0*[0-9]{1,4})+\\,(0*[0-9]{1,4})+\\,+(0*[0-9]{1,"
+                                                  "4})+\\,+(0*[0-9]{1,4})"))) {
+                std::cout << line << std::endl;
+            }
+            //format is wrong, stop program
+            else {
+                std::cout << "ERROR: Incorrect format in " << file << " on line " << lineCount
+                          << std::endl;
+                std::cout << "Usage is: <0-9999>,<0-9999>,<0-9999>,<0-9999>" << std::endl;
+                exit(0);
+            }
+            lineCount++;
+        }
+    }
+    else {
+        std::cout << "Unable to open file: " << file << std::endl;
+    }
 }
 
 Controller::~Controller() {
@@ -30,11 +53,7 @@ void Controller::addQueues() {
     waitingQueue = new CustomQueue("Waiting");
 }
 
+// to be deleted
 void Controller::setFile(std::string file) {
-    this->file.open(file, std::ios::in);
-    
-    if (!this->file.is_open()) {
-        std::cout << "Unable to open file: " << file << std::endl;
-        exit(0);
-    }
+    // this->file.open(file, std::ios::in);
 }
