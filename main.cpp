@@ -12,7 +12,7 @@
 
 int main(int argc, const char * argv[]) {
     if (argv[1] == nullptr)
-        std::cout << "No text file specified\nUsage: ./CSE7343\\ -\\ Semester\\ Project input.txt" << std::endl;
+        std::cout << "No text file specified\nUsage: ./a.out input.txt" << std::endl;
     else
         Controller main(argv[1]);
     

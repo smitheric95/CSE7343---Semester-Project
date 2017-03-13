@@ -9,7 +9,7 @@
 
 #include "Controller.hpp"
 
-Controller::Controller(std::string file) {
+Controller::Controller(std::string file) : readyQueue(nullptr), waitingQueue(nullptr) {
     // open input file
     this->file.open(file, std::ios::in);
 
@@ -66,8 +66,10 @@ Controller::Controller(std::string file) {
 }
 
 Controller::~Controller() {
-    delete readyQueue;
-    delete waitingQueue;
+    if (readyQueue != nullptr)
+        delete readyQueue;
+    if (waitingQueue != nullptr)
+        delete waitingQueue;
     this->file.close();
 }
 
