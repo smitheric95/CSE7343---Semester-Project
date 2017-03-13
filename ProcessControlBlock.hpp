@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <iostream> 
+#include <vector>
 
 class ProcessControlBlock{
 private:
@@ -24,7 +25,7 @@ private:
 
 public:
     ProcessControlBlock();
-    ProcessControlBlock(int priority, int PID);
+    ProcessControlBlock(std::vector<int> values);
     
     int getPriority();
     void setPriority(int priority);

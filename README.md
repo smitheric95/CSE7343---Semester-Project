@@ -38,4 +38,6 @@ Scheduler:
 	<Type: SJF, FCFS, Non-preemptive Priority, and Round Robin>
 	
 	
-
+TODO:
+- change instructions to ./a.out
+- test on server

@@ -27,9 +27,10 @@ Controller::Controller(std::string file) {
             if (std::regex_match(
                     line, std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"))) {
                 
+                // store process values
                 std::vector<int> processValues;
                 std::stringstream tempStream(line);
-                
+
                 // split string up by commas
                 while (tempStream.good()) {
                     std::string substr;
@@ -38,10 +39,12 @@ Controller::Controller(std::string file) {
                     // remove white space
                     substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
 
-                    // convert to int, store process values
+                    // convert to int before pushing
                     processValues.push_back(std::stoi(substr));
                 }
-                for (int i = 0; i < processValues.size(); i++) std::cout << processValues.at(i) << std::endl;
+
+                // add to waiting queue
+                waitingQueue->add( new ProcessControlBlock(processValues) );
             }
             // format is wrong, stop program
             else {
@@ -52,10 +55,14 @@ Controller::Controller(std::string file) {
             }
             lineCount++;
         }
+        
+        //print the contents of the waiting queue
+        waitingQueue->print();
     }
     else {
         std::cout << "Unable to open file: " << file << std::endl;
     }
+    
 }
 
 Controller::~Controller() {

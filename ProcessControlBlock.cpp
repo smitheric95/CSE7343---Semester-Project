@@ -9,11 +9,12 @@
 #include "ProcessControlBlock.hpp"
 
 ProcessControlBlock::ProcessControlBlock()
-    : priority(0), arrivalTime(-1), burstTime(-1), PID(0), next(nullptr), prev(nullptr) {
+    : PID(0), arrivalTime(-1), burstTime(-1), priority(0), next(nullptr), prev(nullptr) {
 }
 
-ProcessControlBlock::ProcessControlBlock(int priority, int PID)
-    : priority(priority), arrivalTime(-1), burstTime(-1), PID(PID), next(nullptr), prev(nullptr){
+// initialize PCB from input vector
+ProcessControlBlock::ProcessControlBlock(std::vector<int> values)
+    : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), priority(values[3]), next(nullptr), prev(nullptr){
 }
 
 int ProcessControlBlock::getPriority() {
