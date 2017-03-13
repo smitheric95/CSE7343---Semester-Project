@@ -17,11 +17,14 @@
 #include <sstream>
 #include <regex>
 #include <string>
+#include <unordered_map>
 
 class Controller {
 private:
     CustomQueue* readyQueue;
     CustomQueue* waitingQueue;
+    //std::unordered_map<std::string,double> processTable;
+    
     std::ifstream file;
     
     void addQueues();
@@ -29,7 +32,7 @@ private:
 public:
     Controller(std::string file);
     ~Controller();
-    
+    bool parseFile(std::string file);
     void setFile(std::string file);
 };
 
