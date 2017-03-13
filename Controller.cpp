@@ -23,15 +23,15 @@ Controller::Controller(std::string file) {
 
         while (getline(this->file, line)) {
             // check format of input
-            if (std::regex_match(line, std::regex("(0*[0-9]{1,4})+\\,(0*[0-9]{1,4})+\\,+(0*[0-9]{1,"
-                                                  "4})+\\,+(0*[0-9]{1,4})"))) {
+            if (std::regex_match(
+                    line, std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"))) {
                 std::cout << line << std::endl;
             }
-            //format is wrong, stop program
+            // format is wrong, stop program
             else {
                 std::cout << "ERROR: Incorrect format in " << file << " on line " << lineCount
                           << std::endl;
-                std::cout << "Usage is: <0-9999>,<0-9999>,<0-9999>,<0-9999>" << std::endl;
+                std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
                 exit(0);
             }
             lineCount++;
