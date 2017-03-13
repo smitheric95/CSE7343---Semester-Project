@@ -1,3 +1,4 @@
+
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -25,7 +26,22 @@ Controller::Controller(std::string file) {
             // check format of input
             if (std::regex_match(
                     line, std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"))) {
-                std::cout << line << std::endl;
+                
+                std::vector<int> processValues;
+                std::stringstream tempStream(line);
+                
+                // split string up by commas
+                while (tempStream.good()) {
+                    std::string substr;
+                    std::getline(tempStream, substr, ',');
+
+                    // remove white space
+                    substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
+
+                    // convert to int, store process values
+                    processValues.push_back(std::stoi(substr));
+                }
+                for (int i = 0; i < processValues.size(); i++) std::cout << processValues.at(i) << std::endl;
             }
             // format is wrong, stop program
             else {

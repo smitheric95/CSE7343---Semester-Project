@@ -14,7 +14,9 @@
 #include "CustomQueue.hpp"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <regex>
+#include <string>
 
 class Controller {
 private:
