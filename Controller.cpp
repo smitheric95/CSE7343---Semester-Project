@@ -8,24 +8,8 @@
 
 #include "Controller.hpp"
 
-Controller::Controller(std::string file) : readyQueue(nullptr), waitingQueue(nullptr) {
-    // open input file
-    this->file.open(file, std::ios::in);
-
-    // if the file was found, parse it
-    if (this->file.is_open()) {
-        // create all necessary queues
-        addQueues();
-
-        // try parsing file
-        if (parseFile(file)) {
-            // print the contents of the waiting queue
-            waitingQueue->print();
-        }
-    }
-    else {
-        std::cout << "Unable to open file: " << file << std::endl;
-    }
+Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr) {
+    displayMainMenu();
 }
 
 Controller::~Controller() {
@@ -34,6 +18,87 @@ Controller::~Controller() {
     if (waitingQueue != nullptr)
         delete waitingQueue;
     this->file.close();
+}
+
+// simply displays the main menu
+void Controller::displayMainMenu() {
+    std::cout << "##############################################" << std::endl;
+    std::cout << "# Welcome to EricOS !!                       #" << std::endl;
+    std::cout << "#                                            #" << std::endl;
+    std::cout << "# Version 1.0                                #" << std::endl;
+    std::cout << "#                                            #" << std::endl;
+    std::cout << "# Select input type:                         #" << std::endl;
+    std::cout << "#     [1] File [2] Command line              #" << std::endl;
+    std::cout << "#                                            #" << std::endl;
+    std::cout << "# [3] Execute processes                      #" << std::endl;
+    std::cout << "# [4] Select scheduling algorithm            #" << std::endl;
+    std::cout << "#                                            #" << std::endl;
+    std::cout << "# [0] Exit                                   #" << std::endl;
+    std::cout << "##############################################" << std::endl << std::endl;
+    std::cout << "Please select a mode: ";
+
+    int modeSelection = 0;
+
+    // while the user has not exited
+    while (std::cin >> modeSelection) {
+        // std::cin >> modeSelection;
+        std::cout << "modeSelection: " << modeSelection << std::endl;
+
+        if (modeSelection == 0) {
+            std::cout << "Goodbye!" << std::endl;
+            break;
+        }
+        else if (modeSelection == 1) {
+            std::string filename;
+            int promptCount = 0;
+
+            do {
+                // user has entered an error
+                if (promptCount > 0)
+                    std::cout << "Unable to open file: " << filename << std::endl;
+
+                // prompt the user to enter file name
+                std::cout << "Please enter a file to parse: ([0] to go back)" << std::endl;
+                std::cin >> filename;
+
+                // exit
+                if (filename == "0")
+                    break;
+                // open file
+                else
+                    this->file.open(filename, std::ios::in);
+
+                promptCount++;
+
+            } while (!this->file.is_open());
+
+            // user has entered correct input
+            promptCount = 0;
+
+            // if the file was found, parse it
+            // create all necessary queues
+            addQueues();
+
+            // try parsing file
+            if (parseFile(filename)) {
+                // print the contents of the waiting queue
+                waitingQueue->print();
+            }
+        }
+        else {
+            displayErrorMessage();
+        }
+
+        /*
+         // go back to mode selection == file
+         std::cout << "Please select an input type: ([0] to exit)";
+         std::cin >> modeSelection;
+         */
+    }
+}
+
+void Controller::displayErrorMessage() {
+    std::cout << "Incorrect input. Please try again: " << std::endl;
 }
 
 // parse file given by user, build processTable
