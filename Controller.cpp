@@ -1,3 +1,4 @@
+
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -8,8 +9,9 @@
 
 #include "Controller.hpp"
 
-Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr) {
+Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), inputFileParsed(false) {
     displayMainMenu();
+    handleUserInput();
 }
 
 Controller::~Controller() {
@@ -21,33 +23,43 @@ Controller::~Controller() {
 }
 
 // simply displays the main menu
-void Controller::displayMainMenu() {
-    std::cout << "##############################################" << std::endl;
-    std::cout << "# Welcome to EricOS !!                       #" << std::endl;
-    std::cout << "#                                            #" << std::endl;
-    std::cout << "# Version 1.0                                #" << std::endl;
-    std::cout << "#                                            #" << std::endl;
-    std::cout << "# Select input type:                         #" << std::endl;
-    std::cout << "#     [1] File [2] Command line              #" << std::endl;
-    std::cout << "#                                            #" << std::endl;
-    std::cout << "# [3] Execute processes                      #" << std::endl;
-    std::cout << "# [4] Select scheduling algorithm            #" << std::endl;
-    std::cout << "#                                            #" << std::endl;
-    std::cout << "# [0] Exit                                   #" << std::endl;
-    std::cout << "##############################################" << std::endl << std::endl;
+void Controller::displayMainMenu(bool shortHand) {
+    if (shortHand) {
+        std::cout << "################ Main Menu ###################" << std::endl;
+        std::cout << "# [0] Exit [1] Input file [2] Command line   #" << std::endl;
+        std::cout << "# [3] Execute processes [4] Select scheduler #" << std::endl;
+        std::cout << "##############################################" << std::endl;
+    }
+    else {
+        std::cout << "##############################################" << std::endl;
+        std::cout << "# Welcome to EricOS !!                       #" << std::endl;
+        std::cout << "#                                            #" << std::endl;
+        std::cout << "# Version 1.0                                #" << std::endl;
+        std::cout << "#                                            #" << std::endl;
+        std::cout << "# Select process input type:                 #" << std::endl;
+        std::cout << "#     [1] File [2] Command line              #" << std::endl;
+        std::cout << "#                                            #" << std::endl;
+        std::cout << "# [3] Execute processes                      #" << std::endl;
+        std::cout << "# [4] Select scheduling algorithm            #" << std::endl;
+        std::cout << "#                                            #" << std::endl;
+        std::cout << "# [0] Exit                                   #" << std::endl;
+        std::cout << "##############################################" << std::endl << std::endl;
+    }
     std::cout << "Please select a mode: ";
+}
 
+void Controller::handleUserInput() {
     int modeSelection = 0;
 
     // while the user has not exited
     while (std::cin >> modeSelection) {
-        // std::cin >> modeSelection;
-        std::cout << "modeSelection: " << modeSelection << std::endl;
-
+    
+        // exit
         if (modeSelection == 0) {
             std::cout << "Goodbye!" << std::endl;
             break;
         }
+        // select input file to build queues
         else if (modeSelection == 1) {
             std::string filename;
             int promptCount = 0;
@@ -81,8 +93,9 @@ void Controller::displayMainMenu() {
 
             // try parsing file
             if (parseFile(filename)) {
-                // print the contents of the waiting queue
-                waitingQueue->print();
+                std::cout << "Input successfully entered." << std::endl;
+                this->inputFileParsed = true;
+                displayMainMenu(true);
             }
         }
         else {
@@ -148,7 +161,3 @@ void Controller::addQueues() {
     waitingQueue = new CustomQueue("Waiting");
 }
 
-// to be deleted
-void Controller::setFile(std::string file) {
-    // this->file.open(file, std::ios::in);
-}

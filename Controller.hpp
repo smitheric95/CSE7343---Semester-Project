@@ -21,19 +21,21 @@
 
 class Controller {
 private:
-    CustomQueue* readyQueue;
+    CustomQueue* readyQueue; // null if no processes
     CustomQueue* waitingQueue;
     //std::unordered_map<std::string,double> processTable;
     
     std::ifstream file;
     
-    void addQueues();
-    
 public:
-    Controller(std::string file);
+    Controller();
     ~Controller();
+    bool inputFileParsed;
+    void addQueues();
+    void displayMainMenu(bool shortHand=false);
+    void handleUserInput();
+    void displayErrorMessage();
     bool parseFile(std::string file);
-    void setFile(std::string file);
 };
 
 #endif /* Controller_hpp */
