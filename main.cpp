@@ -11,10 +11,7 @@
 #include "Controller.hpp"
 
 int main(int argc, const char * argv[]) {
-    if (argv[1] == nullptr)
-        std::cout << "No text file specified\nUsage: ./a.out input.txt" << std::endl;
-    else
-        Controller main;
+    Controller main;
     
     return 0;
 }
