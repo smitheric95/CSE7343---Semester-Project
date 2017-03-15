@@ -53,7 +53,6 @@ void Controller::handleUserInput() {
 
     // while the user has not exited
     while (std::cin >> modeSelection) {
-    
         // exit
         if (modeSelection == 0) {
             std::cout << "Goodbye!" << std::endl;
@@ -64,6 +63,7 @@ void Controller::handleUserInput() {
             std::string filename;
             int promptCount = 0;
 
+            // check the users input
             do {
                 // user has entered an error
                 if (promptCount > 0)
@@ -101,6 +101,9 @@ void Controller::handleUserInput() {
             }
             displayMainMenu(true);
         }
+        // select command line to build queues
+        else if (modeSelection == 2) {
+        }
         else {
             displayErrorMessage();
         }
@@ -119,8 +122,7 @@ bool Controller::parseFile(std::string file) {
 
     while (getline(this->file, line)) {
         // check format of input
-        if (std::regex_match(line,
-                             std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"))) {
+        if (lineIsValid(line)) {
             // store process values
             std::vector<int> processValues;
             std::stringstream tempStream(line);
@@ -132,22 +134,23 @@ bool Controller::parseFile(std::string file) {
 
                 // remove white space
                 substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
-                
+
                 // convert to int before pushing to vector
                 processValues.push_back(std::stoi(substr));
             }
-            
+
             int curPID = processValues[0];
-            
+
             // check to see if PCB has been added before
             if (processStatus(curPID) > -1) {
-                std::cout << "Error: Duplicate process in " << file << " on line " << lineCount << std::endl;
+                std::cout << "Error: Duplicate process in " << file << " on line " << lineCount
+                          << std::endl;
                 return false;
             }
-            
+
             // add to waiting queue
             waitingQueue->add(new ProcessControlBlock(processValues));
-            
+
             // add to process table as 'waiting'
             editProcessTable(curPID, 0);
         }
@@ -166,22 +169,20 @@ bool Controller::parseFile(std::string file) {
 
 // edit/add PID and it's value in process table
 void Controller::editProcessTable(int PID, int value) {
-    std::unordered_map<int,int>::iterator processIndex = this->processTable.find(PID);
+    std::unordered_map<int, int>::iterator processIndex = this->processTable.find(PID);
 
     // edit
     if (processIndex != this->processTable.end())
         processIndex->second = value;
-    //add
+    // add
     else
         this->processTable.insert(std::make_pair(PID, value));
-    
-    
 }
 
 // returns process status in process table, if process doesn't exist, -1
 int Controller::processStatus(int PID) {
-    std::unordered_map<int,int>::const_iterator processIndex = this->processTable.find(PID);
-    
+    std::unordered_map<int, int>::const_iterator processIndex = this->processTable.find(PID);
+
     if (processIndex == this->processTable.end()) {
         return -1;
     }
@@ -196,3 +197,8 @@ void Controller::addQueues() {
     waitingQueue = new CustomQueue("Waiting");
 }
 
+// returns true if a line of input is syntactically valid
+bool Controller::lineIsValid(std::string line) {
+    return std::regex_match(line,
+                            std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"));
+}

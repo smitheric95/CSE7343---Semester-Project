@@ -46,6 +46,7 @@ public:
     bool parseFile(std::string file);
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
+    bool lineIsValid(std::string line);
 };
 
 #endif /* Controller_hpp */
