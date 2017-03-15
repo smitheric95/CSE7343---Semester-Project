@@ -19,7 +19,7 @@ CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
 
 CustomQueue::~CustomQueue() {
     ProcessControlBlock* cur = this->head;
-    
+
     while (cur != nullptr) {
         ProcessControlBlock* next = cur->getNext();
         delete cur;

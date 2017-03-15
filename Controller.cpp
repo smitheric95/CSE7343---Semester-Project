@@ -93,20 +93,17 @@ void Controller::handleUserInput() {
 
             // try parsing file
             if (parseFile(filename)) {
-                std::cout << "Input successfully entered." << std::endl;
+                std::cout << "Input successfully entered." << std::endl << std::endl;
                 this->inputFileParsed = true;
-                displayMainMenu(true);
             }
+            else {
+                std::cout << "Unable to process input." << std::endl << std::endl;
+            }
+            displayMainMenu(true);
         }
         else {
             displayErrorMessage();
         }
-
-        /*
-         // go back to mode selection == file
-         std::cout << "Please select an input type: ([0] to exit)";
-         std::cin >> modeSelection;
-         */
     }
 }
 
@@ -135,13 +132,24 @@ bool Controller::parseFile(std::string file) {
 
                 // remove white space
                 substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
-
-                // convert to int before pushing
+                
+                // convert to int before pushing to vector
                 processValues.push_back(std::stoi(substr));
             }
-
+            
+            int curPID = processValues[0];
+            
+            // check to see if PCB has been added before
+            if (processStatus(curPID) > -1) {
+                std::cout << "Error: Duplicate process in " << file << " on line " << lineCount << std::endl;
+                return false;
+            }
+            
             // add to waiting queue
             waitingQueue->add(new ProcessControlBlock(processValues));
+            
+            // add to process table as 'waiting'
+            editProcessTable(curPID, 0);
         }
         // format is wrong, stop program
         else {
@@ -154,6 +162,33 @@ bool Controller::parseFile(std::string file) {
     }
 
     return true;
+}
+
+// edit/add PID and it's value in process table
+void Controller::editProcessTable(int PID, int value) {
+    std::unordered_map<int,int>::iterator processIndex = this->processTable.find(PID);
+
+    // edit
+    if (processIndex != this->processTable.end())
+        processIndex->second = value;
+    //add
+    else
+        this->processTable.insert(std::make_pair(PID, value));
+    
+    
+}
+
+// returns process status in process table, if process doesn't exist, -1
+int Controller::processStatus(int PID) {
+    std::unordered_map<int,int>::const_iterator processIndex = this->processTable.find(PID);
+    
+    if (processIndex == this->processTable.end()) {
+        return -1;
+    }
+    // return the value associated with the process (0 for waiting, 1 for ready, 2 for completed)
+    else {
+        return processIndex->second;
+    }
 }
 
 void Controller::addQueues() {

@@ -18,24 +18,34 @@
 #include <regex>
 #include <string>
 #include <unordered_map>
+#include <utility>
+
 
 class Controller {
 private:
     CustomQueue* readyQueue; // null if no processes
     CustomQueue* waitingQueue;
-    //std::unordered_map<std::string,double> processTable;
+    
+/*
+   Key -> Value
+   PID -> (0 for waiting)
+          (1 for ready)
+          (2 for completed)
+*/  std::unordered_map<int,int> processTable;
     
     std::ifstream file;
+    bool inputFileParsed;
     
 public:
     Controller();
     ~Controller();
-    bool inputFileParsed;
     void addQueues();
     void displayMainMenu(bool shortHand=false);
     void handleUserInput();
     void displayErrorMessage();
     bool parseFile(std::string file);
+    void editProcessTable(int PID, int value);
+    int processStatus(int PID);
 };
 
 #endif /* Controller_hpp */
