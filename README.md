@@ -41,3 +41,10 @@ Scheduler:
 TODO:
 - change instructions to ./a.out
 - test on server
+- controller:
+    - command input:
+        - enter 0 to exit
+        - addProcess(<user command>) 
+            - twice
+- replace string parameters with const std::string &arg
+- rethink how to handle scheduling

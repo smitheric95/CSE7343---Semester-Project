@@ -11,6 +11,10 @@
 
 Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), inputFileParsed(false) {
     displayMainMenu();
+
+    // create all necessary queues
+    addQueues();
+
     handleUserInput();
 }
 
@@ -90,10 +94,6 @@ void Controller::handleUserInput() {
             promptCount = 0;
 
             // if the file was found, parse it
-            // create all necessary queues
-            addQueues();
-
-            // try parsing file
             if (parseFile(filename)) {
                 std::cout << "Input successfully entered." << std::endl << std::endl;
                 this->inputFileParsed = true;
@@ -108,37 +108,43 @@ void Controller::handleUserInput() {
             std::string commandLine;
 
             // check the users input
-            while (commandLine != "0") {
-                // user has entered an error
-                if (promptCount > 0) {
-                    std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                    std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
-                }
+            while (true) {
+                if (promptCount == 0)
+                    std::cin.ignore();
 
                 // prompt the user to enter file name
                 std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
-                std::cin.clear();
                 std::getline(std::cin, commandLine);
-                // std::cin.clear();
+                std::cin.clear();
+                
+                // exit to main menu
+                if (commandLine == "0")
+                    break;
+                
                 // user has entered correct input, process command
                 if (lineIsValid(commandLine)) {
-                    std::cout << "commandLine: \"" << commandLine << "\"" << std::endl;
-                    // addProcess(commandLine, "input.txt", 0);
-                    promptCount = 0;
+                    // process was successfully added
+                    if (addProcess(commandLine)) {
+                        std::cout << "Process added to waiting queue." << std::endl;
+                    }
+                    else {
+                        std::cout << "Error adding process. Please try again." << std::endl;
+                    }
                 }
-                else
-                    promptCount++;
+                // user has entered an error
+                else {
+                    std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
+                    std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
+                }
+                promptCount++;
             }
             promptCount = 0;
+            displayMainMenu(true);
         }
         else {
-            displayErrorMessage();
+            std::cout << "Incorrect input. Please try again: " << std::endl;
         }
     }
-}
-
-void Controller::displayErrorMessage() {
-    std::cout << "Incorrect input. Please try again: " << std::endl;
 }
 
 // parse file given by user, build processTable
@@ -197,7 +203,7 @@ void Controller::addQueues() {
 }
 
 // returns true if a line of input is syntactically valid
-bool Controller::lineIsValid(std::string line) {
+bool Controller::lineIsValid(const std::string& line) {
     return (std::regex_match(line,
                              std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
@@ -207,7 +213,6 @@ bool Controller::lineIsValid(std::string line) {
 // PCB is added to processTable and waitingQueue
 // returns true if PCB is sucessfully added
 bool Controller::addProcess(std::string line, std::string file, int lineCount) {
-    std::cout << "hiiiiiiiiiiiiiiiiiiii" << std::endl;
     // store process values
     std::vector<int> processValues;
     std::stringstream tempStream(line);

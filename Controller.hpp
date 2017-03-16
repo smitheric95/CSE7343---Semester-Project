@@ -42,12 +42,11 @@ public:
     void addQueues();
     void displayMainMenu(bool shortHand=false);
     void handleUserInput();
-    void displayErrorMessage();
     bool parseFile(std::string file);
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
-    bool lineIsValid(std::string line);
-    bool addProcess(std::string line, std::string file=nullptr, int lineCount=0);
+    bool lineIsValid(const std::string &line);
+    bool addProcess(std::string line, std::string file=std::string(), int lineCount=0);
 };
 
 #endif /* Controller_hpp */
