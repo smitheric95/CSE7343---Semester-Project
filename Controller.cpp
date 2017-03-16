@@ -105,7 +105,7 @@ void Controller::handleUserInput() {
         }
         // select command line to build queues
         else if (modeSelection == 2) {
-            std::string commandLine = "";
+            std::string commandLine;
 
             // check the users input
             while (commandLine != "0") {
@@ -117,16 +117,17 @@ void Controller::handleUserInput() {
 
                 // prompt the user to enter file name
                 std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
-                std::cin >> commandLine;
-
+                std::cin.clear();
+                std::getline(std::cin, commandLine);
+                // std::cin.clear();
                 // user has entered correct input, process command
                 if (lineIsValid(commandLine)) {
-                    addProcess(commandLine);
+                    std::cout << "commandLine: \"" << commandLine << "\"" << std::endl;
+                    // addProcess(commandLine, "input.txt", 0);
                     promptCount = 0;
                 }
-                else {
+                else
                     promptCount++;
-                }
             }
             promptCount = 0;
         }
@@ -149,8 +150,8 @@ bool Controller::parseFile(std::string file) {
     while (getline(this->file, line)) {
         // check format of input
         if (lineIsValid(line)) {
-            if(!addProcess(line, file, lineCount))
-               return false;
+            if (!addProcess(line, file, lineCount))
+                return false;
         }
         // format is wrong, stop program
         else {
@@ -197,14 +198,16 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(std::string line) {
-    return std::regex_match(line,
-                            std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"));
+    return (std::regex_match(line,
+                             std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$")) &&
+            std::count(line.begin(), line.end(), ',') == 3);
 }
 
 // takes a valid input line and turns into a PCB
 // PCB is added to processTable and waitingQueue
 // returns true if PCB is sucessfully added
 bool Controller::addProcess(std::string line, std::string file, int lineCount) {
+    std::cout << "hiiiiiiiiiiiiiiiiiiii" << std::endl;
     // store process values
     std::vector<int> processValues;
     std::stringstream tempStream(line);
@@ -225,8 +228,7 @@ bool Controller::addProcess(std::string line, std::string file, int lineCount) {
 
     // check to see if PCB has been added before
     if (processStatus(curPID) > -1) {
-        std::cout << "Error: Duplicate process in " << file << " on line " << lineCount
-                  << std::endl;
+        std::cout << "Error: Duplicate process. Command ignored." << std::endl;
         return false;
     }
 
@@ -235,6 +237,6 @@ bool Controller::addProcess(std::string line, std::string file, int lineCount) {
 
     // add to process table as 'waiting'
     editProcessTable(curPID, 0);
-    
+
     return true;
 }
