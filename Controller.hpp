@@ -47,6 +47,7 @@ public:
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
     bool lineIsValid(std::string line);
+    bool addProcess(std::string line, std::string file=nullptr, int lineCount=0);
 };
 
 #endif /* Controller_hpp */

@@ -53,6 +53,9 @@ void Controller::handleUserInput() {
 
     // while the user has not exited
     while (std::cin >> modeSelection) {
+        // number of times a user has been prompted for a particular command
+        int promptCount = 0;
+
         // exit
         if (modeSelection == 0) {
             std::cout << "Goodbye!" << std::endl;
@@ -61,7 +64,6 @@ void Controller::handleUserInput() {
         // select input file to build queues
         else if (modeSelection == 1) {
             std::string filename;
-            int promptCount = 0;
 
             // check the users input
             do {
@@ -103,6 +105,30 @@ void Controller::handleUserInput() {
         }
         // select command line to build queues
         else if (modeSelection == 2) {
+            std::string commandLine = "";
+
+            // check the users input
+            while (commandLine != "0") {
+                // user has entered an error
+                if (promptCount > 0) {
+                    std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
+                    std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
+                }
+
+                // prompt the user to enter file name
+                std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
+                std::cin >> commandLine;
+
+                // user has entered correct input, process command
+                if (lineIsValid(commandLine)) {
+                    addProcess(commandLine);
+                    promptCount = 0;
+                }
+                else {
+                    promptCount++;
+                }
+            }
+            promptCount = 0;
         }
         else {
             displayErrorMessage();
@@ -123,36 +149,8 @@ bool Controller::parseFile(std::string file) {
     while (getline(this->file, line)) {
         // check format of input
         if (lineIsValid(line)) {
-            // store process values
-            std::vector<int> processValues;
-            std::stringstream tempStream(line);
-
-            // split string up by commas
-            while (tempStream.good()) {
-                std::string substr;
-                std::getline(tempStream, substr, ',');
-
-                // remove white space
-                substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
-
-                // convert to int before pushing to vector
-                processValues.push_back(std::stoi(substr));
-            }
-
-            int curPID = processValues[0];
-
-            // check to see if PCB has been added before
-            if (processStatus(curPID) > -1) {
-                std::cout << "Error: Duplicate process in " << file << " on line " << lineCount
-                          << std::endl;
-                return false;
-            }
-
-            // add to waiting queue
-            waitingQueue->add(new ProcessControlBlock(processValues));
-
-            // add to process table as 'waiting'
-            editProcessTable(curPID, 0);
+            if(!addProcess(line, file, lineCount))
+               return false;
         }
         // format is wrong, stop program
         else {
@@ -201,4 +199,42 @@ void Controller::addQueues() {
 bool Controller::lineIsValid(std::string line) {
     return std::regex_match(line,
                             std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$"));
+}
+
+// takes a valid input line and turns into a PCB
+// PCB is added to processTable and waitingQueue
+// returns true if PCB is sucessfully added
+bool Controller::addProcess(std::string line, std::string file, int lineCount) {
+    // store process values
+    std::vector<int> processValues;
+    std::stringstream tempStream(line);
+
+    // split string up by commas
+    while (tempStream.good()) {
+        std::string substr;
+        std::getline(tempStream, substr, ',');
+
+        // remove white space
+        substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
+
+        // convert to int before pushing to vector
+        processValues.push_back(std::stoi(substr));
+    }
+
+    int curPID = processValues[0];
+
+    // check to see if PCB has been added before
+    if (processStatus(curPID) > -1) {
+        std::cout << "Error: Duplicate process in " << file << " on line " << lineCount
+                  << std::endl;
+        return false;
+    }
+
+    // add to waiting queue
+    waitingQueue->add(new ProcessControlBlock(processValues));
+
+    // add to process table as 'waiting'
+    editProcessTable(curPID, 0);
+    
+    return true;
 }
