@@ -42,7 +42,7 @@ TODO:
 - change instructions to ./a.out
 - test on server
 - controller: 
-    - error check: no priority > 4
 - replace string parameters with const std::string &arg
 - rethink how to handle scheduling
 - clarification on length of digits for error checking
+- remove prev* on CustomQueue
