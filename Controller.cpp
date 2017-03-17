@@ -116,11 +116,11 @@ void Controller::handleUserInput() {
                 std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
                 std::getline(std::cin, commandLine);
                 std::cin.clear();
-                
+
                 // exit to main menu
                 if (commandLine == "0")
                     break;
-                
+
                 // user has entered correct input, process command
                 if (lineIsValid(commandLine)) {
                     // process was successfully added
@@ -233,7 +233,28 @@ bool Controller::addProcess(std::string line, std::string file, int lineCount) {
 
     // check to see if PCB has been added before
     if (processStatus(curPID) > -1) {
-        std::cout << "Error: Duplicate process. Command ignored." << std::endl;
+        // passed from input file
+        if (lineCount > 0) {
+            std::cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
+                      << std::endl;
+        }
+        // passed from command line
+        else {
+            std::cout << "Error: Duplicate process. Command ignored." << std::endl;
+        }
+        return false;
+    }
+    // priority is too low
+    else if (processValues[3] == 0 || processValues[3] > 4) {
+        // passed from input file
+        if (lineCount > 0) {
+            std::cout << "Error: on line " << lineCount
+                      << ". Priority must be between 1 and 4. Command ignored." << std::endl;
+        }
+        // passed from command line
+        else {
+            std::cout << "Error: Priority must be between 1 and 4. Command ignored." << std::endl;
+        }
         return false;
     }
 
