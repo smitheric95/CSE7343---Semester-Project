@@ -14,6 +14,9 @@
 #include <stdlib.h> 
 #include "ProcessControlBlock.hpp"
 
+// scheduling algorithm
+enum Mode { SJF, FCFS, Priority, RoundRobin };
+
 class CustomQueue{
 private:
     ProcessControlBlock* head;
@@ -31,10 +34,10 @@ public:
     
     std::string getName();
     
-    int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, int comparison=0);
-    void sort();
-    
     bool isEmpty();
     void print();
+    
+    int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m=SJF);
+    void sort(Mode m);
 };
 #endif /* CustomQueue_hpp */

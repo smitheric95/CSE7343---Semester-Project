@@ -107,28 +107,6 @@ std::string CustomQueue::getName() {
     return this->name;
 }
 
-void CustomQueue::sort() {
-    
-}
-
-/*
- * returns 1 if LHS > RHS, 0 if LHS <= RHS
- * based on mode of scheduler:
- * -1 for arrivalTime
- * 0 for burstTime
- * 1 for priority
- */
-int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, int comparison) {
-    if (comparison == -1) {
-        return (LHS->getArrivalTime() - RHS->getArrivalTime() > 0) ? 1 : 0;
-    }
-    else if (comparison == 1) {
-        return (LHS->getPriority() - RHS->getPriority() > 0) ? 1 : 0;
-    }
-    
-    return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 1 : 0;
-}
-
 // see if the queue is empty
 bool CustomQueue::isEmpty() {
     return this->head == nullptr;
@@ -151,4 +129,39 @@ void CustomQueue::print() {
     }
 
     std::cout << "#############################" << std::endl;
+}
+
+/*
+ * returns 1 if LHS <= RHS, 0 if LHS > RHS
+ * based on mode of scheduler:
+ * -1 for arrivalTime
+ * 0 for burstTime
+ * 1 for priority
+ */
+int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m) {
+    if (m == FCFS) {
+        return (LHS->getArrivalTime() - RHS->getArrivalTime() > 0) ? 0 : 1;
+    }
+    else if (m == Priority) {
+        return (LHS->getPriority() - RHS->getPriority() > 0) ? 0 : 1;
+    }
+    
+    return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 0 : 1;
+}
+
+/*
+ * Sort the linked list based off a Scheduler:
+ *
+ *
+ * NOTE
+ *
+ * All code below this is based off work from the article "Merge Sort for Linked Lists"
+ * by GeeksforGeeks (http://www.geeksforgeeks.org/merge-sort-for-linked-list/)
+ * which is available for noncommercial use based off the
+ * Attribution-NonCommercial-NoDerivs 2.5 India license
+ * (https://creativecommons.org/licenses/by-nc-nd/2.5/in/deed.en_US#)
+ */
+
+void CustomQueue::sort(Mode m) {
+    
 }

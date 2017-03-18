@@ -12,9 +12,6 @@
 #include <stdio.h>
 #include "CustomQueue.hpp"
 
-// scheduling algorithm
-enum Mode { SJF, FCFS, Priority, RoundRobin };
-
 class Scheduler {
 private:
     Mode m;
