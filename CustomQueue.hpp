@@ -27,7 +27,8 @@ class CustomQueue {
     void frontBackSplit(ProcessControlBlock* source,
                         ProcessControlBlock** frontRef,
                         ProcessControlBlock** backRef);
-
+    void reestablishTail();
+    
    public:
     CustomQueue(std::string name);
     CustomQueue(std::string name, ProcessControlBlock* head);

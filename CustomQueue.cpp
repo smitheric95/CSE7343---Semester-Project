@@ -150,6 +150,16 @@ int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS,
     return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 0 : 1;
 }
 
+// ensures that the tail is last element in the list
+void CustomQueue::reestablishTail() {
+    ProcessControlBlock* cur = this->head;
+    
+    while(cur->getNext() != nullptr)
+        cur = cur->getNext();
+    
+    this->tail = cur;
+}
+
 /**************************************************************************************
  * 
  * NOTE!
@@ -164,16 +174,16 @@ int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS,
 
 // Sort the linked list based off a Scheduler
 void CustomQueue::sort(ProcessControlBlock** headRef, Mode m) {
-    ProcessControlBlock* head = *headRef;
+    ProcessControlBlock* front = *headRef;
     ProcessControlBlock* a;
     ProcessControlBlock* b;
 
     // base case
-    if (head == nullptr || head->getNext() == nullptr)
+    if (front == nullptr || front->getNext() == nullptr)
         return;
 
     // split head into a and b
-    frontBackSplit(head, &a, &b);
+    frontBackSplit(front, &a, &b);
 
     // recursivel sort the sublists
     sort(&a, m);
@@ -181,6 +191,9 @@ void CustomQueue::sort(ProcessControlBlock** headRef, Mode m) {
 
     // answer = merge the two sorted lists together
     *headRef = sortedMerge(a, b, m);
+    
+    // ensure tail is put back in right place
+    reestablishTail();
 }
 
 /* 
