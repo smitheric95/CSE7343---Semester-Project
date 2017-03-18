@@ -11,7 +11,7 @@
 #include "Controller.hpp"
 
 int main(int argc, const char * argv[]) {
-    // Controller main;
+    Controller main;
     
     return 0;
 }

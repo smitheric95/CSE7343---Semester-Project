@@ -22,6 +22,11 @@ class CustomQueue {
     ProcessControlBlock* head;
     ProcessControlBlock* tail;
     std::string name;
+    
+    ProcessControlBlock* sortedMerge(ProcessControlBlock*, ProcessControlBlock* b, Mode m);
+    void frontBackSplit(ProcessControlBlock* source,
+                        ProcessControlBlock** frontRef,
+                        ProcessControlBlock** backRef);
 
    public:
     CustomQueue(std::string name);
@@ -33,15 +38,12 @@ class CustomQueue {
     ProcessControlBlock* peek();
 
     std::string getName();
+    ProcessControlBlock* getHead();
 
     bool isEmpty();
     void print();
 
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
-    void sort(ProcessControlBlock** head, Mode m);
-    ProcessControlBlock* sortedMerge(ProcessControlBlock*, ProcessControlBlock* b, Mode m);
-    void frontBackSplit(ProcessControlBlock* source,
-                        ProcessControlBlock** frontRef,
-                        ProcessControlBlock** backRef);
+    void sort(ProcessControlBlock** headRef, Mode m);
 };
 #endif /* CustomQueue_hpp */

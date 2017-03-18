@@ -16,6 +16,9 @@ Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), inputFile
     addQueues();
 
     handleUserInput();
+    ProcessControlBlock* head = waitingQueue->getHead();
+    waitingQueue->sort(&head, SJF);
+    waitingQueue->print();
 }
 
 Controller::~Controller() {
