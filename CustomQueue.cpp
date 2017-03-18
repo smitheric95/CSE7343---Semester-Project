@@ -137,18 +137,14 @@ void CustomQueue::print() {
 
 /*
  * returns 1 if LHS <= RHS, 0 if LHS > RHS
- * (reverse for priority)
- * based on mode of scheduler:
- * -1 for arrivalTime
- * 0 for burstTime
- * 1 for priority
+ * based on mode of scheduler
  */
 int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m) {
     if (m == FCFS) {
         return (LHS->getArrivalTime() - RHS->getArrivalTime() > 0) ? 0 : 1;
     }
     else if (m == Priority) {
-        return (LHS->getPriority() - RHS->getPriority() > 0) ? 1 : 0;
+        return (LHS->getPriority() - RHS->getPriority() > 0) ? 0 : 1;
     }
 
     return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 0 : 1;

@@ -48,3 +48,4 @@ TODO:
 - remove prev* on CustomQueue
 - test priority sorting
 - oh def delete the tail stuff cuz it gets messed up in sorting
+- Priority sorting doesn't work!
