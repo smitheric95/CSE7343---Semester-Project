@@ -9,8 +9,7 @@
 #include "CustomQueue.hpp"
 #include <typeinfo>
 
-CustomQueue::CustomQueue(std::string name)
-    : head(nullptr), tail(head), name(name){
+CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name) {
 }
 
 CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
@@ -145,23 +144,105 @@ int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS,
     else if (m == Priority) {
         return (LHS->getPriority() - RHS->getPriority() > 0) ? 0 : 1;
     }
-    
+
     return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 0 : 1;
 }
 
-/*
- * Sort the linked list based off a Scheduler:
+/**************************************************************************************
+ * 
+ * NOTE!
  *
- *
- * NOTE
- *
- * All code below this is based off work from the article "Merge Sort for Linked Lists"
+ * All code below this line is based off work from the article "Merge Sort for Linked Lists"
  * by GeeksforGeeks (http://www.geeksforgeeks.org/merge-sort-for-linked-list/)
  * which is available for noncommercial use based off the
  * Attribution-NonCommercial-NoDerivs 2.5 India license
  * (https://creativecommons.org/licenses/by-nc-nd/2.5/in/deed.en_US#)
- */
+ *
+ **************************************************************************************/
 
-void CustomQueue::sort(Mode m) {
+// Sort the linked list based off a Scheduler
+void CustomQueue::sort(ProcessControlBlock** headRef, Mode m) {
+    ProcessControlBlock* head = *headRef;
+    ProcessControlBlock* a;
+    ProcessControlBlock* b;
+
+    // base case
+    if (head == nullptr || head->getNext() == nullptr)
+        return;
+
+    // split head into a and b
+    frontBackSplit(head, &a, &b);
+
+    // recursivel sort the sublists
+    sort(&a, m);
+    sort(&b, m);
+
+    // answer = merge the two sorted lists together
+    *headRef = sortedMerge(a, b, m);
+}
+
+/* 
+ * Takes two lists sorted in increasing order, and splices
+ * their nodes together to make one big sorted list which
+ * is returned.  
+ */
+ProcessControlBlock* CustomQueue::sortedMerge(ProcessControlBlock* a, ProcessControlBlock* b, Mode m) {
     
+    ProcessControlBlock* result = nullptr;
+    
+    // base cases
+    if (a == nullptr)
+        return b;
+    else if (b == nullptr)
+        return a;
+    
+    // pick either a or b, and recur
+    if ( comparePCBs(a, b, m) ) {
+        result = a;
+        result->setNext( sortedMerge(a->getNext(), b, m) );
+    }
+    else {
+        result = b;
+        result->setNext( sortedMerge(a, b->getNext(), m) );
+    }
+    
+    return result;
+}
+
+/* &
+ * Split the nodes of the given list into front and back halves,
+ * and return the two lists using the reference parameters.
+ * If the length is odd, the extra node should go in the front list.
+ * Uses the fast/slow pointer strategy.
+ */
+void CustomQueue::frontBackSplit(ProcessControlBlock* source,
+                                 ProcessControlBlock** frontRef,
+                                 ProcessControlBlock** backRef) {
+    ProcessControlBlock* fast;
+    ProcessControlBlock* slow;
+
+    if (source == nullptr || source->getNext() == nullptr) {
+        // length < cases
+        *frontRef = source;
+        *backRef = nullptr;
+    }
+    else {
+        slow = source;
+        fast = source->getNext();
+
+        // advance fast two nodes, slow one node
+        while (fast != nullptr) {
+            fast = fast->getNext();
+
+            if (fast != nullptr) {
+                slow = slow->getNext();
+                fast = fast->getNext();
+            }
+        }
+
+        // slow is before the midpoint in the list, so split it in two
+        *frontRef = source;
+        *backRef = slow->getNext();
+        slow->setNext(nullptr);
+    }
 }
