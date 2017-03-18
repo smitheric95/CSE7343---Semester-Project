@@ -26,3 +26,7 @@ int Scheduler::compare() {
     //if mode ==
     return 0;
 }
+
+void Scheduler::printSchedule() {
+    
+}

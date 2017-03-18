@@ -15,10 +15,10 @@
 
 class ProcessControlBlock{
 private:
-    int priority;
+    int PID;
     int arrivalTime;
     int burstTime;
-    int PID;
+    int priority;
     
     ProcessControlBlock* next;
     ProcessControlBlock* prev;

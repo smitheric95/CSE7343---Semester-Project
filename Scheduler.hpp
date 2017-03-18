@@ -24,7 +24,7 @@ public:
     void changeMode(Mode m);
     Mode getMode();
     int compare();
-    
+    void printSchedule();
 /*
  - keep track of waiting/ready queues
  - SJF, FCFS, non-pre priority are all the same with diff things

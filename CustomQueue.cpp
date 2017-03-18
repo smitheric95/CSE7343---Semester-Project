@@ -107,6 +107,28 @@ std::string CustomQueue::getName() {
     return this->name;
 }
 
+void CustomQueue::sort() {
+    
+}
+
+/*
+ * returns 1 if LHS > RHS, 0 if LHS <= RHS
+ * based on mode of scheduler:
+ * -1 for arrivalTime
+ * 0 for burstTime
+ * 1 for priority
+ */
+int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, int comparison) {
+    if (comparison == -1) {
+        return (LHS->getArrivalTime() - RHS->getArrivalTime() > 0) ? 1 : 0;
+    }
+    else if (comparison == 1) {
+        return (LHS->getPriority() - RHS->getPriority() > 0) ? 1 : 0;
+    }
+    
+    return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 1 : 0;
+}
+
 // see if the queue is empty
 bool CustomQueue::isEmpty() {
     return this->head == nullptr;

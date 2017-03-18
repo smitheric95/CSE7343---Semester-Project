@@ -31,6 +31,9 @@ public:
     
     std::string getName();
     
+    int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, int comparison=0);
+    void sort();
+    
     bool isEmpty();
     void print();
 };
