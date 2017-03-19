@@ -48,3 +48,7 @@ TODO:
 - remove prev* on CustomQueue
 - test priority sorting
 - improve output with new lines
+- be able to add to both queues
+    - just put as optoin in input type
+- be able to transfer from waiting to ready?
+

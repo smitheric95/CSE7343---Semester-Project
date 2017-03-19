@@ -23,6 +23,7 @@ class CustomQueue {
     ProcessControlBlock* tail;
     std::string name;
     void reestablishTail();
+    std::vector<ProcessControlBlock*> processVector;
     
    public:
     CustomQueue(std::string name);
@@ -40,5 +41,6 @@ class CustomQueue {
     void print();
 
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
+    void sortVector(Mode m);
 };
 #endif /* CustomQueue_hpp */

@@ -75,7 +75,10 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
             cur = cur->getNext();
         }
     }
-
+    
+    // remove from process vector
+    this->processVector.erase(std::remove(this->processVector.begin(), this->processVector.end(), temp), this->processVector.end());
+    
     return temp;
 }
 
@@ -88,6 +91,8 @@ void CustomQueue::add(ProcessControlBlock* cur) {
 
     if (this->head == nullptr)
         this->head = this->tail;
+    
+    this->processVector.push_back(cur);
 }
 
 // return PCB without removing
@@ -134,21 +139,6 @@ void CustomQueue::print() {
     std::cout << "#############################" << std::endl;
 }
 
-/*
- * returns 1 if LHS <= RHS, 0 if LHS > RHS
- * based on mode of scheduler
- */
-int CustomQueue::comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m) {
-    if (m == FCFS) {
-        return (LHS->getArrivalTime() - RHS->getArrivalTime() > 0) ? 0 : 1;
-    }
-    else if (m == Priority) {
-        return (LHS->getPriority() - RHS->getPriority() > 0) ? 0 : 1;
-    }
-
-    return (LHS->getBurstTime() - RHS->getBurstTime() > 0) ? 0 : 1;
-}
-
 // ensures that the tail is last element in the list
 void CustomQueue::reestablishTail() {
     ProcessControlBlock* cur = this->head;
@@ -157,4 +147,14 @@ void CustomQueue::reestablishTail() {
         cur = cur->getNext();
     
     this->tail = cur;
+}
+
+// sorts vector based off mode
+void CustomQueue::sortVector(Mode m) {
+    if (m == SJF)
+        std::sort(this->processVector.begin(), this->processVector.end(), [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {return a->getBurstTime() < b->getBurstTime(); });
+    else if (m == FCFS)
+        std::sort(this->processVector.begin(), this->processVector.end(), [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {return a->getArrivalTime() < b->getArrivalTime(); });
+    else // Priority
+        std::sort(this->processVector.begin(), this->processVector.end(), [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {return a->getPriority() < b->getPriority(); });
 }
