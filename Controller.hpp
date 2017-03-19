@@ -52,6 +52,7 @@ public:
     int getRoundRobinQuantum();
     void setRoundRobinQuantum(int q);
     std::string getSchedulingMode(Mode m);
+    void printWaitingTimes();
 };
 
 #endif /* Controller_hpp */

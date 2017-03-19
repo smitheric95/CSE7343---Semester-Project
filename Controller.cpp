@@ -1,6 +1,3 @@
-
-
-
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -23,11 +20,9 @@ Controller::Controller()
     addQueues();
 
     handleUserInput();
-    /*
-    ProcessControlBlock* head = waitingQueue->getHead();
-    waitingQueue->sort(&head, Priority);
-    waitingQueue->print();
-     */
+   
+    waitingQueue->sortVector(SJF);
+    
 }
 
 Controller::~Controller() {
@@ -215,6 +210,11 @@ void Controller::handleUserInput() {
                       << " is selected. Please execute processes." << std::endl
                       << std::endl;
             this->displayMainMenu(true);
+        }
+        // print out waiting times of processes
+        else if (modeSelection == 4) {
+            if (this->getSchedulingMode(<#Mode m#>))
+            readyQueue->sortVector(this->schedulingMode);
         }
         else {
             std::cout << "Incorrect input. Please try again: " << std::endl;
