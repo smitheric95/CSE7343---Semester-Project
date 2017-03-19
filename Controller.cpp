@@ -1,4 +1,6 @@
 
+
+
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -9,18 +11,23 @@
 
 #include "Controller.hpp"
 
-Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), inputFileParsed(false) {
+Controller::Controller()
+    : readyQueue(nullptr)
+    , waitingQueue(nullptr)
+    , inputFileParsed(false)
+    , schedulingMode(SJF)
+    , roundRobinQuantum(0) {
     displayMainMenu();
 
     // create all necessary queues
     addQueues();
 
     handleUserInput();
-
+    /*
     ProcessControlBlock* head = waitingQueue->getHead();
     waitingQueue->sort(&head, Priority);
     waitingQueue->print();
-        
+     */
 }
 
 Controller::~Controller() {
@@ -36,7 +43,7 @@ void Controller::displayMainMenu(bool shortHand) {
     if (shortHand) {
         std::cout << "################ Main Menu ###################" << std::endl;
         std::cout << "# [0] Exit [1] Input file [2] Command line   #" << std::endl;
-        std::cout << "# [3] Execute processes [4] Select scheduler #" << std::endl;
+        std::cout << "# [3] Select scheduler [4] Execute processes #" << std::endl;
         std::cout << "##############################################" << std::endl;
     }
     else {
@@ -48,8 +55,8 @@ void Controller::displayMainMenu(bool shortHand) {
         std::cout << "# Select process input type:                 #" << std::endl;
         std::cout << "#     [1] File [2] Command line              #" << std::endl;
         std::cout << "#                                            #" << std::endl;
-        std::cout << "# [3] Execute processes                      #" << std::endl;
-        std::cout << "# [4] Select scheduling algorithm            #" << std::endl;
+        std::cout << "# [3] Select scheduling algorithm            #" << std::endl;
+        std::cout << "# [4] Execute processes                      #" << std::endl;
         std::cout << "#                                            #" << std::endl;
         std::cout << "# [0] Exit                                   #" << std::endl;
         std::cout << "##############################################" << std::endl << std::endl;
@@ -145,6 +152,69 @@ void Controller::handleUserInput() {
             }
             promptCount = 0;
             displayMainMenu(true);
+        }
+        // select scheduling algorithm to execute processses
+        else if (modeSelection == 3) {
+            std::cout << "Current sceduling mode is "
+                      << this->getSchedulingMode(this->schedulingMode) << std::endl;
+            std::cout << "Please select a scheduling algorithm: " << std::endl;
+            std::cout << "[1] Shortest Job First (Default)" << std::endl;
+            std::cout << "[2] First Come First Serve" << std::endl;
+            std::cout << "[3] Priority" << std::endl;
+            std::cout << "[4] Round Robin" << std::endl;
+            std::cout << "[0] Go back" << std::endl;
+
+            std::string schedulerSelection;
+
+            // prompt user for scheduling mode
+            while (schedulerSelection != "0") {
+                std::cin >> schedulerSelection;
+
+                // SJF
+                if (schedulerSelection == "1") {
+                    this->schedulingMode = SJF;
+                    schedulerSelection = "0";
+                }
+                // FCFS
+                else if (schedulerSelection == "2") {
+                    this->schedulingMode = FCFS;
+                    schedulerSelection = "0";
+                }
+                // Priority
+                else if (schedulerSelection == "3") {
+                    this->schedulingMode = Priority;
+                    schedulerSelection = "0";
+                }
+                // Round Robin
+                else if (schedulerSelection == "4") {
+                    this->roundRobinQuantum = 0;
+                    
+                    // prompt for quantum
+                    promptCount = 0;
+                    while (this->roundRobinQuantum < 1 || this->roundRobinQuantum > 1000) {
+                        std::cout << "Please enter a quantum: <1-999>" << std::endl;
+                        std::cin >> this->roundRobinQuantum;
+                        
+                        // check for errors
+                        if (promptCount > 0) {
+                            std::cout << "Incorrect input. Please try again." << std::endl;
+                            std::cin.clear();
+                            std::cin.ignore(1000, '\n');
+                        }
+                        promptCount++;
+                    }
+
+                    this->schedulingMode = RoundRobin;
+                    schedulerSelection = "0";
+                }
+                else if (schedulerSelection != "0") {
+                    std::cout << "Incorrect input. Please try again: (0 to exit)" << std::endl;
+                }
+            }
+            std::cout << this->getSchedulingMode(this->schedulingMode)
+                      << " is selected. Please execute processes." << std::endl
+                      << std::endl;
+            this->displayMainMenu(true);
         }
         else {
             std::cout << "Incorrect input. Please try again: " << std::endl;
@@ -270,4 +340,16 @@ bool Controller::addProcess(std::string line, std::string file, int lineCount) {
     editProcessTable(curPID, 0);
 
     return true;
+}
+
+int Controller::getRoundRobinQuantum() {
+    return this->roundRobinQuantum;
+}
+void Controller::setRoundRobinQuantum(int q) {
+    this->roundRobinQuantum = q;
+}
+
+std::string Controller::getSchedulingMode(Mode m) {
+    std::string arr[4] = {"SJF", "FCFS", "Priority", "Round Robin"};
+    return arr[m];
 }

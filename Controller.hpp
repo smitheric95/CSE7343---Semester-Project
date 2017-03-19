@@ -26,6 +26,7 @@ private:
     CustomQueue* readyQueue; // null if no processes
     CustomQueue* waitingQueue;
     
+    Mode schedulingMode;
 /*
    Key -> Value
    PID -> (0 for waiting)
@@ -35,6 +36,7 @@ private:
     
     std::ifstream file;
     bool inputFileParsed;
+    int roundRobinQuantum;
     
 public:
     Controller();
@@ -47,6 +49,9 @@ public:
     int processStatus(int PID);
     bool lineIsValid(const std::string &line);
     bool addProcess(std::string line, std::string file=std::string(), int lineCount=0);
+    int getRoundRobinQuantum();
+    void setRoundRobinQuantum(int q);
+    std::string getSchedulingMode(Mode m);
 };
 
 #endif /* Controller_hpp */
