@@ -47,5 +47,4 @@ TODO:
 - clarification on length of digits for error checking
 - remove prev* on CustomQueue
 - test priority sorting
-- 
-- 
+- improve output with new lines
