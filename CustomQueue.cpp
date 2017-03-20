@@ -180,7 +180,7 @@ void CustomQueue::sortVector(Mode m) {
  **************************************************************************************/
 
 void CustomQueue::shortestJobFirst() {
-    int totalWait = 0, smallest = 0, totalBurstTime = 0;
+    int totalWait = 0, shortest = 0, totalBurstTime = 0;
     int n = (int)this->processVector.size();
     std::vector<int> arrivaltimes;
     int burstTimes[n];
@@ -205,25 +205,33 @@ void CustomQueue::shortestJobFirst() {
 
     std::cout << "Waiting times: " << std::endl;
     int time = 0;
+    
+    // progress through the gantt chart
     while (time < totalBurstTime) {
-        smallest = n;
+        shortest = n;
+        
+        // calculate next shortest process to have arrived
         for (int i = 0; i < n; i++) {
             if (arrivaltimes[i] <= time && burstTimes[i] > 0 &&
-                burstTimes[i] < burstTimes[smallest])
-                smallest = i;
+                burstTimes[i] < burstTimes[shortest])
+                shortest = i;
         }
-        if (smallest == n)
+        
+        // increment time
+        if (shortest == n)
             time++;
         else {
             
-            // calculate waiting time
-            int wait = time - arrivaltimes[smallest];
+            // process finished, calculate waiting time
+            int wait = time - arrivaltimes[shortest];
             std::cout << "P" << this->processVector[count]->getPID() << ": " << wait
                       << std::endl;
             
             totalWait += wait;
-            time += burstTimes[smallest];
-            burstTimes[smallest] = 0;
+            
+            // progress time by the current process' burst
+            time += burstTimes[shortest];
+            burstTimes[shortest] = 0;
             count++;
         }
     }
