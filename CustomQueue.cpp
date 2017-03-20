@@ -257,6 +257,26 @@ void CustomQueue::firstComeFirstServe() {
     << std::endl;
 }
 
+void CustomQueue::priority() {
+    // sort process vector by priority
+    this->sortVector(Priority);
+    
+    int serviceTime = 0, totalWait = 0;
+    
+    // loop through processes
+    for (auto x : this->processVector) {
+        // calculate wait time
+        int wait = serviceTime - x->getArrivalTime();
+        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
+        
+        totalWait += wait;
+        serviceTime += x->getBurstTime();
+    }
+    
+    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
+    << std::endl;
+}
+
 /*
 void CustomQueue::printWaitTimes() {
     int totalWaitTime = 0;

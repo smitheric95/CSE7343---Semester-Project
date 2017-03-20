@@ -19,10 +19,12 @@ Controller::Controller()
     // create all necessary queues
     addQueues();
 
+    // prompt user
     handleUserInput();
    
-    //waitingQueue->shortestJobFirst();
-    waitingQueue->firstComeFirstServe();
+    // waitingQueue->shortestJobFirst();
+    // waitingQueue->firstComeFirstServe();
+       waitingQueue->priority();
 }
 
 Controller::~Controller() {

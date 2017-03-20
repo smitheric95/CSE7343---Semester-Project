@@ -46,5 +46,6 @@ class CustomQueue {
     void shortestJobFirst();
     void firstComeFirstServe();
     void printWaitTimes();
+    void priority();
 };
 #endif /* CustomQueue_hpp */
