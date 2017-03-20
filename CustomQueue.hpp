@@ -44,6 +44,7 @@ class CustomQueue {
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
     void sortVector(Mode m);
     void shortestJobFirst();
+    void firstComeFirstServe();
     void printWaitTimes();
 };
 #endif /* CustomQueue_hpp */

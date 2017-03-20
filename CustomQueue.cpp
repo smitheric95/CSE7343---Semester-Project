@@ -205,30 +205,28 @@ void CustomQueue::shortestJobFirst() {
 
     std::cout << "Waiting times: " << std::endl;
     int time = 0;
-    
+
     // progress through the gantt chart
     while (time < totalBurstTime) {
         shortest = n;
-        
+
         // calculate next shortest process to have arrived
         for (int i = 0; i < n; i++) {
             if (arrivaltimes[i] <= time && burstTimes[i] > 0 &&
                 burstTimes[i] < burstTimes[shortest])
                 shortest = i;
         }
-        
+
         // increment time
         if (shortest == n)
             time++;
         else {
-            
             // process finished, calculate waiting time
             int wait = time - arrivaltimes[shortest];
-            std::cout << "P" << this->processVector[count]->getPID() << ": " << wait
-                      << std::endl;
-            
+            std::cout << "P" << this->processVector[count]->getPID() << ": " << wait << std::endl;
+
             totalWait += wait;
-            
+
             // progress time by the current process' burst
             time += burstTimes[shortest];
             burstTimes[shortest] = 0;
@@ -239,6 +237,27 @@ void CustomQueue::shortestJobFirst() {
               << std::endl;
 }
 
+void CustomQueue::firstComeFirstServe() {
+    // sort process vector by arrival time
+    this->sortVector(FCFS);
+
+    int serviceTime = 0, totalWait = 0;
+
+    // loop through processes
+    for (auto x : this->processVector) {
+        // calculate wait time
+        int wait = serviceTime - x->getArrivalTime();
+        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
+        
+        totalWait += wait;
+        serviceTime += x->getBurstTime();
+    }
+    
+    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
+    << std::endl;
+}
+
+/*
 void CustomQueue::printWaitTimes() {
     int totalWaitTime = 0;
 
@@ -255,3 +274,4 @@ void CustomQueue::printWaitTimes() {
     }
     std::cout << "Total wait time: " << totalWaitTime << std::endl;
 }
+ */

@@ -21,8 +21,8 @@ Controller::Controller()
 
     handleUserInput();
    
-    //waitingQueue->sortVector(SJF);
-    waitingQueue->shortestJobFirst();
+    //waitingQueue->shortestJobFirst();
+    waitingQueue->firstComeFirstServe();
 }
 
 Controller::~Controller() {
