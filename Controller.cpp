@@ -24,7 +24,7 @@ Controller::Controller()
    
     // waitingQueue->shortestJobFirst();
     // waitingQueue->firstComeFirstServe();
-       waitingQueue->priority();
+    // waitingQueue->priority();
 }
 
 Controller::~Controller() {

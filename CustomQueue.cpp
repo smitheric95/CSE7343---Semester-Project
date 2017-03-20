@@ -165,6 +165,8 @@ void CustomQueue::sortVector(Mode m) {
     else  // Priority
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      if (a->getPriority() == b->getPriority())
+                          return a->getBurstTime() < b->getBurstTime();
                       return a->getPriority() < b->getPriority();
                   });
 }
@@ -262,6 +264,9 @@ void CustomQueue::priority() {
     this->sortVector(Priority);
     
     int serviceTime = 0, totalWait = 0;
+    
+    // wait time doesn't start at 0?
+    // what about if it hasn't arrived yet?
     
     // loop through processes
     for (auto x : this->processVector) {
