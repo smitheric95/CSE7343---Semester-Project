@@ -160,6 +160,9 @@ void CustomQueue::sortVector(Mode m) {
     else if (m == FCFS)
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      // if same arrival, sort by priority
+                      if (a->getArrivalTime() == b->getArrivalTime())
+                          return a->getPriority() < b->getPriority();
                       return a->getArrivalTime() < b->getArrivalTime();
                   });
     else  // Priority
@@ -286,24 +289,26 @@ void CustomQueue::firstComeFirstServe() {
     std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
+
+
 void CustomQueue::priority() {
     // sort process vector by priority
     this->sortVector(Priority);
     
-    int serviceTime = 0, totalWait = 0;
+    int numberOfProcesses,totalCPUBurstTime,*arrivalTime,*CPUBurstTime,*processNumber,minimumArrivalTime,*priority;
+    float averageWaitingTime=0,averageTurnAroundTime=0;
     
-    // loop through processes
-    for (auto x : this->processVector) {
-        // calculate wait time
-        int wait = serviceTime - x->getArrivalTime();
-        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
-        
-        totalWait += wait;
-        serviceTime += x->getBurstTime();
-    }
+    int i,j,temp;
     
-    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
-    << std::endl;
+    printf("Enter the number of processes : ");
+    scanf("%d",&numberOfProcesses);
+    arrivalTime=(int*)malloc(sizeof(int)*numberOfProcesses);
+    CPUBurstTime=(int*)malloc(sizeof(int)*numberOfProcesses);
+    processNumber=(int*)malloc(sizeof(int)*numberOfProcesses);
+    priority=(int *)malloc(sizeof(int)*numberOfProcesses);
+    
+    minimumArrivalTime=2147483647;
+    
 }
 
 /*
