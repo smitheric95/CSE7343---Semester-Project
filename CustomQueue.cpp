@@ -168,6 +168,9 @@ void CustomQueue::sortVector(Mode m) {
     else  // Priority
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      // if same priority, sort by burst time
+                      if (a->getPriority() == b->getPriority())
+                          return a->getBurstTime() < b->getBurstTime();
                       return a->getPriority() < b->getPriority();
                   });
 }
@@ -289,13 +292,34 @@ void CustomQueue::firstComeFirstServe() {
     std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
-
+/**************************************************************************************
+ *
+ * NOTE!
+ *
+ * This function is based off work from the article "Non Preemptive Priority Scheduling
+ * - Drawing Gantt Chart"
+ * by Lavish Kothari of C With Coding Club:
+ * http://codingloverlavi.blogspot.com/2014/08/non-preemptive-priority-scheduling.html 
+ *
+ *
+ *
+ *
+ *  priority, burst time
+ *
+ *
+ *
+ *
+ **************************************************************************************/
 
 void CustomQueue::priority() {
     // sort process vector by priority
     this->sortVector(Priority);
     
-    int numberOfProcesses,totalCPUBurstTime,*arrivalTime,*CPUBurstTime,*processNumber,minimumArrivalTime,*priority;
+    int numberOfProcesses;
+    int totalCPUBurstTime;
+    int* arrivalTime,*CPUBurstTime,*processNumber;
+    int minimumArrivalTime;
+    int* priority;
     float averageWaitingTime=0,averageTurnAroundTime=0;
     
     int i,j,temp;
@@ -307,7 +331,76 @@ void CustomQueue::priority() {
     processNumber=(int*)malloc(sizeof(int)*numberOfProcesses);
     priority=(int *)malloc(sizeof(int)*numberOfProcesses);
     
-    minimumArrivalTime=2147483647;
+    
+    
+    minimumArrivalTime = std::numeric_limits<int>::max();
+    const int maxWidth=100;
+    
+    int scalingFactor,counter,tempi,currentTime;
+    printf("The gantt chart for the given processes is : \n\n");
+    
+    scalingFactor=maxWidth/totalCPUBurstTime;
+    for(i=0;i<scalingFactor*totalCPUBurstTime+2+numberOfProcesses;i++)
+    {
+        printf("-");
+    }
+    printf("\n|");
+    counter=0,tempi=0;
+    for(i=0;i<scalingFactor*totalCPUBurstTime;i++)
+    {
+        if(i==CPUBurstTime[counter]*scalingFactor+tempi)
+        {
+            counter++;
+            tempi=i;
+            printf("|");
+        }
+        else if(i==(CPUBurstTime[counter]*scalingFactor)/2+tempi)
+        {
+            printf("P%d",processNumber[counter]);
+        }
+        else
+        {
+            printf(" ");
+        }
+        
+    }
+    printf("|");
+    printf("\n");
+    for(i=0;i<scalingFactor*totalCPUBurstTime+2+numberOfProcesses;i++)
+    {
+        printf("-");
+    }
+    printf("\n");
+    
+    /* printing the time labels of the gantt chart */
+    counter=0;
+    tempi=0;
+    currentTime=minimumArrivalTime;
+    printf("%d",currentTime);
+    for(i=0;i<scalingFactor*totalCPUBurstTime;i++)
+    {
+        if(i==CPUBurstTime[counter]*scalingFactor+tempi)
+        {
+            
+            tempi=i;
+            currentTime+=CPUBurstTime[counter];
+            averageWaitingTime+=currentTime;
+            counter++;
+            printf("%2d",currentTime);
+        }
+        else
+        {
+            printf(" ");
+        }
+    }
+    currentTime+=CPUBurstTime[counter];
+    
+    printf("%2d\n\n",currentTime);
+    averageWaitingTime=averageWaitingTime/numberOfProcesses;
+    averageTurnAroundTime=averageWaitingTime+totalCPUBurstTime/numberOfProcesses;
+    
+    printf("Average waiting Time     : %f\n",averageWaitingTime);
+    printf("Average Turn Around Time : %f\n",averageTurnAroundTime);
     
 }
 
