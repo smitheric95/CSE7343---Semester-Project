@@ -51,4 +51,5 @@ TODO:
 - be able to add to both queues
     - just put as optoin in input type
 - be able to transfer from waiting to ready?
-
+- allow input to be zeroes
+- replace "waiting" with "ready"

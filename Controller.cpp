@@ -21,8 +21,8 @@ Controller::Controller()
 
     handleUserInput();
    
-    waitingQueue->sortVector(SJF);
-    
+    //waitingQueue->sortVector(SJF);
+    waitingQueue->shortestJobFirst();
 }
 
 Controller::~Controller() {
@@ -141,7 +141,7 @@ void Controller::handleUserInput() {
                 // user has entered an error
                 else {
                     std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                    std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
+                    std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <0-9999>" << std::endl;
                 }
                 promptCount++;
             }
@@ -213,8 +213,8 @@ void Controller::handleUserInput() {
         }
         // print out waiting times of processes
         else if (modeSelection == 4) {
-            if (this->getSchedulingMode(<#Mode m#>))
-            readyQueue->sortVector(this->schedulingMode);
+            //if (this->getSchedulingMode(<#Mode m#>))
+            //readyQueue->sortVector(this->schedulingMode);
         }
         else {
             std::cout << "Incorrect input. Please try again: " << std::endl;
@@ -238,7 +238,7 @@ bool Controller::parseFile(std::string file) {
         else {
             std::cout << "ERROR: Incorrect format in " << file << " on line " << lineCount
                       << std::endl;
-            std::cout << "Usage is: <1-9999>, <1-999>, <1-999>, <1-999>" << std::endl;
+            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <0-9999>" << std::endl;
             return false;
         }
         lineCount++;
@@ -280,7 +280,7 @@ void Controller::addQueues() {
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
     return (std::regex_match(line,
-                             std::regex("^0*[1-9]{1}[0-9]{0,3}( *, *0*[1-9]{1}[0-9]{0,2})* *$")) &&
+                             std::regex("^0*[0-9]{0,5}( *, *0*[0-9]{0,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 

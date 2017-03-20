@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
+#include <limits> 
 #include "ProcessControlBlock.hpp"
 
 // scheduling algorithm
@@ -42,5 +43,7 @@ class CustomQueue {
 
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
     void sortVector(Mode m);
+    void shortestJobFirst();
+    void printWaitTimes();
 };
 #endif /* CustomQueue_hpp */
