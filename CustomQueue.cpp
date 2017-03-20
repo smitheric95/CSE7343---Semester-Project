@@ -173,52 +173,58 @@ void CustomQueue::sortVector(Mode m) {
  *
  * NOTE!
  *
- * All code below this line is based off work from the article "C Program for Shortest Job
- * First Scheduling (SJF) by Gaurav Sharma of Programmers' Paradise:
+ * This function is based off work from the article "C Program for Shortest Job
+ * First Scheduling (SJF)" by Gaurav Sharma of Programmers' Paradise:
  * http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
  *
  **************************************************************************************/
 
 void CustomQueue::shortestJobFirst() {
     int totalWait = 0, smallest = 0, totalBurstTime = 0;
-    
-    // std::vector<int> burstTimes;
-    int burstTimes[10];
-    int arrivaltimes[10];
-    
-    for (int i=0;i<10;i++) {
+    int n = (int)this->processVector.size();
+    std::vector<int> arrivaltimes;
+    int burstTimes[n];
+
+    // initialize burst times and arrival times
+    for (int i = 0; i < n; i++) {
         if (i < this->processVector.size()) {
             burstTimes[i] = this->processVector[i]->getBurstTime();
-            arrivaltimes[i] = this->processVector[i]->getArrivalTime();
+            arrivaltimes.push_back(this->processVector[i]->getArrivalTime());
+
+            // calculate total burst time
+            totalBurstTime += burstTimes[i];
         }
         else {
             burstTimes[i] = 0;
-            arrivaltimes[i] = 0;
         }
-        
     }
-    
 
-    // calculate total burst time
-    for (auto x : this->processVector) totalBurstTime += x->getBurstTime();
+    // store a large number at the end of the array
+    burstTimes[n] = std::numeric_limits<int>::max();
+    int count = 0;
 
-    // burstTimes.push_back(std::numeric_limits<int>::max());
-    burstTimes[9] = 9999;
-
+    std::cout << "Waiting times: " << std::endl;
     int time = 0;
     while (time < totalBurstTime) {
-        smallest = 9;
-        for (int i = 0; i < this->processVector.size(); i++) {
+        smallest = n;
+        for (int i = 0; i < n; i++) {
             if (arrivaltimes[i] <= time && burstTimes[i] > 0 &&
                 burstTimes[i] < burstTimes[smallest])
                 smallest = i;
         }
-        if (smallest == 9)
+        if (smallest == n)
             time++;
         else {
-            totalWait += time - arrivaltimes[smallest];
+            
+            // calculate waiting time
+            int wait = time - arrivaltimes[smallest];
+            std::cout << "P" << this->processVector[count]->getPID() << ": " << wait
+                      << std::endl;
+            
+            totalWait += wait;
             time += burstTimes[smallest];
             burstTimes[smallest] = 0;
+            count++;
         }
     }
     std::cout << "Average waiting time: " << (totalWait * 1.0) / this->processVector.size()
