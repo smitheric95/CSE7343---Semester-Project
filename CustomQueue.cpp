@@ -1,3 +1,4 @@
+
 //
 //  CustomQueue.cpp
 //  CSE7343 - Semester Project
@@ -160,11 +161,15 @@ void CustomQueue::sortVector(Mode m) {
     else if (m == FCFS)
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      // if same arrival, sort by priority
+                      if (a->getArrivalTime() == b->getArrivalTime())
+                          return a->getPriority() < b->getPriority();
                       return a->getArrivalTime() < b->getArrivalTime();
                   });
     else  // Priority
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      // if same priority, sort by burst time
                       if (a->getPriority() == b->getPriority())
                           return a->getBurstTime() < b->getBurstTime();
                       return a->getPriority() < b->getPriority();
@@ -178,6 +183,8 @@ void CustomQueue::sortVector(Mode m) {
  * This function is based off work from the article "C Program for Shortest Job
  * First Scheduling (SJF)" by Gaurav Sharma of Programmers' Paradise:
  * http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
+ *
+ * It has been modified to handle a dynamic amount of processes
  *
  **************************************************************************************/
 
@@ -235,51 +242,153 @@ void CustomQueue::shortestJobFirst() {
             count++;
         }
     }
-    std::cout << "Average waiting time: " << (totalWait * 1.0) / this->processVector.size()
-              << std::endl;
+    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
+
+/**************************************************************************************
+ *
+ * NOTE!
+ *
+ * This function is based off work from the article "FCFS First come first serve
+ * with arrival time CPU Scheduling Program in c dev cpp"
+ * by Suraj Jha & Abhas Tandon of C With Abhas:
+ * http://www.cwithabhas.com/2012/03/fcfc-first-come-first-serve-with.html
+ *
+ * It has been modified to account for negative wait times
+ * and to use priority as a tiebreaker between two processes of equal arrival time
+ *
+ **************************************************************************************/
 
 void CustomQueue::firstComeFirstServe() {
-    // sort process vector by arrival time
-    this->sortVector(FCFS);
+    int n = (int)this->processVector.size();
+    float totalWait;
+    std::vector<int> burstTimes, arrivalTimes, waitTimes;
 
-    int serviceTime = 0, totalWait = 0;
+    // sort process vector first by arrival time, then priority
+    sortVector(FCFS);
 
-    // loop through processes
+    // initialize burst times and arrival times
     for (auto x : this->processVector) {
-        // calculate wait time
-        int wait = serviceTime - x->getArrivalTime();
-        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
-        
-        totalWait += wait;
-        serviceTime += x->getBurstTime();
+        burstTimes.push_back(x->getBurstTime());
+        arrivalTimes.push_back(x->getArrivalTime());
     }
-    
-    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
-    << std::endl;
+
+    waitTimes.push_back(0);
+    int totalBurstTime = burstTimes[0];
+
+    for (int i = 1; i < n; i++) {
+        // calculate wait time
+        int w = totalBurstTime - arrivalTimes[i];
+
+        // if the wait time is > 0, add it to the running total
+        w >= 0 ? waitTimes.push_back(w) : waitTimes.push_back(0);
+        totalWait += waitTimes[i];
+
+        // increment time
+        totalBurstTime += burstTimes[i];
+    }
+
+    for (int i = 0; i < n; i++)
+        std::cout << "P" << this->processVector[i]->getPID() << ": " << waitTimes[i] << std::endl;
+    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
+
+/**************************************************************************************
+ *
+ * NOTE!
+ *
+ * This function is based off work from the article "Non Preemptive Priority Scheduling
+ * - Drawing Gantt Chart"
+ * by Lavish Kothari of C With Coding Club:
+ * http://codingloverlavi.blogspot.com/2014/08/non-preemptive-priority-scheduling.html
+ *
+ *
+ *
+ *
+ *  priority, burst time
+ *
+ *
+ *
+ *
+ **************************************************************************************/
 
 void CustomQueue::priority() {
     // sort process vector by priority
     this->sortVector(Priority);
-    
-    int serviceTime = 0, totalWait = 0;
-    
-    // wait time doesn't start at 0?
-    // what about if it hasn't arrived yet?
-    
-    // loop through processes
-    for (auto x : this->processVector) {
-        // calculate wait time
-        int wait = serviceTime - x->getArrivalTime();
-        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
-        
-        totalWait += wait;
-        serviceTime += x->getBurstTime();
+
+    int numberOfProcesses;
+    int totalCPUBurstTime;
+    int *arrivalTime, *CPUBurstTime, *processNumber;
+    int minimumArrivalTime;
+    int* priority;
+    float averageWaitingTime = 0, averageTurnAroundTime = 0;
+
+    int i, j, temp;
+
+    printf("Enter the number of processes : ");
+    scanf("%d", &numberOfProcesses);
+    arrivalTime = (int*)malloc(sizeof(int) * numberOfProcesses);
+    CPUBurstTime = (int*)malloc(sizeof(int) * numberOfProcesses);
+    processNumber = (int*)malloc(sizeof(int) * numberOfProcesses);
+    priority = (int*)malloc(sizeof(int) * numberOfProcesses);
+
+    minimumArrivalTime = std::numeric_limits<int>::max();
+    const int maxWidth = 100;
+
+    int scalingFactor, counter, tempi, currentTime;
+    printf("The gantt chart for the given processes is : \n\n");
+
+    scalingFactor = maxWidth / totalCPUBurstTime;
+    for (i = 0; i < scalingFactor * totalCPUBurstTime + 2 + numberOfProcesses; i++) {
+        printf("-");
     }
-    
-    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
-    << std::endl;
+    printf("\n|");
+    counter = 0, tempi = 0;
+    for (i = 0; i < scalingFactor * totalCPUBurstTime; i++) {
+        if (i == CPUBurstTime[counter] * scalingFactor + tempi) {
+            counter++;
+            tempi = i;
+            printf("|");
+        }
+        else if (i == (CPUBurstTime[counter] * scalingFactor) / 2 + tempi) {
+            printf("P%d", processNumber[counter]);
+        }
+        else {
+            printf(" ");
+        }
+    }
+    printf("|");
+    printf("\n");
+    for (i = 0; i < scalingFactor * totalCPUBurstTime + 2 + numberOfProcesses; i++) {
+        printf("-");
+    }
+    printf("\n");
+
+    /* printing the time labels of the gantt chart */
+    counter = 0;
+    tempi = 0;
+    currentTime = minimumArrivalTime;
+    printf("%d", currentTime);
+    for (i = 0; i < scalingFactor * totalCPUBurstTime; i++) {
+        if (i == CPUBurstTime[counter] * scalingFactor + tempi) {
+            tempi = i;
+            currentTime += CPUBurstTime[counter];
+            averageWaitingTime += currentTime;
+            counter++;
+            printf("%2d", currentTime);
+        }
+        else {
+            printf(" ");
+        }
+    }
+    currentTime += CPUBurstTime[counter];
+
+    printf("%2d\n\n", currentTime);
+    averageWaitingTime = averageWaitingTime / numberOfProcesses;
+    averageTurnAroundTime = averageWaitingTime + totalCPUBurstTime / numberOfProcesses;
+
+    printf("Average waiting Time     : %f\n", averageWaitingTime);
+    printf("Average Turn Around Time : %f\n", averageTurnAroundTime);
 }
 
 /*
@@ -300,3 +409,4 @@ void CustomQueue::printWaitTimes() {
     std::cout << "Total wait time: " << totalWaitTime << std::endl;
 }
  */
+
