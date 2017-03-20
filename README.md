@@ -47,7 +47,7 @@ TODO:
 - clarification on length of digits for error checking
 - remove prev* on CustomQueue
 - test priority sorting
-- improve output with new lines
+- improve output with new lines and tabs
 - be able to add to both queues
     - just put as optoin in input type
 - be able to transfer from waiting to ready?

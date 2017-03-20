@@ -177,6 +177,8 @@ void CustomQueue::sortVector(Mode m) {
  * First Scheduling (SJF)" by Gaurav Sharma of Programmers' Paradise:
  * http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
  *
+ * It has been modified to handle a dynamic amount of processes
+ *
  **************************************************************************************/
 
 void CustomQueue::shortestJobFirst() {
@@ -233,28 +235,55 @@ void CustomQueue::shortestJobFirst() {
             count++;
         }
     }
-    std::cout << "Average waiting time: " << (totalWait * 1.0) / this->processVector.size()
-              << std::endl;
+    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
+/**************************************************************************************
+ *
+ * NOTE!
+ *
+ * This function is based off work from the article "FCFS First come first serve
+ * with arrival time CPU Scheduling Program in c dev cpp" 
+ * by Suraj Jha & Abhas Tandon of C With Abhas:
+ * http://www.cwithabhas.com/2012/03/fcfc-first-come-first-serve-with.html
+ * 
+ * It has been modified to account for negative wait times
+ * and to use priority as a tiebreaker between two processes of equal arrival time
+ *
+ **************************************************************************************/
+
 void CustomQueue::firstComeFirstServe() {
-    // sort process vector by arrival time
-    this->sortVector(FCFS);
-
-    int serviceTime = 0, totalWait = 0;
-
-    // loop through processes
+    int n = (int)this->processVector.size();
+    float totalWait;
+    std::vector<int> burstTimes, arrivalTimes, waitTimes;
+    
+    // sort process vector first by arrival time, then priority
+    sortVector(FCFS);
+    
+    // initialize burst times and arrival times
     for (auto x : this->processVector) {
+        burstTimes.push_back( x->getBurstTime() );
+        arrivalTimes.push_back( x->getArrivalTime() );
+    }
+
+    waitTimes.push_back(0);
+    int totalBurstTime = burstTimes[0];
+    
+    for(int i = 1; i < n ; i++){
         // calculate wait time
-        int wait = serviceTime - x->getArrivalTime();
-        std::cout << "P" << x->getPID() << ": " << wait << std::endl;
+        int w = totalBurstTime - arrivalTimes[i];
         
-        totalWait += wait;
-        serviceTime += x->getBurstTime();
+        // if the wait time is > 0, add it to the running total
+        w >= 0 ? waitTimes.push_back(w) : waitTimes.push_back(0);
+        totalWait += waitTimes[i];
+        
+        // increment time
+        totalBurstTime += burstTimes[i];
     }
     
-    std::cout << "Aveage wait time: " << (totalWait * 1.0) / this->processVector.size()
-    << std::endl;
+    for (int i = 0; i < n; i++)
+        std::cout << "P" << this->processVector[i]->getPID() << ": " << waitTimes[i] << std::endl;
+    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
 void CustomQueue::priority() {
