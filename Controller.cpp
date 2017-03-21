@@ -21,12 +21,12 @@ Controller::Controller()
 
     // prompt user
     handleUserInput();
-   
+
     // waitingQueue->shortestJobFirst();
     // waitingQueue->firstComeFirstServe();
     // waitingQueue->priority();
-        waitingQueue->print();
-        waitingQueue->roundRobin(2);
+    waitingQueue->print();
+    waitingQueue->roundRobin(2);
 }
 
 Controller::~Controller() {
@@ -187,13 +187,13 @@ void Controller::handleUserInput() {
                 // Round Robin
                 else if (schedulerSelection == "4") {
                     this->roundRobinQuantum = 0;
-                    
+
                     // prompt for quantum
                     promptCount = 0;
                     while (this->roundRobinQuantum < 1 || this->roundRobinQuantum > 1000) {
                         std::cout << "Please enter a quantum: <1-999>" << std::endl;
                         std::cin >> this->roundRobinQuantum;
-                        
+
                         // check for errors
                         if (promptCount > 0) {
                             std::cout << "Incorrect input. Please try again." << std::endl;
@@ -217,8 +217,8 @@ void Controller::handleUserInput() {
         }
         // print out waiting times of processes
         else if (modeSelection == 4) {
-            //if (this->getSchedulingMode(<#Mode m#>))
-            //readyQueue->sortVector(this->schedulingMode);
+            // if (this->getSchedulingMode(<#Mode m#>))
+            // readyQueue->sortVector(this->schedulingMode);
         }
         else {
             std::cout << "Incorrect input. Please try again: " << std::endl;
@@ -283,8 +283,7 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line,
-                             std::regex("^0*[0-9]{0,5}( *, *0*[0-9]{0,4})* *$")) &&
+    return (std::regex_match(line, std::regex("^0*[0-9]{0,5}( *, *0*[0-9]{0,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 
