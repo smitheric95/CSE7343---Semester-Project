@@ -350,7 +350,6 @@ void CustomQueue::priority() {
 // https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
 void CustomQueue::roundRobin(int q) {
     int n = (int)this->processVector.size();  // number of processes
-    // time quantum
     std::vector<int> waitTimes;     // wait times
     std::vector<int> arrivalTimes;  // arrival times
     std::vector<int> burstTimes;    // remaining times
@@ -361,64 +360,58 @@ void CustomQueue::roundRobin(int q) {
         burstTimes.push_back(x->getBurstTime());
         waitTimes.push_back(0);
     }
-
+    
     int j = 0;
     int time;
-    int k;
-    int i;
-
     bool f = false;  // flag to indicate whether any process was scheduled as i changed from 0 to
                      // n-1 in the next for loop
     int sp = 0;  // time spent
-
-    for (i = 0; j < n; i = (i + 1) % n)  // while there are uncompleted processes
-    {
-        if (burstTimes[i] > 0 && sp >= arrivalTimes[i])  // find the next uncompleted process which
-                                                         // has already or just arrived
-        {
+  
+    // while there are uncompleted processes
+    for (int i = 0; j < n; i = (i + 1) % n) {
+        // find the next uncompleted process which
+        // has already or just arrived
+        if (burstTimes[i] > 0 && sp >= arrivalTimes[i]) {
             f = true;
             if (burstTimes[i] <= q)    // if the process requests for time less than the quantum
-                time = burstTimes[i];  // time to be alloted in this turn is the complete requested
-                                       // time
+                time = burstTimes[i];  // time to be alloted in this turn is the complete requested time
             else
                 time = q;  // else, it is the quantum time
             // schedule the process
             burstTimes[i] -= time, order.push_back(i + 1);
             if (burstTimes[i] == 0)
                 j++;  // if the process has got completed, increment j
-            for (k = 0; k < n; k++)
+            for (int k = 0; k < n; k++) {
                 if (burstTimes[k] != 0 && k != i &&
-                    arrivalTimes[k] < sp + time) {  // for all other arrived processes incompleted
-                                                    // after scheduling this process
-                    if (!(arrivalTimes[k] <= sp)) {  // if they arrived while scheduling this
-                                                     // process
-                        waitTimes[k] += sp + time - arrivalTimes[k];  // account for the time they
-                                                                      // spent waiting while the
-                                                                      // process was being scheduled
+                    // for all other arrived processes incompleted after scheduling this process
+                    arrivalTimes[k] < sp + time) {
+                    if (!(arrivalTimes[k] <= sp)) {  // if they arrived while scheduling this process
+                        // account for the time they spent waiting while the process was being scheduled
+                        waitTimes[k] += sp + time - arrivalTimes[k];
                     }
                     else {
                         waitTimes[k] += time;  // add time to their wait times and turn-around times
                     }
                 }
+            }
             sp += time;
             continue;
         }
         if (i == n - 1) {
-            if (!f)
             // now there are no more arrived processes to be scheduled
             // so change sp to the arrival time of next arriving process
-            {
+            if (!f) {
                 int it;
-                int diff =
-                    0;  // diff between present time spent and arrivaltime of next arriving process
-                for (it = 0; it < n; it++)
-                    if (sp < arrivalTimes[it])  // if process has'nt yet arrived
-                    {
+                int diff = 0;  // diff between present time spent and arrivaltime of next arriving process
+                for (it = 0; it < n; it++) {
+                      // if process has'nt yet arrived
+                    if (sp < arrivalTimes[it]) {
                         if (diff == 0)
                             diff = arrivalTimes[it] - sp;
                         else if (diff > arrivalTimes[it] - sp)
                             diff = arrivalTimes[it] - sp;
                     }
+                }
                 sp += diff;
             }
             f = false;
@@ -426,7 +419,7 @@ void CustomQueue::roundRobin(int q) {
     }
 
     float wav = 0;  // average wait time
-    for (i = 0; i < n; i++) wav += waitTimes[i];
+    for (int i = 0; i < n; i++) wav += waitTimes[i];
     wav /= n;
     std::cout << "Scheduling order:\n";
     for (auto x : order) std::cout << x << "\t";

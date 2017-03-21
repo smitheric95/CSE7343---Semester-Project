@@ -26,7 +26,7 @@ Controller::Controller()
     // waitingQueue->firstComeFirstServe();
     // waitingQueue->priority();
     waitingQueue->print();
-    waitingQueue->roundRobin(2);
+    waitingQueue->roundRobin(20);
 }
 
 Controller::~Controller() {
