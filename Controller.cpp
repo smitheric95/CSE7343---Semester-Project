@@ -23,8 +23,8 @@ Controller::Controller()
     handleUserInput();
    
     // waitingQueue->shortestJobFirst();
-    waitingQueue->firstComeFirstServe();
-       //waitingQueue->priority();
+    // waitingQueue->firstComeFirstServe();
+    waitingQueue->priority();
 }
 
 Controller::~Controller() {

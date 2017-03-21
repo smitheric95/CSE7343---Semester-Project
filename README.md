@@ -53,3 +53,4 @@ TODO:
 - be able to transfer from waiting to ready?
 - allow input to be zeroes
 - replace "waiting" with "ready"
+- should schduler have the scheduling algs?

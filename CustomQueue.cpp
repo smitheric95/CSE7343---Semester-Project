@@ -297,98 +297,51 @@ void CustomQueue::firstComeFirstServe() {
  *
  * NOTE!
  *
- * This function is based off work from the article "Non Preemptive Priority Scheduling
- * - Drawing Gantt Chart"
- * by Lavish Kothari of C With Coding Club:
- * http://codingloverlavi.blogspot.com/2014/08/non-preemptive-priority-scheduling.html
+ * This function is based off work from the article "C Program for Non Preemptive Priority
+ * Scheduling" by Gaurav Sharma of Programmers' Paradise:
+ * http://program-aaag.rhcloud.com/c-program-for-non-preemptive-priority-scheduling-program-in-c/
  *
- *
- *
- *
- *  priority, burst time
- *
- *
- *
+ * It has been modified to handle a dynamic amount of processes
+ 
+ 
+ 
  *
  **************************************************************************************/
-
 void CustomQueue::priority() {
-    // sort process vector by priority
-    this->sortVector(Priority);
-
-    int numberOfProcesses;
-    int totalCPUBurstTime;
-    int *arrivalTime, *CPUBurstTime, *processNumber;
-    int minimumArrivalTime;
-    int* priority;
-    float averageWaitingTime = 0, averageTurnAroundTime = 0;
-
-    int i, j, temp;
-
-    printf("Enter the number of processes : ");
-    scanf("%d", &numberOfProcesses);
-    arrivalTime = (int*)malloc(sizeof(int) * numberOfProcesses);
-    CPUBurstTime = (int*)malloc(sizeof(int) * numberOfProcesses);
-    processNumber = (int*)malloc(sizeof(int) * numberOfProcesses);
-    priority = (int*)malloc(sizeof(int) * numberOfProcesses);
-
-    minimumArrivalTime = std::numeric_limits<int>::max();
-    const int maxWidth = 100;
-
-    int scalingFactor, counter, tempi, currentTime;
-    printf("The gantt chart for the given processes is : \n\n");
-
-    scalingFactor = maxWidth / totalCPUBurstTime;
-    for (i = 0; i < scalingFactor * totalCPUBurstTime + 2 + numberOfProcesses; i++) {
-        printf("-");
+    int i,j,n,time,sum_wait=0,sum_turnaround=0;
+    int smallest,at[10],bt[10],priority[10],remain;
+    printf("Enter no of Processes : ");
+    scanf("%d",&n);
+    remain=n;
+    for(i=0;i<n;i++)
+    {
+        printf("Enter arrival time, burst time and priority for process p%d :",i+1);
+        scanf("%d",&at[i]);
+        scanf("%d",&bt[i]);
+        scanf("%d",&priority[i]);
     }
-    printf("\n|");
-    counter = 0, tempi = 0;
-    for (i = 0; i < scalingFactor * totalCPUBurstTime; i++) {
-        if (i == CPUBurstTime[counter] * scalingFactor + tempi) {
-            counter++;
-            tempi = i;
-            printf("|");
+    priority[9]=11;
+    printf("\n\nProcess\t|Turnaround time|waiting time\n");
+    for(time=0;remain!=0;)
+    {
+        smallest=9;
+        for(i=0;i<n;i++)
+        {
+            if(at[i]<=time && priority[i]<priority[smallest] && bt[i]>0)
+            {
+                smallest=i;
+            }
         }
-        else if (i == (CPUBurstTime[counter] * scalingFactor) / 2 + tempi) {
-            printf("P%d", processNumber[counter]);
-        }
-        else {
-            printf(" ");
-        }
+        time+=bt[smallest];
+        remain--;
+        printf("P[%d]\t|\t%d\t|\t%d\n",smallest+1,time-at[smallest],time-at[smallest]-bt[smallest]);
+        sum_wait+=time-at[smallest]-bt[smallest];
+        sum_turnaround+=time-at[smallest];
+        bt[smallest]=0;
     }
-    printf("|");
-    printf("\n");
-    for (i = 0; i < scalingFactor * totalCPUBurstTime + 2 + numberOfProcesses; i++) {
-        printf("-");
-    }
-    printf("\n");
-
-    /* printing the time labels of the gantt chart */
-    counter = 0;
-    tempi = 0;
-    currentTime = minimumArrivalTime;
-    printf("%d", currentTime);
-    for (i = 0; i < scalingFactor * totalCPUBurstTime; i++) {
-        if (i == CPUBurstTime[counter] * scalingFactor + tempi) {
-            tempi = i;
-            currentTime += CPUBurstTime[counter];
-            averageWaitingTime += currentTime;
-            counter++;
-            printf("%2d", currentTime);
-        }
-        else {
-            printf(" ");
-        }
-    }
-    currentTime += CPUBurstTime[counter];
-
-    printf("%2d\n\n", currentTime);
-    averageWaitingTime = averageWaitingTime / numberOfProcesses;
-    averageTurnAroundTime = averageWaitingTime + totalCPUBurstTime / numberOfProcesses;
-
-    printf("Average waiting Time     : %f\n", averageWaitingTime);
-    printf("Average Turn Around Time : %f\n", averageTurnAroundTime);
+    printf("\nAvg waiting time = %f\n",sum_wait*1.0/n);
+    printf("Avg turnaround time = %f",sum_turnaround*1.0/n);
+    
 }
 
 /*
