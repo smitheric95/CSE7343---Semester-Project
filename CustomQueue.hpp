@@ -41,11 +41,12 @@ class CustomQueue {
     bool isEmpty();
     void print();
 
+    // scheduler
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
     void sortVector(Mode m);
     void shortestJobFirst();
     void firstComeFirstServe();
-    void printWaitTimes();
     void priority();
+    void roundRobin(int q);
 };
 #endif /* CustomQueue_hpp */
