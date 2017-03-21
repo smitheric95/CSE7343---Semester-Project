@@ -363,8 +363,11 @@ void CustomQueue::roundRobin(int q) {
     
     int j = 0;
     int time;
-    bool f = false;  // flag to indicate whether any process was scheduled as i changed from 0 to
-                     // n-1 in the next for loop
+    
+    bool f = false;
+    
+    // flag to indicate whether any process was scheduled as i changed from 0 to
+    // n-1 in the next for loop
     int sp = 0;  // time spent
   
     // while there are uncompleted processes
