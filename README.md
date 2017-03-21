@@ -54,3 +54,8 @@ TODO:
 - allow input to be zeroes
 - replace "waiting" with "ready"
 - should schduler have the scheduling algs?
+- if any error reading from file, delete everything already added
+- add arrival times, burst, priority to scheduling print outs
+    - make them look like table
+- scheduler class should have process vector
+    - queue returns what it adds/deletes

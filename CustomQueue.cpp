@@ -169,9 +169,6 @@ void CustomQueue::sortVector(Mode m) {
     else  // Priority
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
-                      // if same priority, sort by burst time
-                      if (a->getPriority() == b->getPriority())
-                          return a->getBurstTime() < b->getBurstTime();
                       return a->getPriority() < b->getPriority();
                   });
 }
@@ -303,9 +300,7 @@ void CustomQueue::firstComeFirstServe() {
  * http://program-aaag.rhcloud.com/c-program-for-non-preemptive-priority-scheduling-program-in-c/
  *
  * It has been modified to handle a dynamic amount of processes
-
-
-
+ * and to fit within the context of this application
  *
  **************************************************************************************/
 void CustomQueue::priority() {
@@ -313,29 +308,40 @@ void CustomQueue::priority() {
     int n = remain = (int)this->processVector.size();
     std::vector<int> arrivaltimes, burstTimes;
     
-    int priority[10];
+    int priority[n+1];
     
     // initialize burst times and arrival times
     for (int i = 0; i < n; i++) {
+        this->processVector[i]->print();
         arrivaltimes.push_back( this->processVector[i]->getArrivalTime() );
         burstTimes.push_back( this->processVector[i]->getBurstTime() );
         priority[i] = this->processVector[i]->getPriority();
     }
     
-    priority[9] = 11;
-    printf("\n\nProcess\t|Turnaround time|waiting time\n");
-    for (int time = 0; remain != 0;) {
-        shortest = 9;
+    priority[n] = std::numeric_limits<int>::max();
+    
+    int time = 0;
+    
+    // increment backwards through number of processes
+    while (remain != 0) {
+        shortest = n;
+        
+        // loop through all processes
         for (int i = 0; i < n; i++) {
-            if (arrivaltimes[i] <= time && priority[i] < priority[shortest] && burstTimes[i] > 0) {
+            // select the least prioritized processs to have arrived
+            if (arrivaltimes[i] <= time && priority[i] < priority[shortest] && burstTimes[i] > 0)
                 shortest = i;
-            }
         }
+        
+        // execute the shortest process
         time += burstTimes[shortest];
         remain--;
-        printf("P[%d]\t|\t%d\t|\t%d\n", shortest + 1, time - arrivaltimes[shortest],
-               time - arrivaltimes[shortest] - burstTimes[shortest]);
-        totalWait += time - arrivaltimes[shortest] - burstTimes[shortest];
+        
+        // calcualte how long it took to wait
+        int wait = time - arrivaltimes[shortest] - burstTimes[shortest];
+        std::cout << "P" << shortest+1 << ": " << wait << std::endl;
+        
+        totalWait += wait;
         burstTimes[shortest] = 0;
     }
     printf("\nAvg waiting time = %f\n", (totalWait * 1.0) / n);
