@@ -185,9 +185,9 @@ void CustomQueue::sortVector(Mode m) {
  * http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
  *
  * It has been modified to handle a dynamic amount of processes
+ * and to fit within the context of this application
  *
  **************************************************************************************/
-
 void CustomQueue::shortestJobFirst() {
     int totalWait = 0, shortest = 0, totalBurstTime = 0;
     int n = (int)this->processVector.size();
@@ -254,8 +254,9 @@ void CustomQueue::shortestJobFirst() {
  * by Suraj Jha & Abhas Tandon of C With Abhas:
  * http://www.cwithabhas.com/2012/03/fcfc-first-come-first-serve-with.html
  *
- * It has been modified to account for negative wait times
- * and to use priority as a tiebreaker between two processes of equal arrival time
+ * It has been modified to account for negative wait times,
+ * to use priority as a tiebreaker between two processes of equal arrival time,
+ * and to fit within the context of this application
  *
  **************************************************************************************/
 
@@ -302,46 +303,42 @@ void CustomQueue::firstComeFirstServe() {
  * http://program-aaag.rhcloud.com/c-program-for-non-preemptive-priority-scheduling-program-in-c/
  *
  * It has been modified to handle a dynamic amount of processes
- 
- 
- 
+
+
+
  *
  **************************************************************************************/
 void CustomQueue::priority() {
-    int i,j,n,time,sum_wait=0,sum_turnaround=0;
-    int smallest,at[10],bt[10],priority[10],remain;
-    printf("Enter no of Processes : ");
-    scanf("%d",&n);
-    remain=n;
-    for(i=0;i<n;i++)
-    {
-        printf("Enter arrival time, burst time and priority for process p%d :",i+1);
-        scanf("%d",&at[i]);
-        scanf("%d",&bt[i]);
-        scanf("%d",&priority[i]);
+    int totalWait = 0, shortest = 0, remain;
+    int n = remain = (int)this->processVector.size();
+    std::vector<int> arrivaltimes, burstTimes;
+    
+    int priority[10];
+    
+    // initialize burst times and arrival times
+    for (int i = 0; i < n; i++) {
+        arrivaltimes.push_back( this->processVector[i]->getArrivalTime() );
+        burstTimes.push_back( this->processVector[i]->getBurstTime() );
+        priority[i] = this->processVector[i]->getPriority();
     }
-    priority[9]=11;
+    
+    priority[9] = 11;
     printf("\n\nProcess\t|Turnaround time|waiting time\n");
-    for(time=0;remain!=0;)
-    {
-        smallest=9;
-        for(i=0;i<n;i++)
-        {
-            if(at[i]<=time && priority[i]<priority[smallest] && bt[i]>0)
-            {
-                smallest=i;
+    for (int time = 0; remain != 0;) {
+        shortest = 9;
+        for (int i = 0; i < n; i++) {
+            if (arrivaltimes[i] <= time && priority[i] < priority[shortest] && burstTimes[i] > 0) {
+                shortest = i;
             }
         }
-        time+=bt[smallest];
+        time += burstTimes[shortest];
         remain--;
-        printf("P[%d]\t|\t%d\t|\t%d\n",smallest+1,time-at[smallest],time-at[smallest]-bt[smallest]);
-        sum_wait+=time-at[smallest]-bt[smallest];
-        sum_turnaround+=time-at[smallest];
-        bt[smallest]=0;
+        printf("P[%d]\t|\t%d\t|\t%d\n", shortest + 1, time - arrivaltimes[shortest],
+               time - arrivaltimes[shortest] - burstTimes[shortest]);
+        totalWait += time - arrivaltimes[shortest] - burstTimes[shortest];
+        burstTimes[shortest] = 0;
     }
-    printf("\nAvg waiting time = %f\n",sum_wait*1.0/n);
-    printf("Avg turnaround time = %f",sum_turnaround*1.0/n);
-    
+    printf("\nAvg waiting time = %f\n", (totalWait * 1.0) / n);
 }
 
 /*
@@ -362,4 +359,3 @@ void CustomQueue::printWaitTimes() {
     std::cout << "Total wait time: " << totalWaitTime << std::endl;
 }
  */
-
