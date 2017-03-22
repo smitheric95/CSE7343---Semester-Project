@@ -349,25 +349,22 @@ void CustomQueue::priority() {
 
 // https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
 void CustomQueue::roundRobin(int q) {
-    int n = (int)this->processVector.size();  // number of processes
-    std::vector<int> waitTimes;     // wait times
-    std::vector<int> arrivalTimes;  // arrival times
-    std::vector<int> burstTimes;    // remaining times
-    std::vector<int> order;
+    int n = (int)this->processVector.size();
+    std::vector<int> waitTimes, arrivalTimes, burstTimes, schedulingOrder;
 
+    // initialize burst times and arrival times
     for (auto x : processVector) {
         arrivalTimes.push_back(x->getArrivalTime());
-        burstTimes.push_back(x->getBurstTime());
+        burstTimes.push_back(x->getBurstTime()); //REMAINING burst time for each process
         waitTimes.push_back(0);
     }
     
-    int j = 0;
-    int time;
+    int j = 0; // number of completed processes
+    int time = 0;
     
-    bool f = false;
-    
-    // flag to indicate whether any process was scheduled as i changed from 0 to
+    bool f = false; // flag to indicate whether any process was scheduled as i changed from 0 to
     // n-1 in the next for loop
+    
     int sp = 0;  // time spent
   
     // while there are uncompleted processes
@@ -377,29 +374,39 @@ void CustomQueue::roundRobin(int q) {
         if (burstTimes[i] > 0 && sp >= arrivalTimes[i]) {
             f = true;
             if (burstTimes[i] <= q)    // if the process requests for time less than the quantum
-                time = burstTimes[i];  // time to be alloted in this turn is the complete requested time
+                time = burstTimes[i];  // time to be alloted in this turn is the complete requested time (increment time by the process' burst time)
             else
-                time = q;  // else, it is the quantum time
+                time = q;  // else, time is incremented by the quantum
+            
             // schedule the process
-            burstTimes[i] -= time, order.push_back(i + 1);
+            // (decrement the process' burst time
+            burstTimes[i] -= time;
+            schedulingOrder.push_back(i + 1); // assumes processes are scheduled by id (sort by id?)
+            
             if (burstTimes[i] == 0)
                 j++;  // if the process has got completed, increment j
+            
+            // choose next process
             for (int k = 0; k < n; k++) {
-                if (burstTimes[k] != 0 && k != i &&
-                    // for all other arrived processes incompleted after scheduling this process
-                    arrivalTimes[k] < sp + time) {
-                    if (!(arrivalTimes[k] <= sp)) {  // if they arrived while scheduling this process
+                // for all other arrived processes incompleted after scheduling this process
+                // not incomplete && not the current process && has arrived
+                if (burstTimes[k] != 0 && k != i && arrivalTimes[k] < sp + time) {
+                    if (!(arrivalTimes[k] <= sp)) {  // if they arrived while the current process was been executed
                         // account for the time they spent waiting while the process was being scheduled
-                        waitTimes[k] += sp + time - arrivalTimes[k];
+                        waitTimes[k] += sp + time - arrivalTimes[k]; // determine wait time for that process
                     }
+                    // they didn't arrive while the current process was being executed
                     else {
-                        waitTimes[k] += time;  // add time to their wait times and turn-around times
+                        waitTimes[k] += time;  // add time to their wait times
                     }
                 }
             }
+            
             sp += time;
             continue;
         }
+        // last one
+        // ELSE
         if (i == n - 1) {
             // now there are no more arrived processes to be scheduled
             // so change sp to the arrival time of next arriving process
@@ -425,6 +432,6 @@ void CustomQueue::roundRobin(int q) {
     for (int i = 0; i < n; i++) wav += waitTimes[i];
     wav /= n;
     std::cout << "Scheduling order:\n";
-    for (auto x : order) std::cout << x << "\t";
+    for (auto x : schedulingOrder) std::cout << x << "\t";
     std::cout << std::endl << "Average wait time = " << wav << std::endl;
 }
