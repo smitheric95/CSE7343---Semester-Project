@@ -188,7 +188,7 @@ void CustomQueue::sortVector(Mode m) {
  * http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
  *
  * It has been modified to handle a dynamic amount of processes
- * and to fit within the context of this application
+ * and to fit within the context of this application.
  *
  **************************************************************************************/
 void CustomQueue::shortestJobFirst() {
@@ -259,7 +259,7 @@ void CustomQueue::shortestJobFirst() {
  *
  * It has been modified to account for negative wait times,
  * to use priority as a tiebreaker between two processes of equal arrival time,
- * and to fit within the context of this application
+ * and to fit within the context of this application.
  *
  **************************************************************************************/
 
@@ -306,7 +306,7 @@ void CustomQueue::firstComeFirstServe() {
  * http://program-aaag.rhcloud.com/c-program-for-non-preemptive-priority-scheduling-program-in-c/
  *
  * It has been modified to handle a dynamic amount of processes
- * and to fit within the context of this application
+ * and to fit within the context of this application.
  *
  **************************************************************************************/
 void CustomQueue::priority() {
@@ -352,8 +352,18 @@ void CustomQueue::priority() {
     std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
-// https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
-// dynamic number, pids out of order
+/**************************************************************************************
+ *
+ * NOTE!
+ *
+ * This function is based off work from the article "Round Robin Scheduling" 
+ * by CodeProject.com user kbsbng:
+ * https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
+ *
+ * It has been modified to handle a dynamic amount of processes, processes with PIDs of 0,
+ * process IDs in any order, and to fit within the context of this application.
+ *
+ **************************************************************************************/
 void CustomQueue::roundRobin(int quantum) {
     int n = (int)this->processVector.size();
     std::vector<int> waitTimes, arrivalTimes, burstTimes, schedulingOrder;
