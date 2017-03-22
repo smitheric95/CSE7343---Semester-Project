@@ -27,6 +27,10 @@ Controller::Controller()
     // waitingQueue->priority();
     // waitingQueue->print();
     // waitingQueue->roundRobin(20);
+        
+    Scheduler main(this->waitingQueue);
+        
+        
 }
 
 Controller::~Controller() {

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "ProcessControlBlock.hpp"
 #include "CustomQueue.hpp"
+#include "Scheduler.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>

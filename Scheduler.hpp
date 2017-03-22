@@ -16,21 +16,15 @@ class Scheduler {
 private:
     Mode m;
     CustomQueue* queue;
+    std::vector<ProcessControlBlock*> * processVector;
+    
 public:
-    Scheduler(Mode m=SJF);
+    Scheduler(CustomQueue* queue, Mode m=SJF);
+    ~Scheduler();
+    void updateProcessVector();
+    
     void changeMode(Mode m);
     Mode getMode();
-    int compare();
-    void printSchedule();
-/*
- - keep track of waiting/ready queues
- - SJF, FCFS, non-pre priority are all the same with diff things
-    to compare while sorting
-    - requires own comparison algorithm
- - round-robin will require clarification
-    - must take Q as an input
- - print average waiting time
- */
 };
 
 #endif /* Scheduler_hpp */
