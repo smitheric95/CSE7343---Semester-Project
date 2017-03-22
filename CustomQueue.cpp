@@ -167,6 +167,11 @@ void CustomQueue::sortVector(Mode m) {
                           return a->getPriority() < b->getPriority();
                       return a->getArrivalTime() < b->getArrivalTime();
                   });
+    else if (m == RoundRobin)
+        std::sort(this->processVector.begin(), this->processVector.end(),
+                  [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                      return a->getPID() < b->getPID();
+                  });
     else  // Priority
         std::sort(this->processVector.begin(), this->processVector.end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
@@ -352,6 +357,9 @@ void CustomQueue::roundRobin(int q) {
     int n = (int)this->processVector.size();
     std::vector<int> waitTimes, arrivalTimes, burstTimes, schedulingOrder;
 
+    // ensure the processes are sorted by ID
+    sortVector(RoundRobin);
+    
     // initialize burst times and arrival times
     for (auto x : processVector) {
         arrivalTimes.push_back(x->getArrivalTime());
@@ -381,7 +389,7 @@ void CustomQueue::roundRobin(int q) {
             // schedule the process
             // (decrement the process' burst time
             burstTimes[i] -= time;
-            schedulingOrder.push_back(i + 1); // assumes processes are scheduled by id (sort by id?)
+            schedulingOrder.push_back(i); // assumes processes are scheduled by id (sort by id?)
             
             if (burstTimes[i] == 0)
                 j++;  // if the process has got completed, increment j
@@ -432,6 +440,6 @@ void CustomQueue::roundRobin(int q) {
     for (int i = 0; i < n; i++) wav += waitTimes[i];
     wav /= n;
     std::cout << "Scheduling order:\n";
-    for (auto x : schedulingOrder) std::cout << x << "\t";
+    for (auto x : schedulingOrder) std::cout << this->processVector[x]->getPID() << "\t";
     std::cout << std::endl << "Average wait time = " << wav << std::endl;
 }
