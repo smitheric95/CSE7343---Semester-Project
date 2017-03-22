@@ -353,7 +353,8 @@ void CustomQueue::priority() {
 }
 
 // https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
-void CustomQueue::roundRobin(int q) {
+// dynamic number, pids out of order
+void CustomQueue::roundRobin(int quantum) {
     int n = (int)this->processVector.size();
     std::vector<int> waitTimes, arrivalTimes, burstTimes, schedulingOrder;
 
@@ -367,79 +368,73 @@ void CustomQueue::roundRobin(int q) {
         waitTimes.push_back(0);
     }
     
-    int j = 0; // number of completed processes
-    int time = 0;
+    int processesCompleted = 0,
+        curTime = 0, // time of the current process/quantum (whichever is smaller)
+        timeSpent = 0; // total running time
     
-    bool f = false; // flag to indicate whether any process was scheduled as i changed from 0 to
-    // n-1 in the next for loop
-    
-    int sp = 0;  // time spent
+    // indicates whether a process was scheduled as i changed from 0 to n-1 in the next for loop
+    bool processScheduled = false;
   
     // while there are uncompleted processes
-    for (int i = 0; j < n; i = (i + 1) % n) {
-        // find the next uncompleted process which
-        // has already or just arrived
-        if (burstTimes[i] > 0 && sp >= arrivalTimes[i]) {
-            f = true;
-            if (burstTimes[i] <= q)    // if the process requests for time less than the quantum
-                time = burstTimes[i];  // time to be alloted in this turn is the complete requested time (increment time by the process' burst time)
+    for (int i = 0; processesCompleted < n; i = (i + 1) % n) {
+        // find the next uncompleted process to arrive
+        if (burstTimes[i] > 0 && timeSpent >= arrivalTimes[i]) {
+            processScheduled = true;
+            
+            if (burstTimes[i] <= quantum)
+                curTime = burstTimes[i]; // increment by burst time
             else
-                time = q;  // else, time is incremented by the quantum
+                curTime = quantum; // incremented by the quantum
+            
+            
+            // (decrement the process' remaining burst time
+            burstTimes[i] -= curTime;
             
             // schedule the process
-            // (decrement the process' burst time
-            burstTimes[i] -= time;
-            schedulingOrder.push_back(i); // assumes processes are scheduled by id (sort by id?)
+            schedulingOrder.push_back(i);
             
+            // process has been completed
             if (burstTimes[i] == 0)
-                j++;  // if the process has got completed, increment j
+                processesCompleted++;
             
-            // choose next process
+            // add to wait times for all other arrived processes
             for (int k = 0; k < n; k++) {
-                // for all other arrived processes incompleted after scheduling this process
-                // not incomplete && not the current process && has arrived
-                if (burstTimes[k] != 0 && k != i && arrivalTimes[k] < sp + time) {
-                    if (!(arrivalTimes[k] <= sp)) {  // if they arrived while the current process was been executed
-                        // account for the time they spent waiting while the process was being scheduled
-                        waitTimes[k] += sp + time - arrivalTimes[k]; // determine wait time for that process
-                    }
-                    // they didn't arrive while the current process was being executed
-                    else {
-                        waitTimes[k] += time;  // add time to their wait times
-                    }
+                // if the other process has arrived
+                if (burstTimes[k] != 0 && k != i && arrivalTimes[k] < timeSpent + curTime) {
+                    waitTimes[k] += curTime; // increment wait time
+                    
+                    // if the other process arrived while the current process was being executed,
+                    // account for time spent waiting for current process to finish
+                    if (!(arrivalTimes[k] <= timeSpent))
+                        waitTimes[k] += timeSpent - arrivalTimes[k];
                 }
             }
             
-            sp += time;
-            continue;
+            // add time it took to execute process to total time
+            timeSpent += curTime;
         }
-        // last one
-        // ELSE
-        if (i == n - 1) {
-            // now there are no more arrived processes to be scheduled
-            // so change sp to the arrival time of next arriving process
-            if (!f) {
-                int it;
-                int diff = 0;  // diff between present time spent and arrivaltime of next arriving process
-                for (it = 0; it < n; it++) {
-                      // if process has'nt yet arrived
-                    if (sp < arrivalTimes[it]) {
-                        if (diff == 0)
-                            diff = arrivalTimes[it] - sp;
-                        else if (diff > arrivalTimes[it] - sp)
-                            diff = arrivalTimes[it] - sp;
+        // we've gone to the end
+        else if (i == n - 1) {
+            // there are no more arrived processes to be scheduled,
+            // change timeSpent to the arrival time of next arriving process
+            if (!processScheduled) {
+                int diff = 0;  // diff between present time spent and arrival time of next arriving process
+                for (auto x : arrivalTimes) {
+                      // if process hasn't yet arrived
+                    if (timeSpent < x) {
+                        if (diff == 0 || diff > x - timeSpent)
+                            diff = x - timeSpent;
                     }
                 }
-                sp += diff;
+                timeSpent += diff;
             }
-            f = false;
+            processScheduled = false;
         }
     }
 
-    float wav = 0;  // average wait time
-    for (int i = 0; i < n; i++) wav += waitTimes[i];
-    wav /= n;
+    float totalWait = 0;  // average wait time
+    for (int i = 0; i < n; i++) totalWait += waitTimes[i];
     std::cout << "Scheduling order:\n";
     for (auto x : schedulingOrder) std::cout << this->processVector[x]->getPID() << "\t";
-    std::cout << std::endl << "Average wait time = " << wav << std::endl;
+    std::cout << std::endl << "Average wait time: " << (totalWait*1.0) / n << std::endl;
 }

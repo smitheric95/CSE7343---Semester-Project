@@ -47,6 +47,6 @@ class CustomQueue {
     void shortestJobFirst();
     void firstComeFirstServe();
     void priority();
-    void roundRobin(int q);
+    void roundRobin(int quantum);
 };
 #endif /* CustomQueue_hpp */

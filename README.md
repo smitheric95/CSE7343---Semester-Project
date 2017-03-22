@@ -59,3 +59,8 @@ TODO:
     - make them look like table
 - scheduler class should have process vector
     - queue returns what it adds/deletes
+- change handleUserInput() to init()
+- <0 - 9999> should be <1 - 4> for priority in controller.cpp 
+    - actually ask ta about that
+
+- use big data file in class!
