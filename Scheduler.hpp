@@ -22,9 +22,15 @@ public:
     Scheduler(CustomQueue* queue, Mode m=SJF);
     ~Scheduler();
     void updateProcessVector();
-    
     void changeMode(Mode m);
     Mode getMode();
+    void sortVector(Mode m);
+    
+    // scheduling algorithms
+    void shortestJobFirst();
+    void firstComeFirstServe();
+    void priority();
+    void roundRobin(int quantum);
 };
 
 #endif /* Scheduler_hpp */

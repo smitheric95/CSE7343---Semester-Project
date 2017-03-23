@@ -29,7 +29,7 @@ Controller::Controller()
     // waitingQueue->roundRobin(20);
         
     Scheduler main(this->waitingQueue);
-        
+    main.shortestJobFirst();
         
 }
 
