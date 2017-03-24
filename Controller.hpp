@@ -43,7 +43,7 @@ public:
     Controller();
     ~Controller();
     void addQueues();
-    void displayMainMenu(bool shortHand=false);
+    void displayMenu(std::string menu);
     void init();
     bool parseFile(std::string file);
     void editProcessTable(int PID, int value);
@@ -54,6 +54,7 @@ public:
     void setRoundRobinQuantum(int q);
     std::string getSchedulingMode(Mode m);
     void editQueue(int queueSelection);
+    
 };
 
 #endif /* Controller_hpp */

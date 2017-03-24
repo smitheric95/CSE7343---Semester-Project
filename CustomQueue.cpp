@@ -116,22 +116,26 @@ bool CustomQueue::isEmpty() {
 }
 // print the contents of the queue
 void CustomQueue::print() {
-    std::cout << "######## " << this->getName() << " Queue ########" << std::endl;
-    ProcessControlBlock* cur = this->head;
+    if (this->isEmpty())
+        std::cout << "Queue is empty." << std::endl;
+    else {
+        std::cout << "######## " << this->getName() << " Queue ########" << std::endl;
+        ProcessControlBlock* cur = this->head;
 
-    while (cur != nullptr) {
-        if (cur == this->head)
-            std::cout << "## Head: ";
-        else if (cur == this->tail)
-            std::cout << "## Tail: ";
-        else
-            std::cout << "##       ";
+        while (cur != nullptr) {
+            if (cur == this->head)
+                std::cout << "## Head: ";
+            else if (cur == this->tail)
+                std::cout << "## Tail: ";
+            else
+                std::cout << "##       ";
 
-        cur->print();
-        cur = cur->getNext();
+            cur->print();
+            cur = cur->getNext();
+        }
+
+        std::cout << "#############################" << std::endl;
     }
-
-    std::cout << "#############################" << std::endl;
 }
 
 // ensures that the tail is last element in the list
