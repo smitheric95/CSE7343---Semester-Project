@@ -53,3 +53,6 @@ TODO:
 - if input is screwed up halt everything
 - read me can be documentation
 - add pcb to part of queuepen 
+- on duplicate process: say what file it is
+- what is this->inputFileParsed = true;?
+- add no processes to queue if error!!

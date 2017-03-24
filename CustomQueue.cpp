@@ -117,9 +117,9 @@ bool CustomQueue::isEmpty() {
 // print the contents of the queue
 void CustomQueue::print() {
     if (this->isEmpty())
-        std::cout << "Queue is empty." << std::endl;
+        std::cout << "Queue is empty.\n" << std::endl;
     else {
-        std::cout << "######## " << this->getName() << " Queue ########" << std::endl;
+        std::cout << "---------------------- " << this->getName() << " Queue ----------------------" << std::endl;
         ProcessControlBlock* cur = this->head;
 
         while (cur != nullptr) {
@@ -133,8 +133,7 @@ void CustomQueue::print() {
             cur->print();
             cur = cur->getNext();
         }
-
-        std::cout << "#############################" << std::endl;
+        std::cout << std::endl;
     }
 }
 

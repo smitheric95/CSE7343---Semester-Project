@@ -15,6 +15,7 @@
 #include "Scheduler.hpp"
 #include <fstream>
 #include <iostream>
+#include <locale>    
 #include <sstream>
 #include <regex>
 #include <string>
@@ -26,13 +27,13 @@ class Controller {
 private:
     CustomQueue* readyQueue; // null if no processes
     CustomQueue* waitingQueue;
+    CustomQueue* selectedQueue; // points to waiting or ready
     
     Mode schedulingMode;
 /*
    Key -> Value
    PID -> (0 for waiting)
           (1 for ready)
-          (2 for completed)
 */  std::unordered_map<int,int> processTable;
     
     std::ifstream file;
@@ -49,7 +50,7 @@ public:
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
     bool lineIsValid(const std::string &line);
-    bool addProcess(std::string line, std::string file=std::string(), int lineCount=0);
+    bool addProcess(std::string line, std::string file=std::string(), int lineCount=0, int position=0);
     int getRoundRobinQuantum();
     void setRoundRobinQuantum(int q);
     std::string getSchedulingMode(Mode m);
