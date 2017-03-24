@@ -10,6 +10,7 @@
 #define Scheduler_hpp
 
 #include <stdio.h>
+#include <algorithm>
 #include "CustomQueue.hpp"
 
 class Scheduler {

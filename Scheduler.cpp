@@ -28,7 +28,6 @@ void Scheduler::updateProcessVector() {
     // update values to match queue
     ProcessControlBlock* cur = this->queue->peek();
     while (cur != nullptr) {
-        std::cout << cur->getPID() << std::endl;
         this->processVector->push_back(cur);
         cur = cur->getNext();
     }
@@ -200,7 +199,7 @@ void Scheduler::firstComeFirstServe() {
  *
  **************************************************************************************/
 void Scheduler::priority() {
-    int totalWait = 0, shortest = 0, remain;
+    int totalWait = 0, shortest = 0, remain = 0;
     int n = remain = (int)this->processVector->size();
     std::vector<int> arrivaltimes, burstTimes;
     

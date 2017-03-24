@@ -25,10 +25,6 @@ class CustomQueue {
     std::string name;
     void reestablishTail();
     
-    
-    // delete
-    std::vector<ProcessControlBlock*> processVector;
-    
    public:
     CustomQueue(std::string name);
     CustomQueue(std::string name, ProcessControlBlock* head);

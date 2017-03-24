@@ -29,15 +29,15 @@ Controller::Controller()
     // waitingQueue->roundRobin(20);
         
     Scheduler main(this->waitingQueue);
-    main.shortestJobFirst();
+    main.priority();
         
 }
 
 Controller::~Controller() {
-    if (readyQueue != nullptr)
-        delete readyQueue;
-    if (waitingQueue != nullptr)
-        delete waitingQueue;
+    if (this->readyQueue != nullptr)
+        delete this->readyQueue;
+    if (this->waitingQueue != nullptr)
+        delete this->waitingQueue;
     this->file.close();
 }
 
@@ -281,8 +281,8 @@ int Controller::processStatus(int PID) {
 }
 
 void Controller::addQueues() {
-    readyQueue = new CustomQueue("Ready");
-    waitingQueue = new CustomQueue("Waiting");
+    this->readyQueue = new CustomQueue("Ready");
+    this->waitingQueue = new CustomQueue("Waiting");
 }
 
 // returns true if a line of input is syntactically valid

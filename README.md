@@ -64,3 +64,5 @@ TODO:
     - actually ask ta about that
 
 - use big data file in class!
+- priority is screwed up, but only on linux...
+- if input is screwed up halt everything

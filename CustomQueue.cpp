@@ -47,7 +47,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
         // queue is empty
         if (this->head == nullptr) {
             std::cout << "QUEUE IS EMPTY" << std::endl;
-            exit(0);
+            return nullptr;
         }
         // loop till we find PID or the end
         while (cur->getNext() != nullptr) {
@@ -76,11 +76,6 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
         }
     }
 
-    // remove from process vector
-    this->processVector.erase(
-        std::remove(this->processVector.begin(), this->processVector.end(), temp),
-        this->processVector.end());
-
     return temp;
 }
 
@@ -93,15 +88,13 @@ void CustomQueue::add(ProcessControlBlock* cur) {
 
     if (this->head == nullptr)
         this->head = this->tail;
-
-    this->processVector.push_back(cur);
 }
 
 // return PCB without removing
 ProcessControlBlock* CustomQueue::peek() {
-    if (this->head == nullptr) {
+    if (this->isEmpty()) {
         std::cout << "QUEUE IS EMPTY" << std::endl;
-        exit(0);
+        return nullptr;
     }
 
     return this->head;
