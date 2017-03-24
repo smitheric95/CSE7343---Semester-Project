@@ -31,7 +31,7 @@ class CustomQueue {
     ~CustomQueue();
 
     ProcessControlBlock* remove(int PID = -1);
-    void add(ProcessControlBlock* cur);
+    bool add(ProcessControlBlock* PCB, int position=0);
     ProcessControlBlock* peek();
 
     std::string getName();

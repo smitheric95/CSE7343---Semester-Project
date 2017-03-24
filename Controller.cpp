@@ -296,13 +296,18 @@ bool Controller::addProcess(std::string line, std::string file, int lineCount, i
     }
 
     // add to selected queue
-    this->selectedQueue->add(new ProcessControlBlock(processValues), 0);
-
-    // add to process table as 'waiting'
-    if (this->selectedQueue->getName() == "ready")
-        editProcessTable(curPID, 1);
-    else
-        editProcessTable(curPID, 0);
+    if (this->selectedQueue->add(new ProcessControlBlock(processValues), position)) {
+        // add to process table
+        if (this->selectedQueue->getName() == "ready")
+            editProcessTable(curPID, 1);
+        else
+            editProcessTable(curPID, 0);
+    }
+    // given position was too large
+    else {
+        std::cout << "Error. Given position was too large." << std::endl;
+        return false;
+    }
 
     return true;
 }

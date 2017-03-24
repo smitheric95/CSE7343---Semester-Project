@@ -79,8 +79,27 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
     return temp;
 }
 
-// add PCB to front of the queue
-void CustomQueue::add(ProcessControlBlock* cur) {
+// add PCB to a posiiton of the queue
+// returns true if the PCB was successfully added
+bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
+    ProcessControlBlock* cur = head;
+    int count = 1;
+    
+    // loop till
+    while (cur != nullptr && count != position) {
+        count++;
+        cur = cur->getNext();
+    }
+    
+    //
+    if (count == position) {
+        
+    }
+    // given position was too large
+    else {
+        
+    }
+    
     if (this->tail != nullptr)
         this->tail->setNext(cur);
 
@@ -88,6 +107,8 @@ void CustomQueue::add(ProcessControlBlock* cur) {
 
     if (this->head == nullptr)
         this->head = this->tail;
+    
+    return true;
 }
 
 // return PCB without removing
