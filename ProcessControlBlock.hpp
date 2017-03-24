@@ -21,7 +21,6 @@ private:
     int priority;
     
     ProcessControlBlock* next;
-    ProcessControlBlock* prev;
 
 public:
     ProcessControlBlock();
@@ -38,8 +37,7 @@ public:
     
     ProcessControlBlock* getNext();
     void setNext(ProcessControlBlock* next);
-    ProcessControlBlock* getPrev();
-    void setPrev(ProcessControlBlock* prev);
+
     void print();
 };
 

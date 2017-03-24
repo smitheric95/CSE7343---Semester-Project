@@ -44,7 +44,7 @@ public:
     ~Controller();
     void addQueues();
     void displayMainMenu(bool shortHand=false);
-    void handleUserInput();
+    void init();
     bool parseFile(std::string file);
     void editProcessTable(int PID, int value);
     int processStatus(int PID);

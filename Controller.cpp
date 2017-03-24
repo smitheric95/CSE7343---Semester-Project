@@ -20,7 +20,7 @@ Controller::Controller()
     addQueues();
 
     // prompt user
-    handleUserInput();
+    init();
 
     // waitingQueue->shortestJobFirst();
     // waitingQueue->firstComeFirstServe();
@@ -67,7 +67,7 @@ void Controller::displayMainMenu(bool shortHand) {
     std::cout << "Please select a mode: ";
 }
 
-void Controller::handleUserInput() {
+void Controller::init() {
     int modeSelection = 0;
 
     // while the user has not exited
@@ -149,7 +149,7 @@ void Controller::handleUserInput() {
                 // user has entered an error
                 else {
                     std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                    std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <0-9999>" << std::endl;
+                    std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
                 }
                 promptCount++;
             }
@@ -246,7 +246,7 @@ bool Controller::parseFile(std::string file) {
         else {
             std::cout << "ERROR: Incorrect format in " << file << " on line " << lineCount
                       << std::endl;
-            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <0-9999>" << std::endl;
+            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
             return false;
         }
         lineCount++;

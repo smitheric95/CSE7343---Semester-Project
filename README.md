@@ -39,30 +39,15 @@ Scheduler:
 	
 	
 TODO:
-- change instructions to ./a.out
-- test on server
-- controller: 
-- replace string parameters with const std::string &arg
-- rethink how to handle scheduling
 - clarification on length of digits for error checking
-- remove prev* on CustomQueue
-- test priority sorting
 - improve output with new lines and tabs
-- be able to add to both queues
+- be able to add/remove to both queues
     - just put as optoin in input type
-- be able to transfer from waiting to ready?
-- allow input to be zeroes
 - replace "waiting" with "ready"
-- should schduler have the scheduling algs?
 - if any error reading from file, delete everything already added
 - add arrival times, burst, priority to scheduling print outs
     - make them look like table
-- scheduler class should have process vector
-    - queue returns what it adds/deletes
-- change handleUserInput() to init()
-- <0 - 9999> should be <1 - 4> for priority in controller.cpp 
-    - actually ask ta about that
-
 - use big data file in class!
 - priority is screwed up, but only on linux...
 - if input is screwed up halt everything
+- read me can be documentation
