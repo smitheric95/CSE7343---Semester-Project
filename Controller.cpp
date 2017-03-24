@@ -1,3 +1,6 @@
+
+                                                                                                                                                                         
+                                                                                                                                                              
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -27,10 +30,9 @@ Controller::Controller()
     // waitingQueue->priority();
     // waitingQueue->print();
     // waitingQueue->roundRobin(20);
-        
+
     Scheduler main(this->waitingQueue);
     main.priority();
-        
 }
 
 Controller::~Controller() {
@@ -43,27 +45,20 @@ Controller::~Controller() {
 
 // simply displays the main menu
 void Controller::displayMainMenu(bool shortHand) {
-    if (shortHand) {
-        std::cout << "################ Main Menu ###################" << std::endl;
-        std::cout << "# [0] Exit [1] Input file [2] Command line   #" << std::endl;
-        std::cout << "# [3] Select scheduler [4] Execute processes #" << std::endl;
-        std::cout << "##############################################" << std::endl;
-    }
-    else {
-        std::cout << "##############################################" << std::endl;
-        std::cout << "# Welcome to EricOS !!                       #" << std::endl;
-        std::cout << "#                                            #" << std::endl;
-        std::cout << "# Version 1.0                                #" << std::endl;
-        std::cout << "#                                            #" << std::endl;
-        std::cout << "# Select process input type:                 #" << std::endl;
-        std::cout << "#     [1] File [2] Command line              #" << std::endl;
-        std::cout << "#                                            #" << std::endl;
-        std::cout << "# [3] Select scheduling algorithm            #" << std::endl;
-        std::cout << "# [4] Execute processes                      #" << std::endl;
-        std::cout << "#                                            #" << std::endl;
-        std::cout << "# [0] Exit                                   #" << std::endl;
-        std::cout << "##############################################" << std::endl << std::endl;
-    }
+    std::cout << " #############################################" << std::endl;
+    std::cout << "#  Welcome to EricOS                          #" << std::endl;
+    std::cout << "#  Version 1.0                                #" << std::endl;
+    std::cout << "#                                             #" << std::endl;
+    std::cout << "#  Main Menu:                                 #" << std::endl;
+    std::cout << "#                                             #" << std::endl;
+    std::cout << "#  [1] Edit Ready Queue                       #" << std::endl;
+    std::cout << "#  [2] Edit Waiting Queue                     #" << std::endl;
+    std::cout << "#  [3] Select scheduling algorithm            #" << std::endl;
+    std::cout << "#  [4] Execute processes                      #" << std::endl;
+    std::cout << "#                                             #" << std::endl;
+    std::cout << "#  [0] Exit                                   #" << std::endl;
+    std::cout << " ############################################ " << std::endl << std::endl;
+
     std::cout << "Please select a mode: ";
 }
 
@@ -80,82 +75,11 @@ void Controller::init() {
             std::cout << "Goodbye!" << std::endl;
             break;
         }
-        // select input file to build queues
-        else if (modeSelection == 1) {
-            std::string filename;
-
-            // check the users input
-            do {
-                // user has entered an error
-                if (promptCount > 0)
-                    std::cout << "Unable to open file: " << filename << std::endl;
-
-                // prompt the user to enter file name
-                std::cout << "Please enter a file to parse: ([0] to go back)" << std::endl;
-                std::cin >> filename;
-
-                // exit
-                if (filename == "0")
-                    break;
-                // open file
-                else
-                    this->file.open(filename, std::ios::in);
-
-                promptCount++;
-
-            } while (!this->file.is_open());
-
-            // user has entered correct input
-            promptCount = 0;
-
-            // if the file was found, parse it
-            if (parseFile(filename)) {
-                std::cout << "Input successfully entered." << std::endl << std::endl;
-                this->inputFileParsed = true;
-            }
-            else {
-                std::cout << "Unable to process input." << std::endl << std::endl;
-            }
-            displayMainMenu(true);
-        }
-        // select command line to build queues
-        else if (modeSelection == 2) {
-            std::string commandLine;
-
-            // check the users input
-            while (true) {
-                if (promptCount == 0)
-                    std::cin.ignore();
-
-                // prompt the user to enter file name
-                std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
-                std::getline(std::cin, commandLine);
-                std::cin.clear();
-
-                // exit to main menu
-                if (commandLine == "0")
-                    break;
-
-                // user has entered correct input, process command
-                if (lineIsValid(commandLine)) {
-                    // process was successfully added
-                    if (addProcess(commandLine)) {
-                        std::cout << "Process added to waiting queue." << std::endl;
-                    }
-                    else {
-                        std::cout << "Error adding process. Please try again." << std::endl;
-                    }
-                }
-                // user has entered an error
-                else {
-                    std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                    std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
-                }
-                promptCount++;
-            }
-            promptCount = 0;
-            displayMainMenu(true);
-        }
+        
+        // edit the ready/waiting queues
+        else if (modeSelection == 1 || modeSelection == 2)
+            editQueue(modeSelection);
+            
         // select scheduling algorithm to execute processses
         else if (modeSelection == 3) {
             std::cout << "Current sceduling mode is "
@@ -359,4 +283,95 @@ void Controller::setRoundRobinQuantum(int q) {
 std::string Controller::getSchedulingMode(Mode m) {
     std::string arr[4] = {"SJF", "FCFS", "Priority", "Round Robin"};
     return arr[m];
+}
+
+// allows user to view queue
+void Controller::editQueue(int queueSelection) {
+    CustomQueue* selectedQueue = nullptr;
+    
+    if (queueSelection == 1)
+        selectedQueue = readyQueue;
+    else
+        selectedQueue = waitingQueue;
+    
+    int modeSelection = 1;
+    
+    int promptCount;
+    // select input file to build queues
+    if (modeSelection == 1) {
+        std::string filename;
+        
+        // check the users input
+        do {
+            // user has entered an error
+            if (promptCount > 0)
+                std::cout << "Unable to open file: " << filename << std::endl;
+            
+            // prompt the user to enter file name
+            std::cout << "Please enter a file to parse: ([0] to go back)" << std::endl;
+            std::cin >> filename;
+            
+            // exit
+            if (filename == "0")
+                break;
+            // open file
+            else
+                this->file.open(filename, std::ios::in);
+            
+            promptCount++;
+            
+        } while (!this->file.is_open());
+        
+        // user has entered correct input
+        promptCount = 0;
+        
+        // if the file was found, parse it
+        if (parseFile(filename)) {
+            std::cout << "Input successfully entered." << std::endl << std::endl;
+            this->inputFileParsed = true;
+        }
+        else {
+            std::cout << "Unable to process input." << std::endl << std::endl;
+        }
+        displayMainMenu(true);
+    }
+    // select command line to build queues
+    else if (modeSelection == 2) {
+        std::string commandLine;
+        
+        // check the users input
+        while (true) {
+            if (promptCount == 0)
+                std::cin.ignore();
+            
+            // prompt the user to enter file name
+            std::cout << "Please enter a command to parse: ([0] to go back)" << std::endl;
+            std::getline(std::cin, commandLine);
+            std::cin.clear();
+            
+            // exit to main menu
+            if (commandLine == "0")
+                break;
+            
+            // user has entered correct input, process command
+            if (lineIsValid(commandLine)) {
+                // process was successfully added
+                if (addProcess(commandLine)) {
+                    std::cout << "Process added to waiting queue." << std::endl;
+                }
+                else {
+                    std::cout << "Error adding process. Please try again." << std::endl;
+                }
+            }
+            // user has entered an error
+            else {
+                std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
+                std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
+            }
+            promptCount++;
+        }
+        promptCount = 0;
+        displayMainMenu(true);
+    }
+
 }

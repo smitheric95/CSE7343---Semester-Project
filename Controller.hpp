@@ -53,7 +53,7 @@ public:
     int getRoundRobinQuantum();
     void setRoundRobinQuantum(int q);
     std::string getSchedulingMode(Mode m);
-    
+    void editQueue(int queueSelection);
 };
 
 #endif /* Controller_hpp */
