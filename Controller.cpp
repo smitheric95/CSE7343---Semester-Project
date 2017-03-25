@@ -201,7 +201,7 @@ void Controller::parseFile(std::string file) {  // go through each line
 
     std::cout << std::endl
               << validProcesses << " processes successfully entered. "
-              << (lineCount - validProcesses) << " errors generated. (See above.)\n"
+              << (lineCount - validProcesses) << " errors generated.\n"
               << std::endl;
 }
 
@@ -420,11 +420,11 @@ void Controller::editQueue(int queueSelection) {
                         std::getline(std::cin, position);
                         std::cin.clear();
 
-                        // position is a digit or was given as 'defualt' and process was successfully added
+                        // position is a digit or was given as 'defualt' and process was
+                        // successfully added
                         if ((position == "default" ||
                              std::all_of(position.begin(), position.end(), ::isdigit)) &&
-                             addProcess(commandLine, std::string(), 0, position)) {
-                            
+                            addProcess(commandLine, std::string(), 0, position)) {
                             std::cout << "\nProcess added to the " << this->selectedQueue->getName()
                                       << " queue at position: " << position << "." << std::endl;
                         }
@@ -451,9 +451,31 @@ void Controller::editQueue(int queueSelection) {
 
         // delete from queue
         else if (modeSelection == "3") {
-            printf("\033c");
-            std::cout << "\nEnter the ID of process to delete:" << std::endl;
-            std::cout << "(Enter [0] for default position.)" << std::endl;
+            while (true) {
+                // prompt user
+                std::cout << "\nEnter the ID of process to delete:" << std::endl;
+                std::cout << "(Enter [0] for default position.)" << std::endl;
+                std::string pid;
+                std::cin.clear();
+                std::cin >> pid;
+
+                // PCB was successfully deleted
+                if (std::all_of(pid.begin(), pid.end(), ::isdigit) &&
+                    this->selectedQueue->remove(std::stoi(pid)) != nullptr) {
+                    
+                    printf("\033c");
+                    std::cout << "Process P" << pid << " deleted.\n" << std::endl;
+                    break;
+                }
+                else {
+                    printf("\033c");
+                    std::cout << "Not able to delete process. Please try again." << std::endl;
+                    if (this->selectedQueue->getSize() == 0) {
+                        std::cout << "Queue is empty."  << std::endl << std::endl;
+                        break;
+                    }
+                }
+            }
         }
         else {
             printf("\033c");

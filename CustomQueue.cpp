@@ -33,8 +33,14 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
     ProcessControlBlock* temp = nullptr;
     ProcessControlBlock* cur = this->head;
 
+    // queue is empty
+    if (this->head == nullptr) {
+        std::cout << "\nQueue is empty." << std::endl;
+        return nullptr;
+    }
+    
     // the head matches PID or no PID was specified
-    if ((this->head != nullptr && cur->getPID() == PID) || PID == -1) {
+    if ((this->head != nullptr && cur->getPID() == PID) || PID == 0) {
         this->head = cur->getNext();  // remove head
 
         // alter tail
@@ -44,16 +50,10 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
         temp = cur;  // return head
     }
     else {
-        // queue is empty
-        if (this->head == nullptr) {
-            std::cout << "QUEUE IS EMPTY" << std::endl;
-            return nullptr;
-        }
         // loop till we find PID or the end
         while (cur->getNext() != nullptr) {
             // PCB found, remove it
             if (cur->getNext()->getPID() == PID) {
-                std::cout << "PCB FOUND. REMOVED: ";
                 temp = cur->getNext();
 
                 // PCB is at end
@@ -69,7 +69,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
             else {
                 // PID not found
                 if (cur->getNext() == this->tail) {
-                    std::cout << "FAILED TO DELETE: PID " << PID << " NOT FOUND." << std::endl;
+                    std::cout << "Failed to delete process: PID " << PID << " not found." << std::endl;
                 }
             }
             cur = cur->getNext();
@@ -188,4 +188,9 @@ void CustomQueue::reestablishTail() {
     while (cur->getNext() != nullptr) cur = cur->getNext();
 
     this->tail = cur;
+}
+
+// return size
+int CustomQueue::getSize() {
+    return this->size;
 }

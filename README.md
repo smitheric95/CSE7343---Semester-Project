@@ -52,4 +52,5 @@ TODO:
 - priority is screwed up
 - if input is screwed up halt everything
 - read me can be documentation 
-
+- what happens to this->selectedQueue when you switch?
+ - memory leak
