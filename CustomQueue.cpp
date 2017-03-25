@@ -84,7 +84,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
 // returns true if the PCB was successfully added
 bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
     // default add to tail
-    if (position == 0) { //if (position == 0 || position == size-1)
+    if (position == "default") {
         if (this->tail != nullptr)
             this->tail->setNext(PCB);
 
@@ -92,9 +92,12 @@ bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
 
         if (this->head == nullptr)
             this->head = this->tail;
+        return true;
     }
+    int pos = std::stoi(position);
+    
     // add to head
-    else if (position == 1) {
+    if (pos == 0) {
         PCB->setNext(this->head);
         this->head = PCB;
 
@@ -102,9 +105,9 @@ bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
             this->tail = this->head;
     }
     // traverse till position
-    else if (this->size >= position-1) {
+    else if (this->size >= pos-1) {
         ProcessControlBlock* cur = head;
-        for (int i = 1; i < position-1; i++) {
+        for (int i = 0; i < pos-1; i++) {
             cur = cur->getNext();
         }
         
@@ -120,6 +123,7 @@ bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
     }
 
     this->size++;
+    
     return true;
 }
 

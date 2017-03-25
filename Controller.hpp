@@ -49,7 +49,7 @@ public:
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
     bool lineIsValid(const std::string &line);
-    bool addProcess(std::string line, std::string file=std::string(), int lineCount=0, int position=0);
+    bool addProcess(std::string line, std::string file=std::string(), int lineCount=0, std::string position="default");
     int getRoundRobinQuantum();
     void setRoundRobinQuantum(int q);
     std::string getSchedulingMode(Mode m);

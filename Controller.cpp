@@ -9,10 +9,7 @@
 #include "Controller.hpp"
 
 Controller::Controller()
-    : readyQueue(nullptr)
-    , waitingQueue(nullptr)
-    , schedulingMode(SJF)
-    , roundRobinQuantum(0) {
+    : readyQueue(nullptr), waitingQueue(nullptr), schedulingMode(SJF), roundRobinQuantum(0) {
     displayMenu("main");
 
     // create all necessary queues
@@ -181,14 +178,14 @@ void Controller::init() {
 }
 
 // parse file given by user, build processTable
-void Controller::parseFile(std::string file) {// go through each line
+void Controller::parseFile(std::string file) {  // go through each line
     std::string line;
     int lineCount = 0;
     int validProcesses = 0;
-    
+
     while (getline(this->file, line)) {
         lineCount++;
-        
+
         // check format of input
         if (lineIsValid(line)) {
             if (addProcess(line, file, lineCount))
@@ -202,7 +199,10 @@ void Controller::parseFile(std::string file) {// go through each line
         }
     }
 
-    std::cout << std::endl << validProcesses << " processes successfully entered. " << (lineCount - validProcesses) << " errors generated. (See above.)\n" << std::endl;
+    std::cout << std::endl
+              << validProcesses << " processes successfully entered. "
+              << (lineCount - validProcesses) << " errors generated. (See above.)\n"
+              << std::endl;
 }
 
 // edit/add PID and it's value in process table
@@ -244,7 +244,10 @@ bool Controller::lineIsValid(const std::string& line) {
 // takes a valid input line and turns into a PCB
 // PCB is added to processTable and waitingQueue
 // returns true if PCB is sucessfully added
-bool Controller::addProcess(std::string line, std::string file, int lineCount, int position) {
+bool Controller::addProcess(std::string line,
+                            std::string file,
+                            int lineCount,
+                            std::string position) {
     // store process values
     std::vector<int> processValues;
     std::stringstream tempStream(line);
@@ -417,9 +420,11 @@ void Controller::editQueue(int queueSelection) {
                         std::getline(std::cin, position);
                         std::cin.clear();
 
-                        // position is a digit and process was successfully added
-                        if (std::all_of(position.begin(), position.end(), ::isdigit) &&
-                            addProcess(commandLine, std::string(), 0, std::stoi(position))) {
+                        // position is a digit or was given as 'defualt' and process was successfully added
+                        if ((position == "default" ||
+                             std::all_of(position.begin(), position.end(), ::isdigit)) &&
+                             addProcess(commandLine, std::string(), 0, position)) {
+                            
                             std::cout << "\nProcess added to the " << this->selectedQueue->getName()
                                       << " queue at position " << position << "." << std::endl;
                         }
@@ -442,6 +447,13 @@ void Controller::editQueue(int queueSelection) {
                 printf("\033c");
                 std::cout << "Invalid input. Please try again.\n" << std::endl;
             }
+        }
+
+        // delete from queue
+        else if (modeSelection == "3") {
+            printf("\033c");
+            std::cout << "\nEnter the ID of process to delete:" << std::endl;
+            std::cout << "(Enter [0] for default position.)" << std::endl;
         }
         else {
             printf("\033c");
