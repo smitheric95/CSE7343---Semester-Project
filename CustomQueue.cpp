@@ -9,11 +9,11 @@
 #include "CustomQueue.hpp"
 #include <typeinfo>
 
-CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name) {
+CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name), size(0) {
 }
 
 CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
-    : head(head), tail(head), name(name) {
+    : head(head), tail(head), name(name), size(0) {
 }
 
 CustomQueue::~CustomQueue() {
@@ -76,38 +76,50 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
         }
     }
 
+    this->size--;
     return temp;
 }
 
 // add PCB to a posiiton of the queue
 // returns true if the PCB was successfully added
 bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
-    ProcessControlBlock* cur = head;
-    int count = 1;
-    
-    // loop till
-    while (cur != nullptr && count != position) {
-        count++;
-        cur = cur->getNext();
+    // default add to tail
+    if (position == 0) { //if (position == 0 || position == size-1)
+        if (this->tail != nullptr)
+            this->tail->setNext(PCB);
+
+        this->tail = PCB;
+
+        if (this->head == nullptr)
+            this->head = this->tail;
     }
-    
-    //
-    if (count == position) {
+    // add to head
+    else if (position == 1) {
+        PCB->setNext(this->head);
+        this->head = PCB;
+
+        if (this->tail == nullptr)
+            this->tail = this->head;
+    }
+    // traverse till position
+    else if (this->size >= position-1) {
+        ProcessControlBlock* cur = head;
+        for (int i = 1; i < position-1; i++) {
+            cur = cur->getNext();
+        }
         
+        PCB->setNext(cur->getNext());
+        cur->setNext(PCB);
+        
+        if (this->tail->getNext() != nullptr)
+            this->tail = PCB;
     }
-    // given position was too large
+    // position to large
     else {
-        
+        return false;
     }
-    
-    if (this->tail != nullptr)
-        this->tail->setNext(cur);
 
-    this->tail = cur;
-
-    if (this->head == nullptr)
-        this->head = this->tail;
-    
+    this->size++;
     return true;
 }
 
@@ -140,15 +152,16 @@ void CustomQueue::print() {
     if (this->isEmpty())
         std::cout << "Queue is empty.\n" << std::endl;
     else {
-        std::cout << "---------------------- " << this->getName() << " Queue ----------------------" << std::endl;
+        std::cout << "---------------------- " << this->getName() << " Queue ----------------------"
+                  << std::endl;
         ProcessControlBlock* cur = this->head;
 
         while (cur != nullptr) {
             if (cur == this->head)
                 std::cout << "## Head: ";
-            else if (cur == this->tail)
+            if (cur == this->tail)
                 std::cout << "## Tail: ";
-            else
+            else if (cur != this->head)
                 std::cout << "##       ";
 
             cur->print();

@@ -421,13 +421,14 @@ void Controller::editQueue(int queueSelection) {
                     // user has entered correct input, process command
                     if (lineIsValid(commandLine)) {
                         // prompt user to enter process at position
-                        std::cout << "Enter the position to add the process: ([0] for default)" << std::endl;
+                        std::cout << "Enter the position to add the process:" << std::endl;
+                        std::cout << "(Positions indexed at 1. Enter [0] for default position.)" << std::endl;
                         std::string position;
                         std::cin >> position;
                         
                         // position is a digit and process was successfully added
                         if (std::all_of(position.begin(), position.end(), ::isdigit) && addProcess(commandLine, std::string(), 0, std::stoi(position))) {
-                            std::cout << "Process added to the " << this->selectedQueue->getName() << " queue." << std::endl;
+                            std::cout << "Process added to the " << this->selectedQueue->getName() << " queue at position " << position << "." << std::endl;
                         }
                         else {
                             std::cout << "No processes were added to the queue. Please try again." <<  std::endl;

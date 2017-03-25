@@ -24,6 +24,7 @@ class CustomQueue {
     ProcessControlBlock* tail;
     std::string name;
     void reestablishTail();
+    int size;
     
    public:
     CustomQueue(std::string name);
@@ -39,7 +40,7 @@ class CustomQueue {
 
     bool isEmpty();
     void print();
-
+    
     // scheduler
     int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
     void sortVector(Mode m);
