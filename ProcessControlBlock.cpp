@@ -59,6 +59,5 @@ void ProcessControlBlock::setNext(ProcessControlBlock* next) {
 
 void ProcessControlBlock::print() {
     std::cout << "ID: " << this->getPID() << ", ArrivalTime: " << getArrivalTime()
-              << ", BurstTime: " << getBurstTime() << ", Priority: " << this->getPriority()
-              << std::endl;
+              << ", BurstTime: " << getBurstTime() << ", Priority: " << this->getPriority();
 }

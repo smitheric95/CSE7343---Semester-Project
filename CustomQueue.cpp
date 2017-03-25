@@ -82,7 +82,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
 
 // add PCB to a posiiton of the queue
 // returns true if the PCB was successfully added
-bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
+bool CustomQueue::add(ProcessControlBlock* PCB, std::string position) {
     // default add to tail
     if (position == "default") {
         if (this->tail != nullptr)
@@ -92,8 +92,12 @@ bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
 
         if (this->head == nullptr)
             this->head = this->tail;
+        
+        this->size++;
         return true;
     }
+    
+    // turn position into int
     int pos = std::stoi(position);
     
     // add to head
@@ -105,7 +109,7 @@ bool CustomQueue::add(ProcessControlBlock* PCB, int position) {
             this->tail = this->head;
     }
     // traverse till position
-    else if (this->size >= pos-1) {
+    else if (this->size >= pos) {
         ProcessControlBlock* cur = head;
         for (int i = 0; i < pos-1; i++) {
             cur = cur->getNext();
@@ -160,16 +164,18 @@ void CustomQueue::print() {
                   << std::endl;
         ProcessControlBlock* cur = this->head;
 
+        int i = 0;
         while (cur != nullptr) {
-            if (cur == this->head)
-                std::cout << "## Head: ";
-            if (cur == this->tail)
-                std::cout << "## Tail: ";
-            else if (cur != this->head)
-                std::cout << "##       ";
-
+            std::cout << i << " - ";
             cur->print();
+            if (cur == this->head)
+                std::cout << " (Head) ";
+            else if (cur == this->tail)
+                std::cout << " (Tail) ";
+            
+            std::cout << std::endl;
             cur = cur->getNext();
+            i++;
         }
         std::cout << std::endl;
     }

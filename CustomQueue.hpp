@@ -32,7 +32,7 @@ class CustomQueue {
     ~CustomQueue();
 
     ProcessControlBlock* remove(int PID = -1);
-    bool add(ProcessControlBlock* PCB, int position=0);
+    bool add(ProcessControlBlock* PCB, std::string position="default");
     ProcessControlBlock* peek();
 
     std::string getName();

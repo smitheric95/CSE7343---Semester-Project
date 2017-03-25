@@ -25,7 +25,7 @@ Controller::Controller()
     // waitingQueue->roundRobin(20);
 
     // Scheduler main(this->waitingQueue);
-    // main.priority();
+    // main.roundRobin(20);
 }
 
 Controller::~Controller() {
@@ -195,7 +195,7 @@ void Controller::parseFile(std::string file) {  // go through each line
         else {
             std::cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
                       << std::endl;
-            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl << std::endl;
+            std::cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl << std::endl;
         }
     }
 
@@ -237,7 +237,7 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line, std::regex("^0*[0-9]{1,5}( *, *0*[0-9]{1,4})* *$")) &&
+    return (std::regex_match(line, std::regex("^0*[1-9]{1,5}( *, *0*[0-9]{1,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 
@@ -414,7 +414,7 @@ void Controller::editQueue(int queueSelection) {
                     if (lineIsValid(commandLine)) {
                         // prompt user to enter process at position
                         std::cout << "\nEnter the position to add the process:" << std::endl;
-                        std::cout << "(Positions indexed at 1. Enter [0] for default position.)"
+                        std::cout << "(Positions indexed at 0. Enter \"default\" to add to tail.)"
                                   << std::endl;
                         std::string position;
                         std::getline(std::cin, position);
@@ -426,7 +426,7 @@ void Controller::editQueue(int queueSelection) {
                              addProcess(commandLine, std::string(), 0, position)) {
                             
                             std::cout << "\nProcess added to the " << this->selectedQueue->getName()
-                                      << " queue at position " << position << "." << std::endl;
+                                      << " queue at position: " << position << "." << std::endl;
                         }
                         else {
                             std::cout << "\nNo processes were added to the queue. Please try again."
@@ -436,7 +436,7 @@ void Controller::editQueue(int queueSelection) {
                     // user has entered an error
                     else {
                         std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                        std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>\n"
+                        std::cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n"
                                   << std::endl;
                     }
                     promptCount++;
