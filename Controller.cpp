@@ -1,5 +1,3 @@
-
-
 //
 //  Controller.cpp
 //  CSE7343 - Semester Project
@@ -13,7 +11,6 @@
 Controller::Controller()
     : readyQueue(nullptr)
     , waitingQueue(nullptr)
-    , inputFileParsed(false)
     , schedulingMode(SJF)
     , roundRobinQuantum(0) {
     displayMenu("main");
@@ -45,6 +42,7 @@ Controller::~Controller() {
 // simply displays the main menu
 void Controller::displayMenu(std::string menu) {
     if (menu == "main") {
+        printf("\033c");
         std::cout << " #############################################" << std::endl;
         std::cout << "#  Welcome to EricOS                          #" << std::endl;
         std::cout << "#  Version 1.0                                #" << std::endl;
@@ -177,37 +175,34 @@ void Controller::init() {
         else {
             std::cout << "Incorrect input. Please try again: " << std::endl;
         }
-        
+
         displayMenu("main");
     }
 }
 
 // parse file given by user, build processTable
-bool Controller::parseFile(std::string file) {
-    if (file == "0")
-        return false;
-    
-    // go through each line
+void Controller::parseFile(std::string file) {// go through each line
     std::string line;
-    int lineCount = 1;
-
+    int lineCount = 0;
+    int validProcesses = 0;
+    
     while (getline(this->file, line)) {
+        lineCount++;
+        
         // check format of input
         if (lineIsValid(line)) {
-            if (!addProcess(line, file, lineCount))
-                return false;
+            if (addProcess(line, file, lineCount))
+                validProcesses++;
         }
         // format is wrong, stop program
         else {
-            std::cout << "ERROR: Incorrect format in " << file << " on line " << lineCount
+            std::cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
                       << std::endl;
-            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
-            return false;
+            std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl << std::endl;
         }
-        lineCount++;
     }
 
-    return true;
+    std::cout << std::endl << validProcesses << " processes successfully entered. " << (lineCount - validProcesses) << " errors generated. (See above.)\n" << std::endl;
 }
 
 // edit/add PID and it's value in process table
@@ -242,7 +237,7 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line, std::regex("^0*[0-9]{0,5}( *, *0*[0-9]{0,4})* *$")) &&
+    return (std::regex_match(line, std::regex("^0*[0-9]{1,5}( *, *0*[0-9]{1,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 
@@ -326,7 +321,6 @@ std::string Controller::getSchedulingMode(Mode m) {
 
 // allows user to view queue
 void Controller::editQueue(int queueSelection) {
-
     // select queue to use
     if (queueSelection == 1)
         this->selectedQueue = readyQueue;
@@ -336,7 +330,7 @@ void Controller::editQueue(int queueSelection) {
     // print queue menu
     printf("\033c");
     displayMenu("edit queue");
-    
+
     std::string modeSelection = "0";  // reset mode selection
     int promptCount = 0;
     std::cout << "Select operation to perform on " << this->selectedQueue->getName() << " queue: ";
@@ -346,73 +340,68 @@ void Controller::editQueue(int queueSelection) {
             printf("\033c");
             break;
         }
-        
+
         // print
         else if (modeSelection == "1") {
             printf("\033c");
             this->selectedQueue->print();
         }
-        
+
         // add to queue
         else if (modeSelection == "2") {
             printf("\033c");
             displayMenu("add to queue");
             std::cin.clear();
             std::cin >> modeSelection;
-            
+
             // select input file to build queues
             if (modeSelection == "1") {
                 std::string filename;
-                
+
                 // check the users input
                 do {
                     // user has entered an error
                     if (promptCount > 0)
                         std::cout << "Unable to open file: " << filename << std::endl;
-                    
+
                     // prompt the user to enter file name
                     std::cout << "Please enter a file to parse: ([0] to go back)" << std::endl;
                     std::cin >> filename;
-                    
+
                     // exit
                     if (filename == "0")
                         break;
                     // open file
                     else
                         this->file.open(filename, std::ios::in);
-                    
+
                     promptCount++;
-                    
+
                 } while (!this->file.is_open());
-                
+
                 // user has entered correct input
                 promptCount = 0;
-                
+
                 printf("\033c");
-                
-                // if the file was found, parse it
-                if (parseFile(filename)) {
-                    std::cout << "Input successfully entered." << std::endl << std::endl;
-                    this->inputFileParsed = true;
-                }
-                else if(filename != "0"){
-                    std::cout << "Unable to process input." << std::endl << std::endl;
-                }
+
+                // The file was found, parse it
+                if (filename != "0")
+                    parseFile(filename);
             }
             // select command line to build queues
             else if (modeSelection == "2") {
                 std::string commandLine;
-                
+
                 // check the users input
                 while (true) {
                     if (promptCount == 0)
                         std::cin.ignore();
-                    
+
                     // prompt the user to enter file name
                     std::cout << "Please enter a process to parse: ([0] to go back)" << std::endl;
                     std::getline(std::cin, commandLine);
                     std::cin.clear();
-                    
+
                     // exit to main menu
                     if (commandLine == "0") {
                         printf("\033c");
@@ -421,23 +410,29 @@ void Controller::editQueue(int queueSelection) {
                     // user has entered correct input, process command
                     if (lineIsValid(commandLine)) {
                         // prompt user to enter process at position
-                        std::cout << "Enter the position to add the process:" << std::endl;
-                        std::cout << "(Positions indexed at 1. Enter [0] for default position.)" << std::endl;
+                        std::cout << "\nEnter the position to add the process:" << std::endl;
+                        std::cout << "(Positions indexed at 1. Enter [0] for default position.)"
+                                  << std::endl;
                         std::string position;
-                        std::cin >> position;
-                        
+                        std::getline(std::cin, position);
+                        std::cin.clear();
+
                         // position is a digit and process was successfully added
-                        if (std::all_of(position.begin(), position.end(), ::isdigit) && addProcess(commandLine, std::string(), 0, std::stoi(position))) {
-                            std::cout << "Process added to the " << this->selectedQueue->getName() << " queue at position " << position << "." << std::endl;
+                        if (std::all_of(position.begin(), position.end(), ::isdigit) &&
+                            addProcess(commandLine, std::string(), 0, std::stoi(position))) {
+                            std::cout << "\nProcess added to the " << this->selectedQueue->getName()
+                                      << " queue at position " << position << "." << std::endl;
                         }
                         else {
-                            std::cout << "No processes were added to the queue. Please try again." <<  std::endl;
+                            std::cout << "\nNo processes were added to the queue. Please try again."
+                                      << std::endl;
                         }
                     }
                     // user has entered an error
                     else {
                         std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                        std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl;
+                        std::cout << "Usage is: <0-99999>, <0-9999>, <0-9999>, <1-4>\n"
+                                  << std::endl;
                     }
                     promptCount++;
                 }
@@ -447,7 +442,6 @@ void Controller::editQueue(int queueSelection) {
                 printf("\033c");
                 std::cout << "Invalid input. Please try again.\n" << std::endl;
             }
-
         }
         else {
             printf("\033c");
@@ -455,8 +449,7 @@ void Controller::editQueue(int queueSelection) {
         }
         displayMenu("edit queue");
         std::cout << "Select operation to perform on " << selectedQueue->getName() << " queue: ";
-    }// end while
-    
-    return;
+    }  // end while
 
+    return;
 }

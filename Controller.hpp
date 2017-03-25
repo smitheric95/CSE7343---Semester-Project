@@ -37,7 +37,6 @@ private:
 */  std::unordered_map<int,int> processTable;
     
     std::ifstream file;
-    bool inputFileParsed;
     int roundRobinQuantum;
     
 public:
@@ -46,7 +45,7 @@ public:
     void addQueues();
     void displayMenu(std::string menu);
     void init();
-    bool parseFile(std::string file);
+    void parseFile(std::string file);
     void editProcessTable(int PID, int value);
     int processStatus(int PID);
     bool lineIsValid(const std::string &line);
