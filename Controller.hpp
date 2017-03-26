@@ -29,7 +29,6 @@ private:
     CustomQueue* waitingQueue;
     CustomQueue* selectedQueue; // points to waiting or ready
     
-    Mode schedulingMode;
 /*
    Key -> Value
    PID -> (0 for waiting)

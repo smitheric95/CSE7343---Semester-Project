@@ -39,18 +39,15 @@ Scheduler:
 	
 	
 TODO:
-- clarification on length of digits for error checking
 - improve output with new lines and tabs
-- be able to add/remove to both queues
-    - just put as optoin in input type
-- replace "waiting" with "ready"
+
 - "no PCBs in "ready" queue. processes must be added to ready queue."
-- if any error reading from file, delete everything already added
+
 - add arrival times, burst, priority to scheduling print outs
     - make them look like table
-- use big data file in class!
+
 - priority is screwed up
-- if input is screwed up halt everything
+
 - read me can be documentation 
 - what happens to this->selectedQueue when you switch?
  - memory leak
