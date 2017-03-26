@@ -115,7 +115,7 @@ void Controller::init() {
             Scheduler main(this->readyQueue);
             main.shortestJobFirst();
             main.updateProcessVector();
-            main.firstComeFirstServe();
+            //main.firstComeFirstServe();
             
             // loop till user exits
             std::cout << "\nEnter [0] to go back." << std::endl;
