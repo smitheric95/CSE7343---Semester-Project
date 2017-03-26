@@ -83,14 +83,14 @@ void Scheduler::sortVector(Mode m) {
 void Scheduler::shortestJobFirst() {
     int totalWait = 0, shortest = 0, totalBurstTime = 0;
     int n = (int)this->processVector->size();
-    std::vector<int> arrivaltimes;
+    std::vector<int> arrivalTimes;
     int burstTimes[n];
 
     // initialize burst times and arrival times
     for (int i = 0; i < n; i++) {
         if (i < this->processVector->size()) {
             burstTimes[i] = this->processVector->at(i)->getBurstTime();
-            arrivaltimes.push_back(this->processVector->at(i)->getArrivalTime());
+            arrivalTimes.push_back(this->processVector->at(i)->getArrivalTime());
 
             // calculate total burst time
             totalBurstTime += burstTimes[i];
@@ -115,7 +115,7 @@ void Scheduler::shortestJobFirst() {
 
         // calculate next shortest process to have arrived
         for (int i = 0; i < n; i++) {
-            if (arrivaltimes[i] <= time && burstTimes[i] > 0 &&
+            if (arrivalTimes[i] <= time && burstTimes[i] > 0 &&
                 burstTimes[i] < burstTimes[shortest])
                 shortest = i;
         }
@@ -125,7 +125,7 @@ void Scheduler::shortestJobFirst() {
             time++;
         else {
             // process finished, calculate waiting time
-            int wait = time - arrivaltimes[shortest];
+            int wait = time - arrivalTimes[shortest];
             
             std::cout << j+1 << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << time
                       << " \t\t " << (time + burstTimes[shortest]) << " \t\t " << wait << std::endl;
@@ -211,13 +211,13 @@ void Scheduler::firstComeFirstServe() {
 void Scheduler::priority() {
     int totalWait = 0, shortest = 0, remain = 0;
     int n = remain = (int)this->processVector->size();
-    std::vector<int> arrivaltimes, burstTimes;
+    std::vector<int> arrivalTimes, burstTimes;
 
     int priority[n + 1];
 
     // initialize burst times and arrival times
     for (int i = 0; i < n; i++) {
-        arrivaltimes.push_back(this->processVector->at(i)->getArrivalTime());
+        arrivalTimes.push_back(this->processVector->at(i)->getArrivalTime());
         burstTimes.push_back(this->processVector->at(i)->getBurstTime());
         priority[i] = this->processVector->at(i)->getPriority();
     }
@@ -237,7 +237,7 @@ void Scheduler::priority() {
         // loop through all processes
         for (int i = 0; i < n; i++) {
             // select the least prioritized processs to have arrived
-            if (arrivaltimes[i] <= time && priority[i] < priority[shortest] && burstTimes[i] > 0)
+            if (arrivalTimes[i] <= time && priority[i] < priority[shortest] && burstTimes[i] > 0)
                 shortest = i;
         }
 
@@ -246,16 +246,16 @@ void Scheduler::priority() {
         remain--;
 
         // calcualte how long it took to wait
-        int wait = time - arrivaltimes[shortest] - burstTimes[shortest];
+        int wait = time - arrivalTimes[shortest] - burstTimes[shortest];
         
-        std::cout << i << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << (arrivaltimes[shortest] + wait)
-        << " \t\t " << (burstTimes[shortest] + arrivaltimes[shortest] + wait) << " \t\t " << wait << std::endl;
+        std::cout << i << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << (arrivalTimes[shortest] + wait)
+        << " \t\t " << (burstTimes[shortest] + arrivalTimes[shortest] + wait) << " \t\t " << wait << std::endl;
 
         totalWait += wait;
         burstTimes[shortest] = 0;
         i++;
     }
-    std::cout << "\nAverage waiting time: " << (totalWait * 1.0) / n << std::endl;
+    std::cout << "\nAverage waiting time: " << (totalWait * 1.0) / n << std::endl << std::endl;
 }
 
 /**************************************************************************************
@@ -272,7 +272,7 @@ void Scheduler::priority() {
  **************************************************************************************/
 void Scheduler::roundRobin(int quantum) {
     int n = (int)this->processVector->size();
-    std::vector<int> waitTimes, arrivalTimes, burstTimes, schedulingOrder;
+    std::vector<int> waitTimes, arrivalTimes, burstTimes, burstBackup, schedulingOrder;
 
     // ensure the processes are sorted by ID
     sortVector(RoundRobin);
@@ -281,6 +281,7 @@ void Scheduler::roundRobin(int quantum) {
     for (auto x : *(this->processVector)) {
         arrivalTimes.push_back(x->getArrivalTime());
         burstTimes.push_back(x->getBurstTime());  // REMAINING burst time for each process
+        burstBackup.push_back(x->getBurstTime());
         waitTimes.push_back(0);
     }
 
@@ -349,9 +350,20 @@ void Scheduler::roundRobin(int quantum) {
     }
 
     float totalWait = 0;  // average wait time
-    for (int i = 0; i < n; i++) totalWait += waitTimes[i];
-    std::cout << "Scheduling order:\n";
-    for (auto x : schedulingOrder) std::cout << this->processVector->at(x)->getPID() << "\t";
-    std::cout << std::endl << "Average wait time: " << (totalWait * 1.0) / n << std::endl;
+    std::cout << "------------------- Round Robin -------------------" << std::endl;
+    std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
+    
+    for (int i = 0; i < n; i++) {
+        totalWait += waitTimes[i];
+        std::cout << "arrival: " << arrivalTimes[i] << std::endl;
+        std::cout << "burst: " << burstBackup[i] << std::endl;
+        std::cout << "wait: " << waitTimes[i] << std::endl;
+        std::cout << i+1 << " - P" << this->processVector->at(i)->getPID() << " \t\t " << (arrivalTimes[i] + waitTimes[i])
+        << " \t\t " << (burstBackup[i] + arrivalTimes[i] + waitTimes[i]) << " \t\t " << waitTimes[i] << std::endl;
+    }
+    
+    for (auto x : schedulingOrder) std::cout << this->processVector->at(x)->getPID() << std::endl;
+    
+    std::cout << std::endl << "\nAverage wait time: " << (totalWait * 1.0) / n << std::endl;
 }
 
