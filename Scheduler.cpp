@@ -185,11 +185,15 @@ void Scheduler::firstComeFirstServe() {
         // increment time
         totalBurstTime += burstTimes[i];
     }
-
+    
+    std::cout << "----------- First Come First Serve -----------" << std::endl;
+    std::cout << "Process \tStart Time \t End Time" << std::endl;
+    
     for (int i = 0; i < n; i++)
-        std::cout << "P" << this->processVector->at(i)->getPID() << ": " << waitTimes[i]
-                  << std::endl;
-    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
+        std::cout << i << " - P" << this->processVector->at(i)->getPID() << " \t\t " << (arrivalTimes[i] + waitTimes[i])
+        << " \t\t " << (burstTimes[i] + arrivalTimes[i] + waitTimes[i]) << std::endl;
+    
+    std::cout << "\nAverage waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
 /**************************************************************************************

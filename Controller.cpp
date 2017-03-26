@@ -61,6 +61,7 @@ void Controller::displayMenu(std::string menu) {
         std::cout << " #############################################" << std::endl << std::endl;
     }
     else if (menu == "add to queue") {
+        this->selectedQueue->print();
         std::cout << " #############################################" << std::endl;
         std::cout << "#                                             #" << std::endl;
         std::cout << "#  Add to queue:                              #" << std::endl;
@@ -111,11 +112,14 @@ void Controller::init() {
             }
 
             // execute processes with all four algorithms
-            printf("\033c");
-            Scheduler main(this->readyQueue);
-            main.shortestJobFirst();
-            main.updateProcessVector();
-            //main.firstComeFirstServe();
+            if (!this->readyQueue->isEmpty()) {
+                printf("\033c");
+                Scheduler main(this->readyQueue);
+                main.shortestJobFirst();
+                main.updateProcessVector();
+                main.firstComeFirstServe();
+                main.updateProcessVector();
+            } else {std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;}
             
             // loop till user exits
             std::cout << "\nEnter [0] to go back." << std::endl;
@@ -409,6 +413,9 @@ void Controller::editQueue(int queueSelection) {
         // delete from queue
         else if (modeSelection == "3") {
             while (true) {
+                printf("\033c");
+                this->selectedQueue->print();
+                displayMenu("edit queue");
                 // prompt user
                 std::cout << "\nEnter the ID of process to delete:" << std::endl;
                 std::cout << "(Enter [0] for default position.)" << std::endl;
