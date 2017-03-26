@@ -104,10 +104,11 @@ void Scheduler::shortestJobFirst() {
     burstTimes[n] = std::numeric_limits<int>::max();
     int count = 0;
 
-    std::cout << "----- Shortest Job First -----" << std::endl;
-    std::cout << "Process\tStart Time\tEnd Time" << std::endl;
+    std::cout << "----------- Shortest Job First -----------" << std::endl;
+    std::cout << "Process \tStart Time \t End Time" << std::endl;
     int time = 0;
     int j = 0;
+    
     // progress through the gantt chart
     while (time < totalBurstTime) {
         shortest = n;
@@ -125,8 +126,9 @@ void Scheduler::shortestJobFirst() {
         else {
             // process finished, calculate waiting time
             int wait = time - arrivaltimes[shortest];
-            std::cout << j << " - P" << this->processVector->at(count)->getPID() << "\t" << wait
-                      << "\t" << (wait + burstTimes[count]) << std::endl;
+            
+            std::cout << j << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << time
+                      << " \t\t " << (time+ burstTimes[shortest]) << std::endl;
 
             totalWait += wait;
 
@@ -137,7 +139,7 @@ void Scheduler::shortestJobFirst() {
             j++;
         }
     }
-    std::cout << "Average waiting time: " << (totalWait * 1.0) / n << std::endl;
+    std::cout << "\nAverage waiting time: " << (totalWait * 1.0) / n << std::endl;
 }
 
 /**************************************************************************************

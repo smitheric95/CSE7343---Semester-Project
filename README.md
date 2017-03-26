@@ -51,3 +51,4 @@ TODO:
 - read me can be documentation 
 - what happens to this->selectedQueue when you switch?
  - memory leak
+- test entering sjf example from command line
