@@ -119,6 +119,9 @@ void Controller::init() {
                 main.updateProcessVector();
                 main.firstComeFirstServe();
                 main.updateProcessVector();
+                main.priority();
+                main.updateProcessVector();
+                main.roundRobin(this->roundRobinQuantum);
             } else {std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;}
             
             // loop till user exits

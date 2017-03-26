@@ -51,4 +51,3 @@ TODO:
 - read me can be documentation 
 - what happens to this->selectedQueue when you switch?
  - memory leak
-- print before adding!!!!!
