@@ -41,8 +41,6 @@ Scheduler:
 TODO:
 
 - write documentation 
-- what happens to this->selectedQueue when you switch?
-    - memory leak
 - check output with larger amount of pids
 - out of range on priority for mock data.csv
 - delete has to delete from the correct queue

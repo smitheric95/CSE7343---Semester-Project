@@ -8,8 +8,7 @@
 
 #include "Controller.hpp"
 
-Controller::Controller()
-    : readyQueue(nullptr), waitingQueue(nullptr), roundRobinQuantum(0) {
+Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobinQuantum(0) {
     displayMenu("main");
 
     // create all necessary queues
@@ -17,7 +16,6 @@ Controller::Controller()
 
     // prompt user
     init();
-        
 }
 
 Controller::~Controller() {
@@ -122,8 +120,11 @@ void Controller::init() {
                 main.priority();
                 main.updateProcessVector();
                 main.roundRobin(this->roundRobinQuantum);
-            } else {std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;}
-            
+            }
+            else {
+                std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;
+            }
+
             // loop till user exits
             std::cout << "\nEnter [0] to go back." << std::endl;
             std::string exit;
@@ -169,31 +170,6 @@ void Controller::parseFile(std::string file) {  // go through each line
               << std::endl;
 }
 
-// edit/add PID and it's value in process table
-void Controller::editProcessTable(int PID, int value) {
-    std::unordered_map<int, int>::iterator processIndex = this->processTable.find(PID);
-
-    // edit
-    if (processIndex != this->processTable.end())
-        processIndex->second = value;
-    // add
-    else
-        this->processTable.insert(std::make_pair(PID, value));
-}
-
-// returns process status in process table, if process doesn't exist, -1
-int Controller::processStatus(int PID) {
-    std::unordered_map<int, int>::const_iterator processIndex = this->processTable.find(PID);
-
-    if (processIndex == this->processTable.end()) {
-        return -1;
-    }
-    // return the value associated with the process (0 for waiting, 1 for ready, 2 for completed)
-    else {
-        return processIndex->second;
-    }
-}
-
 void Controller::addQueues() {
     this->readyQueue = new CustomQueue("Ready");
     this->waitingQueue = new CustomQueue("Waiting");
@@ -231,7 +207,13 @@ bool Controller::addProcess(std::string line,
     int curPID = processValues[0];
 
     // check to see if PCB has been added before
-    if ((processStatus(curPID) == 0 && this->selectedQueue == this->waitingQueue) || (processStatus(curPID) == 1 && this->selectedQueue == this->readyQueue)) {
+    if ((std::find(this->waitingVector.begin(), this->waitingVector.end(), curPID) !=
+             this->waitingVector.end() &&
+         this->selectedQueue == this->waitingQueue) ||
+        (std::find(this->readyVector.begin(), this->readyVector.end(), curPID) !=
+             this->readyVector.end() &&
+         this->selectedQueue == this->readyQueue)) {
+            
         // passed from input file
         if (lineCount > 0) {
             std::cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
@@ -260,10 +242,10 @@ bool Controller::addProcess(std::string line,
     // add to selected queue
     if (this->selectedQueue->add(new ProcessControlBlock(processValues), position)) {
         // add to process table
-        if (this->selectedQueue == this->readyQueuec)
-            editProcessTable(curPID, 1);
+        if (this->selectedQueue == this->readyQueue)
+            this->readyVector.push_back(curPID);
         else
-            editProcessTable(curPID, 0);
+            this->waitingVector.push_back(curPID);
     }
     // given position was too large
     else {
@@ -429,6 +411,13 @@ void Controller::editQueue(int queueSelection) {
                 // PCB was successfully deleted
                 if (std::all_of(pid.begin(), pid.end(), ::isdigit) &&
                     this->selectedQueue->remove(std::stoi(pid)) != nullptr) {
+                    
+                    // remove from respective vector
+                    if (this->selectedQueue == this->readyQueue)
+                        this->readyVector.erase(std::remove(this->readyVector.begin(), this->readyVector.end(), std::stoi(pid)), this->readyVector.end());
+                    else
+                        this->waitingVector.erase(std::remove(this->waitingVector.begin(), this->waitingVector.end(), std::stoi(pid)), this->waitingVector.end());
+
                     printf("\033c");
                     std::cout << "Process P" << pid << " deleted.\n" << std::endl;
                     break;
