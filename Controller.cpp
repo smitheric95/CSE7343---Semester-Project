@@ -231,7 +231,7 @@ bool Controller::addProcess(std::string line,
     int curPID = processValues[0];
 
     // check to see if PCB has been added before
-    if (processStatus(curPID) > -1) {
+    if ((processStatus(curPID) == 0 && this->selectedQueue == this->waitingQueue) || (processStatus(curPID) == 1 && this->selectedQueue == this->readyQueue)) {
         // passed from input file
         if (lineCount > 0) {
             std::cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
@@ -260,7 +260,7 @@ bool Controller::addProcess(std::string line,
     // add to selected queue
     if (this->selectedQueue->add(new ProcessControlBlock(processValues), position)) {
         // add to process table
-        if (this->selectedQueue->getName() == "ready")
+        if (this->selectedQueue == this->readyQueuec)
             editProcessTable(curPID, 1);
         else
             editProcessTable(curPID, 0);

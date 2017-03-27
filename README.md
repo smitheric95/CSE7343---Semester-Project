@@ -40,7 +40,11 @@ Scheduler:
 	
 TODO:
 
-- "no PCBs in "ready" queue. processes must be added to ready queue."
 - write documentation 
 - what happens to this->selectedQueue when you switch?
     - memory leak
+- check output with larger amount of pids
+- out of range on priority for mock data.csv
+- delete has to delete from the correct queue
+    - check to see what ->second islear
+"waiting queue selected"
