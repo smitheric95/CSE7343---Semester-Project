@@ -39,15 +39,8 @@ Scheduler:
 	
 	
 TODO:
-- improve output with new lines and tabs
 
 - "no PCBs in "ready" queue. processes must be added to ready queue."
-
-- add arrival times, burst, priority to scheduling print outs
-    - make them look like table
-
-- priority is screwed up
-
-- read me can be documentation 
+- write documentation 
 - what happens to this->selectedQueue when you switch?
- - memory leak
+    - memory leak
