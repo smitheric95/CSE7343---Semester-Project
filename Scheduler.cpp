@@ -104,7 +104,7 @@ void Scheduler::shortestJobFirst() {
     burstTimes[n] = std::numeric_limits<int>::max();
     int count = 0;
 
-    std::cout << "----------------- Shortest Job First -----------------" << std::endl;
+    std::cout << "------------------- Shortest Job First -------------------" << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
     int time = 0;
     int j = 0;
@@ -186,7 +186,7 @@ void Scheduler::firstComeFirstServe() {
         totalBurstTime += burstTimes[i];
     }
     
-    std::cout << "---------------- First Come First Serve ----------------" << std::endl;
+    std::cout << "------------------ First Come First Serve ------------------" << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
     
     for (int i = 0; i < n; i++)
@@ -227,7 +227,7 @@ void Scheduler::priority() {
     int time = 0;
     int i = 1;
     
-    std::cout << "---------------------- Priority ----------------------" << std::endl;
+    std::cout << "------------------------ Priority ------------------------" << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
     
     // increment backwards through number of processes
@@ -360,7 +360,7 @@ void Scheduler::roundRobin(int quantum) {
     float totalWait = 0;  // average wait time
     for (auto x : totalWaitTimes) totalWait += x;
     
-    std::cout << "------------------------------- Round Robin -------------------------------" << std::endl;
+    std::cout << "--------------------------------- Round Robin ---------------------------------" << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time \t Total Wait Time" << std::endl;
     
     for (int i = 0; i < schedulingOrder.size(); i++) {

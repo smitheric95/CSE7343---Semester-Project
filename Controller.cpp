@@ -408,9 +408,13 @@ void Controller::editQueue(int queueSelection) {
                 std::cin.clear();
                 std::cin >> pid;
 
+                ProcessControlBlock* deletedProcess = this->selectedQueue->remove(std::stoi(pid));
+                
                 // PCB was successfully deleted
                 if (std::all_of(pid.begin(), pid.end(), ::isdigit) &&
-                    this->selectedQueue->remove(std::stoi(pid)) != nullptr) {
+                     deletedProcess != nullptr) {
+                    
+                    delete deletedProcess;
                     
                     // remove from respective vector
                     if (this->selectedQueue == this->readyQueue)

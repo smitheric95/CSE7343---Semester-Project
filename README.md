@@ -43,6 +43,3 @@ TODO:
 - write documentation 
 - check output with larger amount of pids
 - out of range on priority for mock data.csv
-- delete has to delete from the correct queue
-    - check to see what ->second islear
-"waiting queue selected"
