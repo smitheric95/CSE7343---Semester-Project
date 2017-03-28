@@ -242,11 +242,11 @@ bool Controller::addProcess(std::string line,
         // passed from input file
         if (lineCount > 0) {
             std::cout << "Error: on line " << lineCount
-            << ". PID must be from <0-99999>. Command ignored." << std::endl;
+            << ". PID must be from <1-99999>. Command ignored." << std::endl;
         }
         // passed from command line
         else {
-            std::cout << "Error: PID must be from <0-99999>. Command ignored." << std::endl;
+            std::cout << "Error: PID must be from <1-99999>. Command ignored." << std::endl;
         }
         return false;
     }
