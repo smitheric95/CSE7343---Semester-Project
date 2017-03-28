@@ -177,7 +177,7 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line, std::regex("^0*([1-9]{1,5})+0*( *, *0*[0-9]{1,4})* *$")) &&
+    return (std::regex_match(line, std::regex("^(0*[0-9]{1,5})( *, *0*[0-9]{1,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 
@@ -235,6 +235,18 @@ bool Controller::addProcess(std::string line,
         // passed from command line
         else {
             std::cout << "Error: Priority must be between 1 and 4. Command ignored." << std::endl;
+        }
+        return false;
+    }
+    else if (processValues[0] < 1) {
+        // passed from input file
+        if (lineCount > 0) {
+            std::cout << "Error: on line " << lineCount
+            << ". PID must be from <0-99999>. Command ignored." << std::endl;
+        }
+        // passed from command line
+        else {
+            std::cout << "Error: PID must be from <0-99999>. Command ignored." << std::endl;
         }
         return false;
     }
