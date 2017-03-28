@@ -244,7 +244,7 @@ void Scheduler::priority() {
         // execute the shortest process
         time += burstTimes[shortest];
         remain--;
-
+        
         // calcualte how long it took to wait
         int wait = time - arrivalTimes[shortest] - burstTimes[shortest];
         
@@ -281,7 +281,6 @@ void Scheduler::roundRobin(int quantum) {
     for (auto x : *(this->processVector)) {
         arrivalTimes.push_back(x->getArrivalTime());
         totalBurstTimes.push_back(x->getBurstTime());  // REMAINING burst time for each process
-        // burstBackup.push_back(x->getBurstTime());
         totalWaitTimes.push_back(0);
         lastFinishTime.push_back(0);
     }

@@ -156,7 +156,7 @@ void Controller::parseFile(std::string file) {  // go through each line
             if (addProcess(line, file, lineCount))
                 validProcesses++;
         }
-        // format is wrong, stop program
+        // format is wrong, don't add process
         else {
             std::cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
                       << std::endl;
@@ -177,7 +177,7 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line, std::regex("^0*[1-9]{1,5}( *, *0*[0-9]{1,4})* *$")) &&
+    return (std::regex_match(line, std::regex("^0*([1-9]{1,5})+0*( *, *0*[0-9]{1,4})* *$")) &&
             std::count(line.begin(), line.end(), ',') == 3);
 }
 
@@ -238,7 +238,6 @@ bool Controller::addProcess(std::string line,
         }
         return false;
     }
-
     // add to selected queue
     if (this->selectedQueue->add(new ProcessControlBlock(processValues), position)) {
         // add to process table
