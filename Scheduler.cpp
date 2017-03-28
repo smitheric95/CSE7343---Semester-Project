@@ -364,7 +364,7 @@ void Scheduler::roundRobin(int quantum) {
     std::cout << "Process \tStart Time \t End Time \t Wait Time \t Total Wait Time" << std::endl;
     
     for (int i = 0; i < schedulingOrder.size(); i++) {
-        std::cout << i+1 << " - P" << this->processVector->at( schedulingOrder[i] )->getPID() << " \t\t ";
+        std::cout << i+1 << " - P" << this->processVector->at( schedulingOrder[i] )->getPID() << "  \t ";
         std::cout <<  startTimes[i] << " \t\t ";
         std::cout << startTimes[i] + burstTimes[i] << " \t\t ";
         std::cout << (startTimes[i] - lastFinishTime[ schedulingOrder[i] ])  << " \t\t ";
