@@ -127,7 +127,7 @@ void Scheduler::shortestJobFirst() {
             // process finished, calculate waiting time
             int wait = time - arrivalTimes[shortest];
             
-            std::cout << j+1 << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << time
+            std::cout << j+1 << " - P" << this->processVector->at(shortest)->getPID() << "  \t " << time
                       << " \t\t " << (time + burstTimes[shortest]) << " \t\t " << wait << std::endl;
 
             totalWait += wait;
@@ -190,7 +190,7 @@ void Scheduler::firstComeFirstServe() {
     std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
     
     for (int i = 0; i < n; i++)
-        std::cout << i+1 << " - P" << this->processVector->at(i)->getPID() << " \t\t " << (arrivalTimes[i] + waitTimes[i])
+        std::cout << i+1 << " - P" << this->processVector->at(i)->getPID() << "  \t " << (arrivalTimes[i] + waitTimes[i])
         << " \t\t " << (burstTimes[i] + arrivalTimes[i] + waitTimes[i]) << " \t\t " << waitTimes[i] << std::endl;
     
     std::cout << "\nAverage waiting time: " << (totalWait * 1.0) / n << std::endl << std::endl;
@@ -248,7 +248,7 @@ void Scheduler::priority() {
         // calcualte how long it took to wait
         int wait = time - arrivalTimes[shortest] - burstTimes[shortest];
         
-        std::cout << i << " - P" << this->processVector->at(shortest)->getPID() << " \t\t " << (arrivalTimes[shortest] + wait)
+        std::cout << i << " - P" << this->processVector->at(shortest)->getPID() << "  \t " << (arrivalTimes[shortest] + wait)
         << " \t\t " << (burstTimes[shortest] + arrivalTimes[shortest] + wait) << " \t\t " << wait << std::endl;
 
         totalWait += wait;
