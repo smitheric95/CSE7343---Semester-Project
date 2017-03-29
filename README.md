@@ -41,5 +41,5 @@ Scheduler:
 TODO:
 
 - write documentation 
-- out of range on priority for mock data.csv
 - can't change file after adding file
+- format code

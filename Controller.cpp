@@ -347,6 +347,8 @@ void Controller::editQueue(int queueSelection) {
                 // The file was found, parse it
                 if (filename != "0")
                     parseFile(filename);
+                
+                this->file.close();
             }
             // select command line to build queues
             else if (modeSelection == "2") {
