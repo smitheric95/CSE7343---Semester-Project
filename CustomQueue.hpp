@@ -41,14 +41,5 @@ class CustomQueue {
     bool isEmpty();
     void print();
     int getSize();
-    
-    // scheduler
-    int comparePCBs(ProcessControlBlock* LHS, ProcessControlBlock* RHS, Mode m = SJF);
-    void sortVector(Mode m);
-    void shortestJobFirst();
-    void firstComeFirstServe();
-    void priority();
-    void roundRobin(int quantum);
-    
 };
 #endif /* CustomQueue_hpp */

@@ -1,45 +1,65 @@
-# CSE7343---Semester-Project
+#################################################
+# CSE7343 - Semester Project                    #
+#                                               #
+# On my honor, I have neither given nor         #
+# received any unauthorized aid on this work.   #
+#                                               #
+# Eric Smith                                    #
+# March 29th, 2017                              #
+#                                               #
+#################################################
 
-
-
-Reference:
+References:
 	https://www.tutorialspoint.com/operating_system/os_process_scheduling.htm
+    http://program-aaag.rhcloud.com/c-program-for-shortest-job-first-scheduling-sjf/
+    http://www.cwithabhas.com/2012/03/fcfc-first-come-first-serve-with.html
+    http://program-aaag.rhcloud.com/c-program-for-non-preemptive-priority-scheduling-program-in-c/
+    https://www.codeproject.com/Articles/17583/Round-Robin-Scheduling0
+    https://stackoverflow.com
+    http://www.cplusplus.com
 
-Simulated OS
+This project is meant to showcase the Simulated OS as described in 
+cse7343_Project_Sp2017.pdf and CSE7343_DemoInstructions.pdf
 
-- data structuring should occur in terms of PCBs
-	- a PCB contains all the info about a particular process
+Instructions on how to compile, run, and use the program, please refer to 
+cse7343-documentation.pdf
+
+Class Breakdown:
+
+ProcessControlBlock:
+    - contains all information about a PCB
+    - equivalent to Node of a linked list
+
+CustomQueue:
+    - made up of ProcessControlBlocks
+    - used to implement Ready and Waiting queues
+    - equivalent to a linked list of PCBs
+    - can add, remove, and compare PCBs
+
+Scheduler:
+    - has a pointer to the Ready queue
+    - contains a vector of ProcessControlBlock pointers in the Ready queue for scheduling
+      (Note: Scheduling algorithms do not change the order of the Ready queue but its vector)
+	- has 4 scheduling algorithms (SJF, FCFS, Priority, Round Robin) based off its mode
+    - can sort process vector based off mode
+
+Controller:
+    - displays a basic UI for the user to navigate through
+    - contains a ready and waiting queue for the user to edit
+    - parses input from files and command line to edit queues
+    - contains a ready and waiting vector to keep track of added/deleted processes
+    - creates a Scheduler to run all four scheduling algorithms
 
 
-Class ProcessControlBlock:
-	- priority
-	- pointer(s) to other PCBs
-	- PID
-Queue:
-	<Type: Ready or waiting (more to come)>
-	+ add(PCB, position):
-		default is tail
-	+ delete(PID)
-	+ print()
+Note to the grader:
 
-Controller (OS):
-	(will add, delete from its queues)
-	- readyQueue - always takes new processes
-	- waitingQueue
-		- (able to move between queues)
-	- must keep track of which pids have been added (with table)
-	- takes in file input or user input (error handling)
-	- takes user input
-	- has a scheduler
+I worked very hard on this program to ensure its quality was up to my standards.
+The entire project took me about a month, half of which was to minimize bugs.
+The program can handle a wide variety of user error and malicious use.
+I also thoroughly tested the program's memory usage with a tool called Valgrind.
+All dynamically allocated memory is accounted for, and there are no memory leaks
+or segmentation faults.
 
-Scheduler: 
-	(handles removal of running process from CPU and selection of another
-		based on a strategy)
-	<Type: SJF, FCFS, Non-preemptive Priority, and Round Robin>
-	
-	
-TODO:
+Please do your best to break the program.
 
-- write documentation 
-- can't change file after adding file
-- format code
+- Eric

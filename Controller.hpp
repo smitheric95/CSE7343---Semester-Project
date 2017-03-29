@@ -45,9 +45,6 @@ public:
     void parseFile(std::string file);    
     bool lineIsValid(const std::string &line);
     bool addProcess(std::string line, std::string file=std::string(), int lineCount=0, std::string position="default");
-    int getRoundRobinQuantum();
-    void setRoundRobinQuantum(int q);
-    std::string getSchedulingMode(Mode m);
     void editQueue(int queueSelection);
     
 };

@@ -15,16 +15,13 @@
 
 class Scheduler {
 private:
-    Mode m;
     CustomQueue* queue;
     std::vector<ProcessControlBlock*> * processVector;
     
 public:
-    Scheduler(CustomQueue* queue, Mode m=SJF);
+    Scheduler(CustomQueue* queue);
     ~Scheduler();
     void updateProcessVector();
-    void changeMode(Mode m);
-    Mode getMode();
     void sortVector(Mode m);
     
     // scheduling algorithms

@@ -8,7 +8,7 @@
 
 #include "Scheduler.hpp"
 
-Scheduler::Scheduler(CustomQueue* queue, Mode m) : queue(queue), m(m), processVector(nullptr) {
+Scheduler::Scheduler(CustomQueue* queue) : queue(queue), processVector(nullptr) {
     updateProcessVector();
 }
 
@@ -33,22 +33,16 @@ void Scheduler::updateProcessVector() {
     }
 }
 
-void Scheduler::changeMode(Mode m) {
-    this->m = m;
-}
-
-Mode Scheduler::getMode() {
-    return this->m;
-}
-
 // sorts vector based off mode
 void Scheduler::sortVector(Mode m) {
     if (m == SJF)
+        // sort process vector by burst time
         std::sort(this->processVector->begin(), this->processVector->end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
                       return a->getBurstTime() < b->getBurstTime();
                   });
     else if (m == FCFS)
+        // sort process vector by arrival, then priority
         std::sort(this->processVector->begin(), this->processVector->end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
                       // if same arrival, sort by priority
@@ -57,11 +51,12 @@ void Scheduler::sortVector(Mode m) {
                       return a->getArrivalTime() < b->getArrivalTime();
                   });
     else if (m == RoundRobin)
+        // sort process vector by PID
         std::sort(this->processVector->begin(), this->processVector->end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
                       return a->getPID() < b->getPID();
                   });
-    else  // Priority
+    else  // sort process vector by PID
         std::sort(this->processVector->begin(), this->processVector->end(),
                   [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
                       return a->getPriority() < b->getPriority();
@@ -187,7 +182,7 @@ void Scheduler::firstComeFirstServe() {
         totalBurstTime += burstTimes[i];
     }
 
-    std::cout << "------------------ First Come First Serve ------------------" << std::endl;
+    std::cout << "----------------- First Come First Serve -----------------" << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time" << std::endl;
 
     for (int i = 0; i < n; i++)
@@ -283,6 +278,9 @@ void Scheduler::priority() {
  * It has been modified to handle a dynamic amount of processes, processes with PIDs of 0,
  * process IDs in any order, and to fit within the context of this application.
  *
+ * When choosing which process to execute next, this implementation selects the next 
+ * process to have arrived.
+ *
  **************************************************************************************/
 void Scheduler::roundRobin(int quantum) {
     int n = (int)this->processVector->size();
@@ -306,7 +304,6 @@ void Scheduler::roundRobin(int quantum) {
 
     // indicates whether a process was scheduled as i changed from 0 to n-1 in the next for loop
     bool processScheduled = false;
-
     // while there are uncompleted processes
     for (int i = 0; processesCompleted < n; i = (i + 1) % n) {
         // find the next uncompleted process to arrive
@@ -373,7 +370,7 @@ void Scheduler::roundRobin(int quantum) {
     float totalWait = 0;  // average wait time
     for (auto x : totalWaitTimes) totalWait += x;
 
-    std::cout << "--------------------------------- Round Robin ---------------------------------"
+    std::cout << "--------------------------------- Round Robin ----------------------------------"
               << std::endl;
     std::cout << "Process \tStart Time \t End Time \t Wait Time \t Total Wait Time" << std::endl;
 

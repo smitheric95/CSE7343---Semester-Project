@@ -120,13 +120,16 @@ void Controller::init() {
                 main.priority();
                 main.updateProcessVector();
                 main.roundRobin(this->roundRobinQuantum);
+                main.updateProcessVector();
             }
             else {
+                printf("\033c");
                 std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;
             }
 
             // loop till user exits
             std::cout << "\nEnter [0] to go back." << std::endl;
+            this->roundRobinQuantum = -1;
             std::string exit;
             while (true) {
                 std::cin >> exit;
@@ -265,18 +268,6 @@ bool Controller::addProcess(std::string line,
     }
 
     return true;
-}
-
-int Controller::getRoundRobinQuantum() {
-    return this->roundRobinQuantum;
-}
-void Controller::setRoundRobinQuantum(int q) {
-    this->roundRobinQuantum = q;
-}
-
-std::string Controller::getSchedulingMode(Mode m) {
-    std::string arr[4] = {"SJF", "FCFS", "Priority", "Round Robin"};
-    return arr[m];
 }
 
 // allows user to view queue
