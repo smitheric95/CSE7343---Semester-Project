@@ -146,10 +146,20 @@ void Controller::init() {
         else if (modeSelection == 4) {
             // ensure the ready queue isn't empty
             if (!this->readyQueue->isEmpty()) {
-                cout << "Please enter the number of available memory blocks: " << endl;
+                cout << "Please enter the number of available memory blocks: <1-999>" << endl;
                 string numBlocks;
-                
                 cin >> numBlocks;
+                
+                // ensure that numblocks is a number
+                while (!all_of(numBlocks.begin(), numBlocks.end(), ::isdigit) || stoi(numBlocks) < 1 || stoi(numBlocks) > 999) {
+                    cout << "Invalid input. Please enter the number of available memory blocks: <1-999>" << endl;
+                    cin >> numBlocks;
+                }
+                
+                int n = stoi(numBlocks);
+                for (int i = 0; i < n; i++) {
+                    cout << n;
+                }
             }
             else {
                 // loop till user exits
