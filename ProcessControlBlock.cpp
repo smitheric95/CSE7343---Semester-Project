@@ -8,12 +8,14 @@
 
 #include "ProcessControlBlock.hpp"
 
+using namespace std;
+
 ProcessControlBlock::ProcessControlBlock()
     : PID(0), arrivalTime(-1), burstTime(-1), priority(0), next(nullptr) {
 }
 
 // initialize PCB from input vector
-ProcessControlBlock::ProcessControlBlock(std::vector<int> values)
+ProcessControlBlock::ProcessControlBlock(vector<int> values)
     : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), priority(values[3]), next(nullptr) {
 }
 
@@ -58,6 +60,6 @@ void ProcessControlBlock::setNext(ProcessControlBlock* next) {
 }
 
 void ProcessControlBlock::print() {
-    std::cout << "ID: " << this->getPID() << ", ArrivalTime: " << getArrivalTime()
+    cout << "ID: " << this->getPID() << ", ArrivalTime: " << getArrivalTime()
               << ", BurstTime: " << getBurstTime() << ", Priority: " << this->getPriority();
 }

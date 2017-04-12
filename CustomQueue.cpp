@@ -9,10 +9,12 @@
 #include "CustomQueue.hpp"
 #include <typeinfo>
 
-CustomQueue::CustomQueue(std::string name) : head(nullptr), tail(head), name(name), size(0) {
+using namespace std;
+
+CustomQueue::CustomQueue(string name) : head(nullptr), tail(head), name(name), size(0) {
 }
 
-CustomQueue::CustomQueue(std::string name, ProcessControlBlock* head)
+CustomQueue::CustomQueue(string name, ProcessControlBlock* head)
     : head(head), tail(head), name(name), size(0) {
 }
 
@@ -35,7 +37,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
 
     // queue is empty
     if (this->head == nullptr) {
-        std::cout << "\nQueue is empty." << std::endl;
+        cout << "\nQueue is empty." << endl;
         return nullptr;
     }
     
@@ -69,7 +71,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
             else {
                 // PID not found
                 if (cur->getNext() == this->tail) {
-                    std::cout << "Failed to delete process: PID " << PID << " not found." << std::endl;
+                    cout << "Failed to delete process: PID " << PID << " not found." << endl;
                 }
             }
             cur = cur->getNext();
@@ -82,7 +84,7 @@ ProcessControlBlock* CustomQueue::remove(int PID) {
 
 // add PCB to a posiiton of the queue
 // returns true if the PCB was successfully added
-bool CustomQueue::add(ProcessControlBlock* PCB, std::string position) {
+bool CustomQueue::add(ProcessControlBlock* PCB, string position) {
     // default add to tail
     if (position == "default") {
         if (this->tail != nullptr)
@@ -98,7 +100,7 @@ bool CustomQueue::add(ProcessControlBlock* PCB, std::string position) {
     }
     
     // turn position into int
-    int pos = std::stoi(position);
+    int pos = stoi(position);
     
     // add to head
     if (pos == 0) {
@@ -134,7 +136,7 @@ bool CustomQueue::add(ProcessControlBlock* PCB, std::string position) {
 // return PCB without removing
 ProcessControlBlock* CustomQueue::peek() {
     if (this->isEmpty()) {
-        std::cout << "QUEUE IS EMPTY" << std::endl;
+        cout << "QUEUE IS EMPTY" << endl;
         return nullptr;
     }
 
@@ -142,7 +144,7 @@ ProcessControlBlock* CustomQueue::peek() {
 }
 
 // return name of queue
-std::string CustomQueue::getName() {
+string CustomQueue::getName() {
     return this->name;
 }
 
@@ -158,26 +160,26 @@ bool CustomQueue::isEmpty() {
 // print the contents of the queue
 void CustomQueue::print() {
     if (this->isEmpty())
-        std::cout << "Queue is empty.\n" << std::endl;
+        cout << "Queue is empty.\n" << endl;
     else {
-        std::cout << "---------------------- " << this->getName() << " Queue ----------------------"
-                  << std::endl;
+        cout << "---------------------- " << this->getName() << " Queue ----------------------"
+                  << endl;
         ProcessControlBlock* cur = this->head;
 
         int i = 0;
         while (cur != nullptr) {
-            std::cout << i << " - ";
+            cout << i << " - ";
             cur->print();
             if (cur == this->head)
-                std::cout << " (Head) ";
+                cout << " (Head) ";
             else if (cur == this->tail)
-                std::cout << " (Tail) ";
+                cout << " (Tail) ";
             
-            std::cout << std::endl;
+            cout << endl;
             cur = cur->getNext();
             i++;
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 }
 

@@ -8,6 +8,8 @@
 
 #include "Controller.hpp"
 
+using namespace std;
+
 Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobinQuantum(0) {
     displayMenu("main");
 
@@ -27,64 +29,66 @@ Controller::~Controller() {
 }
 
 // simply displays the main menu
-void Controller::displayMenu(std::string menu) {
+void Controller::displayMenu(string menu) {
     if (menu == "main") {
         printf("\033c");
-        std::cout << " #############################################" << std::endl;
-        std::cout << "#  Welcome to EricOS                          #" << std::endl;
-        std::cout << "#  Version 1.0                                #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  Main Menu:                                 #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [1] Edit Ready Queue                       #" << std::endl;
-        std::cout << "#  [2] Edit Waiting Queue                     #" << std::endl;
-        std::cout << "#  [3] Execute processes                      #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [0] Exit                                   #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << " ############################################ " << std::endl << std::endl;
-        std::cout << "Please select a mode: ";
+        cout << " #############################################" << endl;
+        cout << "#  Welcome to EricOS                          #" << endl;
+        cout << "#  Version 1.0                                #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  Main Menu:                                 #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [1] Edit Ready Queue                       #" << endl;
+        cout << "#  [2] Edit Waiting Queue                     #" << endl;
+        cout << "#  [3] Execute Processes                      #" << endl;
+        cout << "#  [4] Calculate Memory Usage                 #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [0] Exit                                   #" << endl;
+        cout << "#                                             #" << endl;
+        cout << " ############################################ " << endl << endl;
+        cout << "Please select a mode: ";
     }
     else if (menu == "edit queue") {
-        std::cout << " #############################################" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  Edit queue:                                #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [1] Print Queue                            #" << std::endl;
-        std::cout << "#  [2] Add to Queue                           #" << std::endl;
-        std::cout << "#  [3] Delete from Queue                      #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [0] Go Back                                #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << " #############################################" << std::endl << std::endl;
+        cout << " #############################################" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  Edit queue:                                #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [1] Print Queue                            #" << endl;
+        cout << "#  [2] Add to Queue                           #" << endl;
+        cout << "#  [3] Delete from Queue                      #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [0] Go Back                                #" << endl;
+        cout << "#                                             #" << endl;
+        cout << " #############################################" << endl << endl;
     }
     else if (menu == "add to queue") {
         this->selectedQueue->print();
-        std::cout << " #############################################" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  Add to queue:                              #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [1] Add from file                          #" << std::endl;
-        std::cout << "#  [2] Add from command line                  #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << "#  [0] Go Back                                #" << std::endl;
-        std::cout << "#                                             #" << std::endl;
-        std::cout << " #############################################" << std::endl << std::endl;
-        std::cout << "Please select a mode: ";
+        cout << " #############################################" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  Add to queue:                              #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [1] Add from file                          #" << endl;
+        cout << "#  [2] Add from command line                  #" << endl;
+        cout << "#                                             #" << endl;
+        cout << "#  [0] Go Back                                #" << endl;
+        cout << "#                                             #" << endl;
+        cout << " #############################################" << endl << endl;
+        cout << "Please select a mode: ";
     }
+    else {cout << "incorrect menu called?" << endl;}
 }
 
 void Controller::init() {
     int modeSelection = 0;
 
     // while the user has not exited
-    while (std::cin >> modeSelection) {
+    while (cin >> modeSelection) {
         // number of times a user has been prompted for a particular command
         int promptCount = 0;
 
         // exit
         if (modeSelection == 0) {
-            std::cout << "Goodbye!" << std::endl;
+            cout << "Goodbye!" << endl;
             break;
         }
 
@@ -97,14 +101,14 @@ void Controller::init() {
             // prompt for quantum
             promptCount = 0;
             while (this->roundRobinQuantum < 1 || this->roundRobinQuantum > 1000) {
-                std::cout << "Please enter a quantum for Round Robin: <1-999>" << std::endl;
-                std::cin >> this->roundRobinQuantum;
+                cout << "Please enter a quantum for Round Robin: <1-999>" << endl;
+                cin >> this->roundRobinQuantum;
 
                 // check for errors
                 if (promptCount > 0) {
-                    std::cout << "Incorrect input. Please try again." << std::endl;
-                    std::cin.clear();
-                    std::cin.ignore(1000, '\n');
+                    cout << "Incorrect input. Please try again." << endl;
+                    cin.clear();
+                    cin.ignore(1000, '\n');
                 }
                 promptCount++;
             }
@@ -124,21 +128,43 @@ void Controller::init() {
             }
             else {
                 printf("\033c");
-                std::cout << "Ready Queue is empty. Please go back and add processes." << std::endl;
+                cout << "Ready Queue is empty. Please go back and add processes." << endl;
             }
 
             // loop till user exits
-            std::cout << "\nEnter [0] to go back." << std::endl;
+            cout << "\nEnter [0] to go back." << endl;
             this->roundRobinQuantum = -1;
-            std::string exit;
+            string exit;
             while (true) {
-                std::cin >> exit;
+                cin >> exit;
                 if (exit == "0")
                     break;
+                cout << "\nEnter [0] to go back." << endl;
+            }
+        }
+        // calculate memory usage
+        else if (modeSelection == 4) {
+            // ensure the ready queue isn't empty
+            if (!this->readyQueue->isEmpty()) {
+                cout << "Please enter the number of available memory blocks: " << endl;
+                string numBlocks;
+                
+                cin >> numBlocks;
+            }
+            else {
+                // loop till user exits
+                cout << "Processes must first be entered into the ready queue. \nEnter [0] to go back." << endl;
+                string exit;
+                while (true) {
+                    cin >> exit;
+                    if (exit == "0")
+                        break;
+                    cout << "Processes must first be entered into the ready queue. \nEnter [0] to go back." << endl;
+                }
             }
         }
         else {
-            std::cout << "Incorrect input. Please try again: " << std::endl;
+            cout << "Incorrect input. Please try again: " << endl;
         }
 
         displayMenu("main");
@@ -146,8 +172,8 @@ void Controller::init() {
 }
 
 // parse file given by user, build processTable
-void Controller::parseFile(std::string file) {  // go through each line
-    std::string line;
+void Controller::parseFile(string file) {  // go through each line
+    string line;
     int lineCount = 0;
     int validProcesses = 0;
 
@@ -161,16 +187,16 @@ void Controller::parseFile(std::string file) {  // go through each line
         }
         // format is wrong, don't add process
         else {
-            std::cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
-                      << std::endl;
-            std::cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>" << std::endl << std::endl;
+            cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
+                      << endl;
+            cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>" << endl << endl;
         }
     }
 
-    std::cout << std::endl
+    cout << endl
               << validProcesses << " processes successfully entered. "
               << (lineCount - validProcesses) << " errors generated.\n"
-              << std::endl;
+              << endl;
 }
 
 void Controller::addQueues() {
@@ -179,52 +205,52 @@ void Controller::addQueues() {
 }
 
 // returns true if a line of input is syntactically valid
-bool Controller::lineIsValid(const std::string& line) {
-    return (std::regex_match(line, std::regex("^(0*[0-9]{1,5})( *, *0*[0-9]{1,4})* *$")) &&
-            std::count(line.begin(), line.end(), ',') == 3);
+bool Controller::lineIsValid(const string& line) {
+    return (regex_match(line, regex("^(0*[0-9]{1,5})( *, *0*[0-9]{1,4})* *$")) &&
+            count(line.begin(), line.end(), ',') == 3);
 }
 
 // takes a valid input line and turns into a PCB
 // PCB is added to processTable and waitingQueue
 // returns true if PCB is sucessfully added
-bool Controller::addProcess(std::string line,
-                            std::string file,
+bool Controller::addProcess(string line,
+                            string file,
                             int lineCount,
-                            std::string position) {
+                            string position) {
     // store process values
-    std::vector<int> processValues;
-    std::stringstream tempStream(line);
+    vector<int> processValues;
+    stringstream tempStream(line);
 
     // split string up by commas
     while (tempStream.good()) {
-        std::string substr;
-        std::getline(tempStream, substr, ',');
+        string substr;
+        getline(tempStream, substr, ',');
 
         // remove white space
-        substr.erase(std::remove(substr.begin(), substr.end(), ' '), substr.end());
+        substr.erase(remove(substr.begin(), substr.end(), ' '), substr.end());
 
         // convert to int before pushing to vector
-        processValues.push_back(std::stoi(substr));
+        processValues.push_back(stoi(substr));
     }
 
     int curPID = processValues[0];
 
     // check to see if PCB has been added before
-    if ((std::find(this->waitingVector.begin(), this->waitingVector.end(), curPID) !=
+    if ((find(this->waitingVector.begin(), this->waitingVector.end(), curPID) !=
              this->waitingVector.end() &&
          this->selectedQueue == this->waitingQueue) ||
-        (std::find(this->readyVector.begin(), this->readyVector.end(), curPID) !=
+        (find(this->readyVector.begin(), this->readyVector.end(), curPID) !=
              this->readyVector.end() &&
          this->selectedQueue == this->readyQueue)) {
             
         // passed from input file
         if (lineCount > 0) {
-            std::cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
-                      << std::endl;
+            cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
+                      << endl;
         }
         // passed from command line
         else {
-            std::cout << "Error: Duplicate process. Command ignored." << std::endl;
+            cout << "Error: Duplicate process. Command ignored." << endl;
         }
         return false;
     }
@@ -232,24 +258,24 @@ bool Controller::addProcess(std::string line,
     else if (processValues[3] == 0 || processValues[3] > 4) {
         // passed from input file
         if (lineCount > 0) {
-            std::cout << "Error: on line " << lineCount
-                      << ". Priority must be between 1 and 4. Command ignored." << std::endl;
+            cout << "Error: on line " << lineCount
+                      << ". Priority must be between 1 and 4. Command ignored." << endl;
         }
         // passed from command line
         else {
-            std::cout << "Error: Priority must be between 1 and 4. Command ignored." << std::endl;
+            cout << "Error: Priority must be between 1 and 4. Command ignored." << endl;
         }
         return false;
     }
     else if (processValues[0] < 1) {
         // passed from input file
         if (lineCount > 0) {
-            std::cout << "Error: on line " << lineCount
-            << ". PID must be from <1-99999>. Command ignored." << std::endl;
+            cout << "Error: on line " << lineCount
+            << ". PID must be from <1-99999>. Command ignored." << endl;
         }
         // passed from command line
         else {
-            std::cout << "Error: PID must be from <1-99999>. Command ignored." << std::endl;
+            cout << "Error: PID must be from <1-99999>. Command ignored." << endl;
         }
         return false;
     }
@@ -263,7 +289,7 @@ bool Controller::addProcess(std::string line,
     }
     // given position was too large
     else {
-        std::cout << "Error. Given position was too large." << std::endl;
+        cout << "Error. Given position was too large." << endl;
         return false;
     }
 
@@ -282,11 +308,11 @@ void Controller::editQueue(int queueSelection) {
     printf("\033c");
     displayMenu("edit queue");
 
-    std::string modeSelection = "0";  // reset mode selection
+    string modeSelection = "0";  // reset mode selection
     int promptCount = 0;
-    std::cout << "Select operation to perform on " << this->selectedQueue->getName() << " queue: ";
+    cout << "Select operation to perform on " << this->selectedQueue->getName() << " queue: ";
 
-    while (std::cin >> modeSelection) {
+    while (cin >> modeSelection) {
         if (modeSelection == "0") {
             printf("\033c");
             break;
@@ -302,29 +328,29 @@ void Controller::editQueue(int queueSelection) {
         else if (modeSelection == "2") {
             printf("\033c");
             displayMenu("add to queue");
-            std::cin.clear();
-            std::cin >> modeSelection;
+            cin.clear();
+            cin >> modeSelection;
 
             // select input file to build queues
             if (modeSelection == "1") {
-                std::string filename;
+                string filename;
 
                 // check the users input
                 do {
                     // user has entered an error
                     if (promptCount > 0)
-                        std::cout << "Unable to open file: " << filename << std::endl;
+                        cout << "Unable to open file: " << filename << endl;
 
                     // prompt the user to enter file name
-                    std::cout << "Please enter a file to parse: ([0] to go back)" << std::endl;
-                    std::cin >> filename;
+                    cout << "Please enter a file to parse: ([0] to go back)" << endl;
+                    cin >> filename;
 
                     // exit
                     if (filename == "0")
                         break;
                     // open file
                     else
-                        this->file.open(filename, std::ios::in);
+                        this->file.open(filename, ios::in);
 
                     promptCount++;
 
@@ -343,17 +369,17 @@ void Controller::editQueue(int queueSelection) {
             }
             // select command line to build queues
             else if (modeSelection == "2") {
-                std::string commandLine;
+                string commandLine;
 
                 // check the users input
                 while (true) {
                     if (promptCount == 0)
-                        std::cin.ignore();
+                        cin.ignore();
 
                     // prompt the user to enter file name
-                    std::cout << "Please enter a process to parse: ([0] to go back)" << std::endl;
-                    std::getline(std::cin, commandLine);
-                    std::cin.clear();
+                    cout << "Please enter a process to parse: ([0] to go back)" << endl;
+                    getline(cin, commandLine);
+                    cin.clear();
 
                     // exit to main menu
                     if (commandLine == "0") {
@@ -363,31 +389,31 @@ void Controller::editQueue(int queueSelection) {
                     // user has entered correct input, process command
                     if (lineIsValid(commandLine)) {
                         // prompt user to enter process at position
-                        std::cout << "\nEnter the position to add the process:" << std::endl;
-                        std::cout << "(Positions indexed at 0. Enter \"default\" to add to tail.)"
-                                  << std::endl;
-                        std::string position;
-                        std::getline(std::cin, position);
-                        std::cin.clear();
+                        cout << "\nEnter the position to add the process:" << endl;
+                        cout << "(Positions indexed at 0. Enter \"default\" to add to tail.)"
+                                  << endl;
+                        string position;
+                        getline(cin, position);
+                        cin.clear();
 
                         // position is a digit or was given as 'default' and process was
                         // successfully added
                         if ((position == "default" ||
-                             std::all_of(position.begin(), position.end(), ::isdigit)) &&
-                            addProcess(commandLine, std::string(), 0, position)) {
-                            std::cout << "\nProcess added to the " << this->selectedQueue->getName()
-                                      << " queue at position: " << position << "." << std::endl;
+                             all_of(position.begin(), position.end(), ::isdigit)) &&
+                            addProcess(commandLine, string(), 0, position)) {
+                            cout << "\nProcess added to the " << this->selectedQueue->getName()
+                                      << " queue at position: " << position << "." << endl;
                         }
                         else {
-                            std::cout << "\nNo processes were added to the queue. Please try again."
-                                      << std::endl;
+                            cout << "\nNo processes were added to the queue. Please try again."
+                                      << endl;
                         }
                     }
                     // user has entered an error
                     else {
-                        std::cout << "Unable to process: \"" << commandLine << "\"" << std::endl;
-                        std::cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n"
-                                  << std::endl;
+                        cout << "Unable to process: \"" << commandLine << "\"" << endl;
+                        cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n"
+                                  << endl;
                     }
                     promptCount++;
                 }
@@ -395,7 +421,7 @@ void Controller::editQueue(int queueSelection) {
             }
             else {
                 printf("\033c");
-                std::cout << "Invalid input. Please try again.\n" << std::endl;
+                cout << "Invalid input. Please try again.\n" << endl;
             }
         }
 
@@ -406,35 +432,35 @@ void Controller::editQueue(int queueSelection) {
                 this->selectedQueue->print();
                 displayMenu("edit queue");
                 // prompt user
-                std::cout << "\nEnter the ID of process to delete:" << std::endl;
-                std::cout << "(Enter [0] for default position.)" << std::endl;
-                std::string pid;
-                std::cin.clear();
-                std::cin >> pid;
+                cout << "\nEnter the ID of process to delete:" << endl;
+                cout << "(Enter [0] for default position.)" << endl;
+                string pid;
+                cin.clear();
+                cin >> pid;
 
-                ProcessControlBlock* deletedProcess = this->selectedQueue->remove(std::stoi(pid));
+                ProcessControlBlock* deletedProcess = this->selectedQueue->remove(stoi(pid));
                 
                 // PCB was successfully deleted
-                if (std::all_of(pid.begin(), pid.end(), ::isdigit) &&
+                if (all_of(pid.begin(), pid.end(), ::isdigit) &&
                      deletedProcess != nullptr) {
                     
                     delete deletedProcess;
                     
                     // remove from respective vector
                     if (this->selectedQueue == this->readyQueue)
-                        this->readyVector.erase(std::remove(this->readyVector.begin(), this->readyVector.end(), std::stoi(pid)), this->readyVector.end());
+                        this->readyVector.erase(remove(this->readyVector.begin(), this->readyVector.end(), stoi(pid)), this->readyVector.end());
                     else
-                        this->waitingVector.erase(std::remove(this->waitingVector.begin(), this->waitingVector.end(), std::stoi(pid)), this->waitingVector.end());
+                        this->waitingVector.erase(remove(this->waitingVector.begin(), this->waitingVector.end(), stoi(pid)), this->waitingVector.end());
 
                     printf("\033c");
-                    std::cout << "Process P" << pid << " deleted.\n" << std::endl;
+                    cout << "Process P" << pid << " deleted.\n" << endl;
                     break;
                 }
                 else {
                     printf("\033c");
-                    std::cout << "Not able to delete process. Please try again." << std::endl;
+                    cout << "Not able to delete process. Please try again." << endl;
                     if (this->selectedQueue->getSize() == 0) {
-                        std::cout << "Queue is empty." << std::endl << std::endl;
+                        cout << "Queue is empty." << endl << endl;
                         break;
                     }
                 }
@@ -442,10 +468,10 @@ void Controller::editQueue(int queueSelection) {
         }
         else {
             printf("\033c");
-            std::cout << "Invalid input. Please try again.\n" << std::endl;
+            cout << "Invalid input. Please try again.\n" << endl;
         }
         displayMenu("edit queue");
-        std::cout << "Select operation to perform on " << selectedQueue->getName() << " queue: ";
+        cout << "Select operation to perform on " << selectedQueue->getName() << " queue: ";
     }  // end while
 
     return;
