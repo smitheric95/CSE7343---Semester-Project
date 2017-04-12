@@ -18,6 +18,15 @@ Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobi
 
     // prompt user
     init();
+    /*
+    for (int i=0;i<readyVector.size();i++) {
+        get<1>(memory[i]).push_back(readyQueue->[i]);
+    }
+    
+    for (auto m : memory) {
+        cout << get<0>(m) << ", " << &get<1>(m) << endl;
+    }
+     */
 }
 
 Controller::~Controller() {
@@ -156,9 +165,22 @@ void Controller::init() {
                     cin >> numBlocks;
                 }
                 
+                // prompt user for sizes of memory block
                 int n = stoi(numBlocks);
-                for (int i = 0; i < n; i++) {
-                    cout << n;
+                for (int i = 1; i <= n; i++) {
+                    cout << "Please enter the size of memory block Number " << i << " : <1-9999>" << endl;
+                    
+                    string blockSize;
+                    cin >> blockSize;
+                    
+                    // ensure that numblocks is a number
+                    while (!all_of(blockSize.begin(), blockSize.end(), ::isdigit) || stoi(blockSize) < 1 || stoi(blockSize) > 9999) {
+                        cout << "Invalid input. Please enter the size of memory block Number " << i << " : <1-9999>" << endl;
+                        cin >> blockSize;
+                    }
+                    
+                    // push the block of memory to the memory vector
+                    memory.push_back( pair<int, vector<ProcessControlBlock*> >( stoi(blockSize), vector<ProcessControlBlock*>() ) );
                 }
             }
             else {

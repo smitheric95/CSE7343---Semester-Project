@@ -30,12 +30,13 @@ private:
     CustomQueue* waitingQueue;
     CustomQueue* selectedQueue; // points to waiting or ready
     
+    // keep track of IDs in ready and waiting queues
     std::vector<int> readyVector;
     std::vector<int> waitingVector;
     
     // memory blocks
     std::vector<
-        std::tuple<
+        std::pair<
             int, // availble memory left
             std::vector<ProcessControlBlock*> // processes in the blocks
         >

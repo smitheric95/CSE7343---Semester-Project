@@ -10,31 +10,6 @@
 
 using namespace std;
 
-Scheduler::Scheduler(CustomQueue* queue) : queue(queue), processVector(nullptr) {
-    updateProcessVector();
-}
-
-Scheduler::~Scheduler() {
-    if (this->processVector != nullptr)
-        delete this->processVector;
-}
-
-// ensure processVector has the correct values
-void Scheduler::updateProcessVector() {
-    // delete old values
-    if (this->processVector != nullptr)
-        delete this->processVector;
-
-    this->processVector = new vector<ProcessControlBlock*>;
-
-    // update values to match queue
-    ProcessControlBlock* cur = this->queue->peek();
-    while (cur != nullptr) {
-        this->processVector->push_back(cur);
-        cur = cur->getNext();
-    }
-}
-
 // sorts vector based off mode
 void Scheduler::sortVector(Mode m) {
     if (m == SJF)

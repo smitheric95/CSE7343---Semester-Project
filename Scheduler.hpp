@@ -11,17 +11,14 @@
 
 #include <stdio.h>
 #include <algorithm>
-#include "CustomQueue.hpp"
+#include "ProcessManager.hpp"
 
-class Scheduler {
+class Scheduler : public ProcessManager {
 private:
     CustomQueue* queue;
     std::vector<ProcessControlBlock*> * processVector;
     
 public:
-    Scheduler(CustomQueue* queue);
-    ~Scheduler();
-    void updateProcessVector();
     void sortVector(Mode m);
     
     // scheduling algorithms
