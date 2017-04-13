@@ -14,11 +14,9 @@
 #include "ProcessManager.hpp"
 
 class Scheduler : public ProcessManager {
-private:
-    CustomQueue* queue;
-    std::vector<ProcessControlBlock*> * processVector;
-    
 public:
+    Scheduler(CustomQueue* queue) : ProcessManager(queue){}
+    
     void sortVector(Mode m);
     
     // scheduling algorithms

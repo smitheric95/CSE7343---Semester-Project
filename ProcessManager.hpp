@@ -13,7 +13,7 @@
 #include <vector>
 
 class ProcessManager {
-private:
+protected:
     CustomQueue* queue;
     std::vector<ProcessControlBlock*> * processVector;
     

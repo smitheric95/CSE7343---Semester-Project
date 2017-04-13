@@ -10,5 +10,12 @@
 #define MemoryManager_hpp
 
 #include <stdio.h>
+#include "ProcessManager.hpp"
 
 #endif /* MemoryManager_hpp */
+
+class MemoryManager : public ProcessManager {
+public:
+    MemoryManager(CustomQueue* queue) : ProcessManager(queue){}
+    
+};
