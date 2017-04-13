@@ -18,17 +18,6 @@ Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobi
 
     // prompt user
     init();
-
-
-    //    for (int i=0;i<readyVector.size();i++) {
-    //        get<1>(memory[i]).push_back(mainMemory.getPCB(i));
-    //    }
-    //
-    //    for (auto m : memory) {
-    //        cout << get<0>(m) <<  ": ";
-    //        for (auto i : get<1>(m))
-    //            cout << i->getPID() << endl;
-    //    }
 }
 
 Controller::~Controller() {
@@ -236,7 +225,7 @@ void Controller::parseFile(string file) {  // go through each line
         // format is wrong, don't add process
         else {
             cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount << endl;
-            cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>" << endl << endl;
+            cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>, <0-9999>" << endl << endl;
         }
     }
 
@@ -253,8 +242,8 @@ void Controller::addQueues() {
 
 // returns true if a line of input is syntactically valid
 bool Controller::lineIsValid(const string& line) {
-    return (regex_match(line, regex("^(0*[0-9]{1,5})( *, *0*[0-9]{1,4})* *$")) &&
-            count(line.begin(), line.end(), ',') == 3);
+    return (regex_match(line, regex("^(0*[0-9]{1,5})( *, *0*[0-9]{1,5})* *$")) &&
+            count(line.begin(), line.end(), ',') == 4);
 }
 
 // takes a valid input line and turns into a PCB
@@ -310,6 +299,7 @@ bool Controller::addProcess(string line, string file, int lineCount, string posi
         }
         return false;
     }
+    // ID is too low
     else if (processValues[0] < 1) {
         // passed from input file
         if (lineCount > 0) {
@@ -386,6 +376,7 @@ void Controller::editQueue(int queueSelection) {
 
                     // prompt the user to enter file name
                     cout << "Please enter a file to parse: ([0] to go back)" << endl;
+                    cout << "Format for each line is: ID, Arrival Time, Burst Time, Priority, Memory Space" << endl;
                     cin >> filename;
 
                     // exit
@@ -421,6 +412,7 @@ void Controller::editQueue(int queueSelection) {
 
                     // prompt the user to enter file name
                     cout << "Please enter a process to parse: ([0] to go back)" << endl;
+                    cout << "Format is: ID, Arrival Time, Burst Time, Priority, Memory Space" << endl;
                     getline(cin, commandLine);
                     cin.clear();
 
@@ -445,17 +437,17 @@ void Controller::editQueue(int queueSelection) {
                              all_of(position.begin(), position.end(), ::isdigit)) &&
                             addProcess(commandLine, string(), 0, position)) {
                             cout << "\nProcess added to the " << this->selectedQueue->getName()
-                                 << " queue at position: " << position << "." << endl;
+                                 << " queue at position: " << position << ".\n" << endl;
                         }
                         else {
-                            cout << "\nNo processes were added to the queue. Please try again."
+                            cout << "\nNo processes were added to the queue. Please try again.\n"
                                  << endl;
                         }
                     }
                     // user has entered an error
                     else {
                         cout << "Unable to process: \"" << commandLine << "\"" << endl;
-                        cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n" << endl;
+                        cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>, <0-9999>\n" << endl;
                     }
                     promptCount++;
                 }

@@ -19,11 +19,11 @@ private:
     int arrivalTime;
     int burstTime;
     int priority;
+    int memorySpace;
     
     ProcessControlBlock* next;
 
 public:
-    ProcessControlBlock();
     ProcessControlBlock(std::vector<int> values);
     
     int getPriority();

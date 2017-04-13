@@ -162,7 +162,7 @@ void CustomQueue::print() {
     if (this->isEmpty())
         cout << "Queue is empty.\n" << endl;
     else {
-        cout << "---------------------- " << this->getName() << " Queue ----------------------"
+        cout << "-------------------------- " << this->getName() << " Queue --------------------------"
                   << endl;
         ProcessControlBlock* cur = this->head;
 

@@ -10,13 +10,9 @@
 
 using namespace std;
 
-ProcessControlBlock::ProcessControlBlock()
-    : PID(0), arrivalTime(-1), burstTime(-1), priority(0), next(nullptr) {
-}
-
 // initialize PCB from input vector
 ProcessControlBlock::ProcessControlBlock(vector<int> values)
-    : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), priority(values[3]), next(nullptr) {
+    : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), priority(values[3]), memorySpace(values[4]), next(nullptr) {
 }
 
 int ProcessControlBlock::getPriority() {
@@ -60,6 +56,6 @@ void ProcessControlBlock::setNext(ProcessControlBlock* next) {
 }
 
 void ProcessControlBlock::print() {
-    cout << "ID: " << this->getPID() << ", ArrivalTime: " << getArrivalTime()
-              << ", BurstTime: " << getBurstTime() << ", Priority: " << this->getPriority();
+    cout << "ID: " << this->PID << ", ArrivalTime: " << this->arrivalTime
+              << ", BurstTime: " << this->burstTime << ", Priority: " << this->priority << ", Memory: " << this->memorySpace;
 }
