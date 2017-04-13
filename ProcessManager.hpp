@@ -22,6 +22,7 @@ public:
     ~ProcessManager();
     
     void updateProcessVector();
+    ProcessControlBlock* getPCB(int index);
 };
 
 #endif /* ProcessManager_hpp */

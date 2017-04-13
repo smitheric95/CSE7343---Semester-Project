@@ -13,6 +13,7 @@
 #include "ProcessControlBlock.hpp"
 #include "CustomQueue.hpp"
 #include "Scheduler.hpp"
+#include "MemoryManager.hpp"
 #include <fstream>
 #include <iostream>
 #include <locale>    

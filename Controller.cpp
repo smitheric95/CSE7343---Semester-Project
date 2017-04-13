@@ -18,15 +18,20 @@ Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobi
 
     // prompt user
     init();
-    /*
+    
+    MemoryManager mainMemory(this->readyQueue);
+    mainMemory.updateProcessVector();
+    
     for (int i=0;i<readyVector.size();i++) {
-        get<1>(memory[i]).push_back(readyQueue->[i]);
+        get<1>(memory[i]).push_back(mainMemory.getPCB(i));
     }
     
     for (auto m : memory) {
-        cout << get<0>(m) << ", " << &get<1>(m) << endl;
+        cout << get<0>(m) <<  ": ";
+        for (auto i : get<1>(m))
+            cout << i->getPID() << endl;
     }
-     */
+    
 }
 
 Controller::~Controller() {

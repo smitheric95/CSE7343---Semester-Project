@@ -33,3 +33,9 @@ void ProcessManager::updateProcessVector() {
         cur = cur->getNext();
     }
 }
+
+// given an index,
+// return a process control block from the process vector
+ProcessControlBlock* ProcessManager::getPCB(int index) {
+    return this->processVector->at(index);
+}
