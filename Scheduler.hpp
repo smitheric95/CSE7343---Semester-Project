@@ -15,7 +15,7 @@
 
 class Scheduler : public ProcessManager {
 public:
-    Scheduler(CustomQueue* queue) : ProcessManager(queue){}
+    Scheduler(CustomQueue* queue);
     
     void sortVector(Mode m);
     

@@ -15,7 +15,20 @@
 #endif /* MemoryManager_hpp */
 
 class MemoryManager : public ProcessManager {
+private:
+    int numBlocks;
+    
+    // memory blocks
+    std::vector<
+        std::pair<
+            int, // availble memory left
+            std::vector<ProcessControlBlock*> // processes in the blocks
+        >
+    > memory;
+    
 public:
-    MemoryManager(CustomQueue* queue) : ProcessManager(queue){}
+    MemoryManager(CustomQueue* queue, std::vector<int> memorySizes);
+    
+    void addMemoryBlock(int blockSize);
     
 };

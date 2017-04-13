@@ -35,14 +35,6 @@ private:
     std::vector<int> readyVector;
     std::vector<int> waitingVector;
     
-    // memory blocks
-    std::vector<
-        std::pair<
-            int, // availble memory left
-            std::vector<ProcessControlBlock*> // processes in the blocks
-        >
-    > memory;
-    
     std::ifstream file;
     int roundRobinQuantum;
     

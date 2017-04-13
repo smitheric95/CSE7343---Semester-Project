@@ -18,20 +18,17 @@ Controller::Controller() : readyQueue(nullptr), waitingQueue(nullptr), roundRobi
 
     // prompt user
     init();
-    
-    MemoryManager mainMemory(this->readyQueue);
-    mainMemory.updateProcessVector();
-    
-    for (int i=0;i<readyVector.size();i++) {
-        get<1>(memory[i]).push_back(mainMemory.getPCB(i));
-    }
-    
-    for (auto m : memory) {
-        cout << get<0>(m) <<  ": ";
-        for (auto i : get<1>(m))
-            cout << i->getPID() << endl;
-    }
-    
+
+
+    //    for (int i=0;i<readyVector.size();i++) {
+    //        get<1>(memory[i]).push_back(mainMemory.getPCB(i));
+    //    }
+    //
+    //    for (auto m : memory) {
+    //        cout << get<0>(m) <<  ": ";
+    //        for (auto i : get<1>(m))
+    //            cout << i->getPID() << endl;
+    //    }
 }
 
 Controller::~Controller() {
@@ -89,7 +86,9 @@ void Controller::displayMenu(string menu) {
         cout << " #############################################" << endl << endl;
         cout << "Please select a mode: ";
     }
-    else {cout << "incorrect menu called?" << endl;}
+    else {
+        cout << "incorrect menu called?" << endl;
+    }
 }
 
 void Controller::init() {
@@ -130,15 +129,11 @@ void Controller::init() {
             // execute processes with all four algorithms
             if (!this->readyQueue->isEmpty()) {
                 printf("\033c");
-                Scheduler main(this->readyQueue);
-                main.shortestJobFirst();
-                main.updateProcessVector();
-                main.firstComeFirstServe();
-                main.updateProcessVector();
-                main.priority();
-                main.updateProcessVector();
-                main.roundRobin(this->roundRobinQuantum);
-                main.updateProcessVector();
+                Scheduler mainScheduler(this->readyQueue);
+                mainScheduler.shortestJobFirst();
+                mainScheduler.firstComeFirstServe();
+                mainScheduler.priority();
+                mainScheduler.roundRobin(this->roundRobinQuantum);
             }
             else {
                 printf("\033c");
@@ -163,40 +158,56 @@ void Controller::init() {
                 cout << "Please enter the number of available memory blocks: <1-999>" << endl;
                 string numBlocks;
                 cin >> numBlocks;
-                
+
                 // ensure that numblocks is a number
-                while (!all_of(numBlocks.begin(), numBlocks.end(), ::isdigit) || stoi(numBlocks) < 1 || stoi(numBlocks) > 999) {
-                    cout << "Invalid input. Please enter the number of available memory blocks: <1-999>" << endl;
+                while (!all_of(numBlocks.begin(), numBlocks.end(), ::isdigit) ||
+                       stoi(numBlocks) < 1 || stoi(numBlocks) > 999) {
+                    cout << "Invalid input. Please enter the number of available memory blocks: "
+                            "<1-999>"
+                         << endl;
                     cin >> numBlocks;
                 }
-                
+
                 // prompt user for sizes of memory block
                 int n = stoi(numBlocks);
+                vector<int> memorySizes;
+                
+                // push memory blocks of a given size to the main memory
                 for (int i = 1; i <= n; i++) {
-                    cout << "Please enter the size of memory block Number " << i << " : <1-9999>" << endl;
-                    
+                    cout << "Please enter the size of memory block Number " << i << " : <1-9999>"
+                         << endl;
+
                     string blockSize;
                     cin >> blockSize;
-                    
+
                     // ensure that numblocks is a number
-                    while (!all_of(blockSize.begin(), blockSize.end(), ::isdigit) || stoi(blockSize) < 1 || stoi(blockSize) > 9999) {
-                        cout << "Invalid input. Please enter the size of memory block Number " << i << " : <1-9999>" << endl;
+                    while (!all_of(blockSize.begin(), blockSize.end(), ::isdigit) ||
+                           stoi(blockSize) < 1 || stoi(blockSize) > 9999) {
+                        cout << "Invalid input. Please enter the size of memory block Number " << i
+                             << " : <1-9999>" << endl;
                         cin >> blockSize;
                     }
                     
-                    // push the block of memory to the memory vector
-                    memory.push_back( pair<int, vector<ProcessControlBlock*> >( stoi(blockSize), vector<ProcessControlBlock*>() ) );
+                    // add the block to memory
+                    memorySizes.push_back(stoi(blockSize));
                 }
+                
+                // initialize memory
+                MemoryManager mainMemory(this->readyQueue, memorySizes);
             }
             else {
                 // loop till user exits
-                cout << "Processes must first be entered into the ready queue. \nEnter [0] to go back." << endl;
+                cout << "Processes must first be entered into the ready queue. \nEnter [0] to go "
+                        "back."
+                     << endl;
                 string exit;
                 while (true) {
                     cin >> exit;
                     if (exit == "0")
                         break;
-                    cout << "Processes must first be entered into the ready queue. \nEnter [0] to go back." << endl;
+                    cout << "Processes must first be entered into the ready queue. \nEnter [0] to "
+                            "go back."
+                         << endl;
                 }
             }
         }
@@ -224,16 +235,15 @@ void Controller::parseFile(string file) {  // go through each line
         }
         // format is wrong, don't add process
         else {
-            cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount
-                      << endl;
+            cout << "\nERROR: Incorrect format in " << file << " on line " << lineCount << endl;
             cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>" << endl << endl;
         }
     }
 
     cout << endl
-              << validProcesses << " processes successfully entered. "
-              << (lineCount - validProcesses) << " errors generated.\n"
-              << endl;
+         << validProcesses << " processes successfully entered. " << (lineCount - validProcesses)
+         << " errors generated.\n"
+         << endl;
 }
 
 void Controller::addQueues() {
@@ -250,10 +260,7 @@ bool Controller::lineIsValid(const string& line) {
 // takes a valid input line and turns into a PCB
 // PCB is added to processTable and waitingQueue
 // returns true if PCB is sucessfully added
-bool Controller::addProcess(string line,
-                            string file,
-                            int lineCount,
-                            string position) {
+bool Controller::addProcess(string line, string file, int lineCount, string position) {
     // store process values
     vector<int> processValues;
     stringstream tempStream(line);
@@ -279,11 +286,10 @@ bool Controller::addProcess(string line,
         (find(this->readyVector.begin(), this->readyVector.end(), curPID) !=
              this->readyVector.end() &&
          this->selectedQueue == this->readyQueue)) {
-            
         // passed from input file
         if (lineCount > 0) {
             cout << "Error: Duplicate process on line " << lineCount << ". Command ignored."
-                      << endl;
+                 << endl;
         }
         // passed from command line
         else {
@@ -296,7 +302,7 @@ bool Controller::addProcess(string line,
         // passed from input file
         if (lineCount > 0) {
             cout << "Error: on line " << lineCount
-                      << ". Priority must be between 1 and 4. Command ignored." << endl;
+                 << ". Priority must be between 1 and 4. Command ignored." << endl;
         }
         // passed from command line
         else {
@@ -308,7 +314,7 @@ bool Controller::addProcess(string line,
         // passed from input file
         if (lineCount > 0) {
             cout << "Error: on line " << lineCount
-            << ". PID must be from <1-99999>. Command ignored." << endl;
+                 << ". PID must be from <1-99999>. Command ignored." << endl;
         }
         // passed from command line
         else {
@@ -401,7 +407,7 @@ void Controller::editQueue(int queueSelection) {
                 // The file was found, parse it
                 if (filename != "0")
                     parseFile(filename);
-                
+
                 this->file.close();
             }
             // select command line to build queues
@@ -428,7 +434,7 @@ void Controller::editQueue(int queueSelection) {
                         // prompt user to enter process at position
                         cout << "\nEnter the position to add the process:" << endl;
                         cout << "(Positions indexed at 0. Enter \"default\" to add to tail.)"
-                                  << endl;
+                             << endl;
                         string position;
                         getline(cin, position);
                         cin.clear();
@@ -439,18 +445,17 @@ void Controller::editQueue(int queueSelection) {
                              all_of(position.begin(), position.end(), ::isdigit)) &&
                             addProcess(commandLine, string(), 0, position)) {
                             cout << "\nProcess added to the " << this->selectedQueue->getName()
-                                      << " queue at position: " << position << "." << endl;
+                                 << " queue at position: " << position << "." << endl;
                         }
                         else {
                             cout << "\nNo processes were added to the queue. Please try again."
-                                      << endl;
+                                 << endl;
                         }
                     }
                     // user has entered an error
                     else {
                         cout << "Unable to process: \"" << commandLine << "\"" << endl;
-                        cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n"
-                                  << endl;
+                        cout << "Usage is: <1-99999>, <0-9999>, <0-9999>, <1-4>\n" << endl;
                     }
                     promptCount++;
                 }
@@ -476,18 +481,20 @@ void Controller::editQueue(int queueSelection) {
                 cin >> pid;
 
                 ProcessControlBlock* deletedProcess = this->selectedQueue->remove(stoi(pid));
-                
+
                 // PCB was successfully deleted
-                if (all_of(pid.begin(), pid.end(), ::isdigit) &&
-                     deletedProcess != nullptr) {
-                    
+                if (all_of(pid.begin(), pid.end(), ::isdigit) && deletedProcess != nullptr) {
                     delete deletedProcess;
-                    
+
                     // remove from respective vector
                     if (this->selectedQueue == this->readyQueue)
-                        this->readyVector.erase(remove(this->readyVector.begin(), this->readyVector.end(), stoi(pid)), this->readyVector.end());
+                        this->readyVector.erase(
+                            remove(this->readyVector.begin(), this->readyVector.end(), stoi(pid)),
+                            this->readyVector.end());
                     else
-                        this->waitingVector.erase(remove(this->waitingVector.begin(), this->waitingVector.end(), stoi(pid)), this->waitingVector.end());
+                        this->waitingVector.erase(remove(this->waitingVector.begin(),
+                                                         this->waitingVector.end(), stoi(pid)),
+                                                  this->waitingVector.end());
 
                     printf("\033c");
                     cout << "Process P" << pid << " deleted.\n" << endl;

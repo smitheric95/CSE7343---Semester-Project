@@ -10,6 +10,9 @@
 
 using namespace std;
 
+// inherit from the ProcessManager
+Scheduler::Scheduler(CustomQueue* queue) : ProcessManager(queue){}
+
 // sorts vector based off mode
 void Scheduler::sortVector(Mode m) {
     if (m == SJF)
@@ -53,6 +56,9 @@ void Scheduler::sortVector(Mode m) {
  *
  **************************************************************************************/
 void Scheduler::shortestJobFirst() {
+    // update the process vector to have the correct order
+    this->updateProcessVector();
+    
     int totalWait = 0, shortest = 0, totalBurstTime = 0;
     int n = (int)this->processVector->size();
     vector<int> arrivalTimes;
@@ -131,6 +137,9 @@ void Scheduler::shortestJobFirst() {
  **************************************************************************************/
 
 void Scheduler::firstComeFirstServe() {
+    // update the process vector to have the correct order
+    this->updateProcessVector();
+    
     int n = (int)this->processVector->size();
     float totalWait;
     vector<int> burstTimes, arrivalTimes, waitTimes;
@@ -184,6 +193,9 @@ void Scheduler::firstComeFirstServe() {
  *
  **************************************************************************************/
 void Scheduler::priority() {
+    // update the process vector to have the correct order
+    this->updateProcessVector();
+    
     int totalWait = 0, shortest = 0, remain = 0;
     int n = remain = (int)this->processVector->size();
     vector<int> arrivalTimes, burstTimes;
@@ -260,6 +272,9 @@ void Scheduler::priority() {
  *
  **************************************************************************************/
 void Scheduler::roundRobin(int quantum) {
+    // update the process vector to have the correct order
+    this->updateProcessVector();
+    
     int n = (int)this->processVector->size();
     vector<int> waitTimes, totalWaitTimes, arrivalTimes, totalBurstTimes, burstTimes,
         schedulingOrder, startTimes, lastFinishTime;
