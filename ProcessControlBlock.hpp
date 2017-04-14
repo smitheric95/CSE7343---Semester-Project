@@ -18,6 +18,7 @@ private:
     int PID;
     int arrivalTime;
     int burstTime;
+    int burstTimeRemaining;
     int priority;
     int memorySpace;
     
@@ -34,6 +35,9 @@ public:
     void setArrivalTime(int arrivalTime);
     int getBurstTime();
     void setBurstTime(int burstTime);
+    int getBurstTimeRemaining();
+    void setBurstTimeRemaining(int burstTimeRemaining);
+    int getMemorySpace();
     
     ProcessControlBlock* getNext();
     void setNext(ProcessControlBlock* next);

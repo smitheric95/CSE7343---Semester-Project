@@ -22,6 +22,7 @@ public:
     ~ProcessManager();
     
     void updateProcessVector();
+    void sortProcessVector(Mode m);
     ProcessControlBlock* getPCB(int index);
 };
 

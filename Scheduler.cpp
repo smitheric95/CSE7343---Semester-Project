@@ -13,35 +13,6 @@ using namespace std;
 // inherit from the ProcessManager
 Scheduler::Scheduler(CustomQueue* queue) : ProcessManager(queue){}
 
-// sorts vector based off mode
-void Scheduler::sortVector(Mode m) {
-    if (m == SJF)
-        // sort process vector by burst time
-        sort(this->processVector->begin(), this->processVector->end(),
-                  [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
-                      return a->getBurstTime() < b->getBurstTime();
-                  });
-    else if (m == FCFS)
-        // sort process vector by arrival, then priority
-        sort(this->processVector->begin(), this->processVector->end(),
-                  [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
-                      // if same arrival, sort by priority
-                      if (a->getArrivalTime() == b->getArrivalTime())
-                          return a->getPriority() < b->getPriority();
-                      return a->getArrivalTime() < b->getArrivalTime();
-                  });
-    else if (m == RoundRobin)
-        // sort process vector by PID
-        sort(this->processVector->begin(), this->processVector->end(),
-                  [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
-                      return a->getPID() < b->getPID();
-                  });
-    else  // sort process vector by PID
-        sort(this->processVector->begin(), this->processVector->end(),
-                  [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
-                      return a->getPriority() < b->getPriority();
-                  });
-}
 
 /**************************************************************************************
  *
@@ -145,7 +116,7 @@ void Scheduler::firstComeFirstServe() {
     vector<int> burstTimes, arrivalTimes, waitTimes;
 
     // sort process vector first by arrival time, then priority
-    sortVector(FCFS);
+    sortProcessVector(FCFS);
 
     // initialize burst times and arrival times
     for (auto x : *(this->processVector)) {
@@ -280,7 +251,7 @@ void Scheduler::roundRobin(int quantum) {
         schedulingOrder, startTimes, lastFinishTime;
 
     // ensure the processes are sorted by ID
-    sortVector(RoundRobin);
+    sortProcessVector(RoundRobin);
 
     // initialize burst times and arrival times
     for (auto x : *(this->processVector)) {

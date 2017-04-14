@@ -18,6 +18,36 @@ ProcessManager::~ProcessManager() {
         delete this->processVector;
 }
 
+// sorts vector based off mode
+void ProcessManager::sortProcessVector(Mode m) {
+    if (m == SJF)
+        // sort process vector by burst time
+        sort(this->processVector->begin(), this->processVector->end(),
+             [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                 return a->getBurstTime() < b->getBurstTime();
+             });
+    else if (m == FCFS)
+        // sort process vector by arrival, then priority
+        sort(this->processVector->begin(), this->processVector->end(),
+             [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                 // if same arrival, sort by priority
+                 if (a->getArrivalTime() == b->getArrivalTime())
+                     return a->getPriority() < b->getPriority();
+                 return a->getArrivalTime() < b->getArrivalTime();
+             });
+    else if (m == RoundRobin)
+        // sort process vector by PID
+        sort(this->processVector->begin(), this->processVector->end(),
+             [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                 return a->getPID() < b->getPID();
+             });
+    else  // sort process vector by PID
+        sort(this->processVector->begin(), this->processVector->end(),
+             [](ProcessControlBlock* a, ProcessControlBlock* b) -> bool {
+                 return a->getPriority() < b->getPriority();
+             });
+}
+
 // ensure processVector has the correct values
 void ProcessManager::updateProcessVector() {
     // delete old values

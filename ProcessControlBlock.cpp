@@ -12,7 +12,7 @@ using namespace std;
 
 // initialize PCB from input vector
 ProcessControlBlock::ProcessControlBlock(vector<int> values)
-    : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), priority(values[3]), memorySpace(values[4]), next(nullptr) {
+    : PID(values[0]), arrivalTime(values[1]), burstTime(values[2]), burstTimeRemaining(values[2]), priority(values[3]), memorySpace(values[4]), next(nullptr) {
 }
 
 int ProcessControlBlock::getPriority() {
@@ -45,6 +45,18 @@ int ProcessControlBlock::getPID() {
 
 void ProcessControlBlock::setPID(int PID) {
     this->PID = PID;
+}
+
+int ProcessControlBlock::getBurstTimeRemaining() {
+    return this->burstTimeRemaining;
+}
+
+void ProcessControlBlock::setBurstTimeRemaining(int burstTimeRemaining) {
+    this->burstTimeRemaining = burstTimeRemaining;
+}
+
+int ProcessControlBlock::getMemorySpace() {
+    return this->memorySpace;
 }
 
 ProcessControlBlock* ProcessControlBlock::getNext() {
