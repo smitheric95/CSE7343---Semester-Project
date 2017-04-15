@@ -15,12 +15,16 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
     // update the process vector to have the correct order
     this->updateProcessVector();
     
+    
     /* FOR TESTING ONLY */
     static const int arr[] = {300,600,350,200,750,125};
     vector<int> testingMemorySizes (arr, arr + sizeof(arr) / sizeof(arr[0]) );
     
     // add each memory
 //    for (auto blockSize : memorySizes)
+    /*************************/
+    
+    
     for (auto blockSize : testingMemorySizes)
         memory.push_back(
             pair<int, vector<ProcessControlBlock*> >(blockSize, vector<ProcessControlBlock*>()));
@@ -36,11 +40,14 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
 }
 
 void MemoryManager::firstFit() {
+    cout << "------------------------------- First Fit -------------------------------" << endl;
     // update the process vector to have the correct order
     this->updateProcessVector();
 
     int n = (int)this->processVector->size();
-    int time = 0, totalBurstTime = 0, executedProcesses = 0;
+    int originalN = n;
+    
+    int time = 0, totalBurstTime = 0, executedProcesses = 0, numFrags = 0;
     vector<int> burstTimes, arrivalTimes, inMemory;
 
     // sort process vector first by arrival time, then priority
@@ -67,11 +74,12 @@ void MemoryManager::firstFit() {
         }
         // the process can never be executed
         if (i == memory.size()) {
-            cout << "Not enough memory to execute the process P" << p->getPID() << endl;
+            cout << "Not enough memory to execute the process P" << p->getPID() << endl << endl;
+            inMemory.back() = 1;
             n--;
         }
     }
-
+    
     while (executedProcesses < n) {
         // update each block of memory
         int j = 0;
@@ -85,7 +93,7 @@ void MemoryManager::firstFit() {
                 if (p->getBurstTimeRemaining() == 0) {
                     // update memory block's available space
                     m.first += p->getMemorySpace();
-                    cout << endl << "Process P" << p->getPID() << " has completed" << endl;
+                    cout << "Process P" << p->getPID() << " has completed" << endl;
                     cout << "Memory block " << j+1 << " now has " << m.first << " units of available space." << endl << endl;
 
                     // remove the process from the memory block
@@ -126,12 +134,19 @@ void MemoryManager::firstFit() {
                 }  // end while
 
                 // a spot in memory was not found: fragmentation!
-                if (j == memory.size())
+                if (j == memory.size()) {
                     cout << "Fragmentation. Not enough room to add P: " << curProcess->getPID()
                          << endl;
+                    numFrags++;
+                }
             }  // end for
         }
         // increment time
         time++;
     }  // end while
+    
+    cout << "-------------------------------------------------------------------------" << endl;
+    cout << n << " processes were loaded into and out of memory with " << numFrags << " fragmentations." << endl;
+    if (originalN != n) cout << (originalN - n) <<  " processes weren't able to be completed."<< endl;
+    cout << "-------------------------------------------------------------------------" << endl;
 }
