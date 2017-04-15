@@ -14,21 +14,20 @@ using namespace std;
 MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : ProcessManager(queue) {
     // update the process vector to have the correct order
     this->updateProcessVector();
-    
-    
+
     /* FOR TESTING ONLY */
-    // static const int arr[] = {300,600,350,200,750,125};
-    static const int arr[] = {300,600,350,200,125,900,1,400,399,239,3329,2343,234,9999, 1999, 1222, 1111, 9999, 3333,664,82,33};
-    vector<int> testingMemorySizes (arr, arr + sizeof(arr) / sizeof(arr[0]) );
-    
+    static const int arr[] = {300, 200, 350, 125};
+    // static const int arr[] = {300,600,350,200,125,900,1,400,399,239,3329,2343,234,9999, 1999,
+    // 1222, 1111, 9999, 3333,664,82,33};
+    vector<int> testingMemorySizes(arr, arr + sizeof(arr) / sizeof(arr[0]));
+
     // add each memory
-//    for (auto blockSize : memorySizes)
+    //    for (auto blockSize : memorySizes)
     /*************************/
-    
-    
+
     for (auto blockSize : testingMemorySizes)
         memory.push_back(
-            pair<int, vector<ProcessControlBlock*> >(blockSize, vector<ProcessControlBlock*>()));
+            pair<int, vector<ProcessControlBlock*>>(blockSize, vector<ProcessControlBlock*>()));
 
     //    for (int i = 0; i < this->processVector->size(); i++) {
     //        get<1>(this->memory[i]).push_back(this->processVector->at(i));
@@ -41,15 +40,18 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
 }
 
 void MemoryManager::firstFit() {
-    cout << "---------------------------------------------- First Fit ----------------------------------------------" << endl;
+    cout << "--------------------------------------------------------- First Fit "
+            "---------------------------------------------------------"
+         << endl;
     // update the process vector to have the correct order
     this->updateProcessVector();
 
     int n = (int)this->processVector->size();
     int originalN = n;
-    
-    int time = 0, totalBurstTime = 0, executedProcesses = 0, numFrags = 0;
-    vector<int> burstTimes, arrivalTimes, inMemory;
+
+    int time = 0, totalBurstTime = 0, totalWaitTime = 0, executedProcesses = 0, numFrags = 0,
+        maxMemory = 0, maximumMemoryUsed = 0;
+    vector<int> burstTimes, arrivalTimes, inMemory, waitTimes;
 
     // sort process vector first by arrival time, then priority
     sortProcessVector(FCFS);
@@ -61,11 +63,13 @@ void MemoryManager::firstFit() {
         totalBurstTime += curBurst;
 
         arrivalTimes.push_back(p->getArrivalTime());
-        
+
         // whether or not the process is in memory OR has completed
         // (0 for false, 1 for true)
         inMemory.push_back(0);
-        
+
+        waitTimes.push_back(0);  // how long a fragmented process has to wait
+
         // ensure that all processes have enough memory
         int i = 0;
         while (i < memory.size()) {
@@ -80,14 +84,14 @@ void MemoryManager::firstFit() {
             n--;
         }
     }
-    
+
     // there are still valid processes to be loaded into memory
     while (executedProcesses < n) {
         // update each block of memory
         int j = 0;
         while (j < memory.size()) {
-            std::pair<int,std::vector<ProcessControlBlock*>> * m = &memory[j];
-            
+            std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
+
             // go through each process in the current block
             int processesPerBlock = (int)get<1>(*m).size();
             for (int i = 0; i < processesPerBlock; i++) {
@@ -100,7 +104,8 @@ void MemoryManager::firstFit() {
                     (*m).first += p->getMemorySpace();
                     cout << "t=" << time << ": \t ";
                     cout << "Process P" << p->getPID() << " has completed. \t\t ";
-                    cout << " \t (Memory block " << j+1 << " now has " << (*m).first << " units of available space.)" << endl;
+                    cout << " \t (Memory block " << j + 1 << " now has " << (*m).first
+                         << " units of available space.)" << endl;
 
                     // remove the process from the memory block
                     get<1>(*m).erase(get<1>(*m).begin() + i);
@@ -124,21 +129,22 @@ void MemoryManager::firstFit() {
                 // find a place in memory to fit the process
                 int j = 0;
                 while (j < memory.size()) {
-                    std::pair<int,std::vector<ProcessControlBlock*>> * m = &memory[j];
-                    
+                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
+
                     // if the process fits, add it to the memory block
                     if (get<0>(*m) >= curProcess->getMemorySpace()) {
                         cout << "t=" << time << ": \t ";
                         cout << "Adding process P" << curProcess->getPID() << " to memory block "
-                             << j+1 << ".";
+                             << j + 1 << ".";
                         get<1>(*m).push_back(curProcess);
-                        
+
                         // assume the process wil be completed
                         inMemory[i] = 1;
-                        
+
                         (*m).first -= curProcess->getMemorySpace();
-                        
-                        cout << "\t\t (Memory block " << j+1 << " now has " << (*m).first << " units of available space.)" << endl;
+
+                        cout << "\t\t (Memory block " << j + 1 << " now has " << (*m).first
+                             << " units of available space.)" << endl;
                         break;
                     }
                     j++;
@@ -147,8 +153,9 @@ void MemoryManager::firstFit() {
                 // a spot in memory was not found: fragmentation!
                 if (j == memory.size()) {
                     cout << "t=" << time << ": \t ";
-                    cout << "Fragmentation. Not enough room to add P" << curProcess->getPID()
-                         << "." << endl ;
+                    cout << "Fragmentation. Not enough room to add P" << curProcess->getPID() << "."
+                         << endl;
+                    waitTimes[i] += 1;
                     numFrags++;
                 }
             }  // end for
@@ -156,9 +163,19 @@ void MemoryManager::firstFit() {
         // increment time
         time++;
     }  // end while
-    
-    cout << "-------------------------------------------------------------------------------------------------------" << endl;
-    cout << n << " processes were loaded into and out of memory with " << numFrags << " fragmentations." << endl;
-    if (originalN != n) cout << (originalN - n) <<  " processes weren't able to be completed."<< endl;
-    cout << "-------------------------------------------------------------------------------------------------------" << endl;
+
+    for (int w : waitTimes) totalWaitTime += w;
+
+    cout << "--------------------------------------------------------------------------------------"
+            "----------------------------"
+         << endl;
+    cout << n << " processes were loaded into and out of memory with " << numFrags
+         << " fragmentations." << endl;
+    if (originalN != n)
+        cout << (originalN - n) << " processes weren't able to be completed." << endl;
+    cout << "Blocking probability: " << (float)(originalN - n) / n << "%" << endl;
+    cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
+    cout << "--------------------------------------------------------------------------------------"
+            "----------------------------"
+         << endl;
 }
