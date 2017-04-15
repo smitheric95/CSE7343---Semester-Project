@@ -183,6 +183,18 @@ void Controller::init() {
                 
                 // initialize memory
                 MemoryManager mainMemory(this->readyQueue, memorySizes);
+                mainMemory.firstFit();
+                
+                // loop till user exits
+                cout << "\nEnter [0] to go back." << endl;
+                this->roundRobinQuantum = -1;
+                string exit;
+                while (true) {
+                    cin >> exit;
+                    if (exit == "0")
+                        break;
+                    cout << "\nEnter [0] to go back." << endl;
+                }
             }
             else {
                 // loop till user exits

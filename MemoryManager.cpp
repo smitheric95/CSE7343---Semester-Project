@@ -14,9 +14,14 @@ using namespace std;
 MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : ProcessManager(queue) {
     // update the process vector to have the correct order
     this->updateProcessVector();
-
-    // add each memory block of size s
-    for (auto blockSize : memorySizes)
+    
+    /* FOR TESTING ONLY */
+    static const int arr[] = {300,600,350,200,750,125};
+    vector<int> testingMemorySizes (arr, arr + sizeof(arr) / sizeof(arr[0]) );
+    
+    // add each memory
+//    for (auto blockSize : memorySizes)
+    for (auto blockSize : testingMemorySizes)
         memory.push_back(
             pair<int, vector<ProcessControlBlock*> >(blockSize, vector<ProcessControlBlock*>()));
 
@@ -36,7 +41,7 @@ void MemoryManager::firstFit() {
 
     int n = (int)this->processVector->size();
     int time = 0, totalBurstTime = 0, executedProcesses = 0;
-    vector<int> burstTimes, arrivalTimes;
+    vector<int> burstTimes, arrivalTimes, inMemory;
 
     // sort process vector first by arrival time, then priority
     sortProcessVector(FCFS);
@@ -48,13 +53,18 @@ void MemoryManager::firstFit() {
         totalBurstTime += curBurst;
 
         arrivalTimes.push_back(p->getArrivalTime());
-
+        
+        // whether or not the process is in memory OR has completed
+        // (0 for false, 1 for true)
+        inMemory.push_back(0);
+        
         // ensure that all processes have enough memory
         int i = 0;
-        while (i < memory.size())
+        while (i < memory.size()) {
             if (get<0>(memory[i]) >= p->getMemorySpace())
                 break;
-
+            i++;
+        }
         // the process can never be executed
         if (i == memory.size()) {
             cout << "Not enough memory to execute the process P" << p->getPID() << endl;
@@ -62,8 +72,9 @@ void MemoryManager::firstFit() {
         }
     }
 
-    while (executedProcesses <= n) {
+    while (executedProcesses < n) {
         // update each block of memory
+        int j = 0;
         for (auto m : memory) {
             // go through each process in the current block
             for (int i = 0; i < get<1>(m).size(); i++) {
@@ -74,10 +85,11 @@ void MemoryManager::firstFit() {
                 if (p->getBurstTimeRemaining() == 0) {
                     // update memory block's available space
                     m.first += p->getMemorySpace();
+                    cout << endl << "Process P" << p->getPID() << " has completed" << endl;
+                    cout << "Memory block " << j+1 << " now has " << m.first << " units of available space." << endl << endl;
 
                     // remove the process from the memory block
                     get<1>(m).erase(get<1>(m).begin() + i);
-
                     executedProcesses++;
                     i--;
                 }
@@ -86,24 +98,28 @@ void MemoryManager::firstFit() {
                     p->setBurstTimeRemaining(p->getBurstTimeRemaining() - 1);
                 }
             }
-
-        }  // end for
+            j++;
+        }  // end memory for loop
 
         // go through the remaining processes to be "executed"
         for (int i = 0; i < arrivalTimes.size(); i++) {
-            // if the process has arrived
-            if (arrivalTimes[i] <= time) {
+            // if the process has arrived and it's not currently in memory
+            if (arrivalTimes[i] <= time && inMemory[i] == 0) {
                 ProcessControlBlock* curProcess = this->processVector->at(i);
 
                 // find a place in memory to fit the process
                 int j = 0;
                 while (j < memory.size()) {
-                    auto m = memory[j];
+                    std::pair<int,std::vector<ProcessControlBlock*>> * m = &memory[j];
+                    
                     // if the process fits, add it to the memory block
-                    if (get<0>(m) >= curProcess->getMemorySpace()) {
+                    if (get<0>(*m) >= curProcess->getMemorySpace()) {
                         cout << "Adding process P" << curProcess->getPID() << " to memory block "
-                             << j << endl;
-                        get<1>(m).push_back(curProcess);
+                             << j+1 << endl;
+                        get<1>(*m).push_back(curProcess);
+                        inMemory[i] = 1;
+                        (*m).first -= curProcess->getMemorySpace();
+                        cout << "Memory block " << j+1 << " now has " << (*m).first << " units of available space." << endl;
                         break;
                     }
                     j++;
