@@ -18,7 +18,7 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
     
     /* FOR TESTING ONLY */
     // static const int arr[] = {300,600,350,200,750,125};
-    static const int arr[] = {300,600,350,200,125};
+    static const int arr[] = {300,600,350,200,125,900,1,400,399,239,3329,2343,234,9999, 1999, 1222, 1111, 9999, 3333,664,82,33};
     vector<int> testingMemorySizes (arr, arr + sizeof(arr) / sizeof(arr[0]) );
     
     // add each memory
@@ -41,7 +41,7 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
 }
 
 void MemoryManager::firstFit() {
-    cout << "------------------------------- First Fit -------------------------------" << endl;
+    cout << "---------------------------------------------- First Fit ----------------------------------------------" << endl;
     // update the process vector to have the correct order
     this->updateProcessVector();
 
@@ -98,8 +98,9 @@ void MemoryManager::firstFit() {
                 if (p->getBurstTimeRemaining() == 0) {
                     // update memory block's available space
                     (*m).first += p->getMemorySpace();
-                    cout << "Process P" << p->getPID() << " has completed" << endl;
-                    cout << "Memory block " << j+1 << " now has " << (*m).first << " units of available space." << endl << endl;
+                    cout << "t=" << time << ": \t ";
+                    cout << "Process P" << p->getPID() << " has completed. \t\t ";
+                    cout << " \t (Memory block " << j+1 << " now has " << (*m).first << " units of available space.)" << endl;
 
                     // remove the process from the memory block
                     get<1>(*m).erase(get<1>(*m).begin() + i);
@@ -127,15 +128,17 @@ void MemoryManager::firstFit() {
                     
                     // if the process fits, add it to the memory block
                     if (get<0>(*m) >= curProcess->getMemorySpace()) {
+                        cout << "t=" << time << ": \t ";
                         cout << "Adding process P" << curProcess->getPID() << " to memory block "
-                             << j+1 << endl;
+                             << j+1 << ".";
                         get<1>(*m).push_back(curProcess);
                         
                         // assume the process wil be completed
                         inMemory[i] = 1;
                         
                         (*m).first -= curProcess->getMemorySpace();
-                        cout << "Memory block " << j+1 << " now has " << (*m).first << " units of available space." << endl;
+                        
+                        cout << "\t\t (Memory block " << j+1 << " now has " << (*m).first << " units of available space.)" << endl;
                         break;
                     }
                     j++;
@@ -143,8 +146,9 @@ void MemoryManager::firstFit() {
 
                 // a spot in memory was not found: fragmentation!
                 if (j == memory.size()) {
+                    cout << "t=" << time << ": \t ";
                     cout << "Fragmentation. Not enough room to add P" << curProcess->getPID()
-                         << endl;
+                         << "." << endl ;
                     numFrags++;
                 }
             }  // end for
@@ -153,8 +157,8 @@ void MemoryManager::firstFit() {
         time++;
     }  // end while
     
-    cout << "-------------------------------------------------------------------------" << endl;
+    cout << "-------------------------------------------------------------------------------------------------------" << endl;
     cout << n << " processes were loaded into and out of memory with " << numFrags << " fragmentations." << endl;
-    if (originalN != n) cout << (originalN - n) <<  "  processes weren't able to be completed."<< endl;
-    cout << "-------------------------------------------------------------------------" << endl;
+    if (originalN != n) cout << (originalN - n) <<  " processes weren't able to be completed."<< endl;
+    cout << "-------------------------------------------------------------------------------------------------------" << endl;
 }
