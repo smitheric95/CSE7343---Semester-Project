@@ -34,7 +34,7 @@ void Controller::displayMenu(string menu) {
         printf("\033c");
         cout << " #############################################" << endl;
         cout << "#  Welcome to EricOS                          #" << endl;
-        cout << "#  Version 1.0                                #" << endl;
+        cout << "#  Version 2.0                                #" << endl;
         cout << "#                                             #" << endl;
         cout << "#  Main Menu:                                 #" << endl;
         cout << "#                                             #" << endl;

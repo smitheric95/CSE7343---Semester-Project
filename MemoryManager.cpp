@@ -50,12 +50,16 @@ void MemoryManager::firstFit() {
     int originalN = n;
 
     int time = 0, totalBurstTime = 0, totalWaitTime = 0, executedProcesses = 0, numFrags = 0,
-        maxMemory = 0, maximumMemoryUsed = 0;
+        totalMemory = 0, maxMemoryUsed = 0, maxMemoryTime = 0;
+    
     vector<int> burstTimes, arrivalTimes, inMemory, waitTimes;
-
+    
     // sort process vector first by arrival time, then priority
     sortProcessVector(FCFS);
-
+    
+    // determine a total memory
+    for (auto m : memory) totalMemory += get<0>(m);
+    
     // initialize burst times and arrival times
     for (auto p : *(this->processVector)) {
         int curBurst = p->getBurstTime();
@@ -79,16 +83,19 @@ void MemoryManager::firstFit() {
         }
         // the process can never be executed
         if (i == memory.size()) {
-            cout << "Not enough memory to execute the process P" << p->getPID() << endl << endl;
+            cout << "Not enough memory to execute the process P" << p->getPID() << endl;
             inMemory.back() = 1;
             n--;
         }
     }
+    
+    cout << endl;
 
     // there are still valid processes to be loaded into memory
     while (executedProcesses < n) {
+        int j = 0, curMemoryUsed = 0;
+        
         // update each block of memory
-        int j = 0;
         while (j < memory.size()) {
             std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
 
@@ -117,9 +124,13 @@ void MemoryManager::firstFit() {
                     p->setBurstTimeRemaining(p->getBurstTimeRemaining() - 1);
                 }
             }
+            
             j++;
+            curMemoryUsed += get<0>(*m);
         }  // end memory for loop
-
+        
+        curMemoryUsed = totalMemory - curMemoryUsed;
+        
         // go through the remaining processes to be "executed"
         for (int i = 0; i < arrivalTimes.size(); i++) {
             // if the process has arrived and it's not currently in memory
@@ -160,22 +171,36 @@ void MemoryManager::firstFit() {
                 }
             }  // end for
         }
+
+        // check to see if this is the maximum amount of memory used
+        if (curMemoryUsed > maxMemoryUsed) {
+            maxMemoryUsed = curMemoryUsed;
+            maxMemoryTime = time-1;
+        }
+        
         // increment time
         time++;
     }  // end while
 
+    // calculate total wait time
     for (int w : waitTimes) totalWaitTime += w;
-
+    
+    // print stats
     cout << "--------------------------------------------------------------------------------------"
-            "----------------------------"
+         << "----------------------------"
          << endl;
+    
     cout << n << " processes were loaded into and out of memory with " << numFrags
          << " fragmentations." << endl;
+    
     if (originalN != n)
         cout << (originalN - n) << " processes weren't able to be completed." << endl;
-    cout << "Blocking probability: " << (float)(originalN - n) / n << "%" << endl;
+    
+    cout << "Blocking probability: " << (int)(n*1.0/originalN*100) << "%" << endl;
     cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
+    cout << "Maximum memory utilization: " << (int)(maxMemoryUsed*1.0/totalMemory*100) << "% occurs at t=" << maxMemoryTime << endl;
+    
     cout << "--------------------------------------------------------------------------------------"
-            "----------------------------"
+         << "----------------------------"
          << endl;
 }
