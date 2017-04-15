@@ -17,7 +17,8 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
     
     
     /* FOR TESTING ONLY */
-    static const int arr[] = {300,600,350,200,750,125};
+    // static const int arr[] = {300,600,350,200,750,125};
+    static const int arr[] = {300,600,350,200,125};
     vector<int> testingMemorySizes (arr, arr + sizeof(arr) / sizeof(arr[0]) );
     
     // add each memory
@@ -80,26 +81,30 @@ void MemoryManager::firstFit() {
         }
     }
     
+    // there are still valid processes to be loaded into memory
     while (executedProcesses < n) {
         // update each block of memory
         int j = 0;
-        for (auto m : memory) {
+        while (j < memory.size()) {
+            std::pair<int,std::vector<ProcessControlBlock*>> * m = &memory[j];
+            
             // go through each process in the current block
-            for (int i = 0; i < get<1>(m).size(); i++) {
+            int processesPerBlock = (int)get<1>(*m).size();
+            for (int i = 0; i < processesPerBlock; i++) {
                 // current process
-                ProcessControlBlock* p = get<1>(m)[i];
+                ProcessControlBlock* p = get<1>(*m)[i];
 
                 // if the process has finished
                 if (p->getBurstTimeRemaining() == 0) {
                     // update memory block's available space
-                    m.first += p->getMemorySpace();
+                    (*m).first += p->getMemorySpace();
                     cout << "Process P" << p->getPID() << " has completed" << endl;
-                    cout << "Memory block " << j+1 << " now has " << m.first << " units of available space." << endl << endl;
+                    cout << "Memory block " << j+1 << " now has " << (*m).first << " units of available space." << endl << endl;
 
                     // remove the process from the memory block
-                    get<1>(m).erase(get<1>(m).begin() + i);
+                    get<1>(*m).erase(get<1>(*m).begin() + i);
                     executedProcesses++;
-                    i--;
+                    processesPerBlock--;
                 }
                 // decrement the remaining burst time of the process
                 else {
@@ -125,7 +130,10 @@ void MemoryManager::firstFit() {
                         cout << "Adding process P" << curProcess->getPID() << " to memory block "
                              << j+1 << endl;
                         get<1>(*m).push_back(curProcess);
+                        
+                        // assume the process wil be completed
                         inMemory[i] = 1;
+                        
                         (*m).first -= curProcess->getMemorySpace();
                         cout << "Memory block " << j+1 << " now has " << (*m).first << " units of available space." << endl;
                         break;
@@ -135,7 +143,7 @@ void MemoryManager::firstFit() {
 
                 // a spot in memory was not found: fragmentation!
                 if (j == memory.size()) {
-                    cout << "Fragmentation. Not enough room to add P: " << curProcess->getPID()
+                    cout << "Fragmentation. Not enough room to add P" << curProcess->getPID()
                          << endl;
                     numFrags++;
                 }
@@ -147,6 +155,6 @@ void MemoryManager::firstFit() {
     
     cout << "-------------------------------------------------------------------------" << endl;
     cout << n << " processes were loaded into and out of memory with " << numFrags << " fragmentations." << endl;
-    if (originalN != n) cout << (originalN - n) <<  " processes weren't able to be completed."<< endl;
+    if (originalN != n) cout << (originalN - n) <<  "  processes weren't able to be completed."<< endl;
     cout << "-------------------------------------------------------------------------" << endl;
 }
