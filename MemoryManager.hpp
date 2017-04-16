@@ -17,6 +17,7 @@
 class MemoryManager : public ProcessManager {
 private:
     int numBlocks;
+    int totalMemorySize;
     
     // memory blocks
     std::vector<
@@ -27,6 +28,6 @@ private:
     > memory;
     
 public:
-    MemoryManager(CustomQueue* queue, std::vector<int> memorySizes);
+    MemoryManager(CustomQueue* queue, int totalMemorySize, std::vector<int> memorySizes);
     void calculateMemoryUsage(Mode mode, std::string title);
 };

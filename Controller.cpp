@@ -144,6 +144,17 @@ void Controller::init() {
         else if (modeSelection == 4) {
             // ensure the ready queue isn't empty
             if (!this->readyQueue->isEmpty()) {
+                cout << "Please enter the total memory sized: <1-99999>:" << endl;
+                string totalMemSize;
+                cin >> totalMemSize;
+                
+                // ensure that memSize is a number
+                while (!all_of(totalMemSize.begin(), totalMemSize.end(), ::isdigit) ||
+                       stoi(totalMemSize) < 1 || stoi(totalMemSize) > 99999) {
+                    cout << "Invalid input. Please enter the total memory size: <1-99999>" << endl;
+                    cin >> totalMemSize;
+                }
+
                 cout << "Please enter the number of available memory blocks: <1-999>" << endl;
                 string numBlocks;
                 cin >> numBlocks;
@@ -182,7 +193,7 @@ void Controller::init() {
                 }
                 
                 // initialize memory
-                MemoryManager mainMemory(this->readyQueue, memorySizes);
+                MemoryManager mainMemory(this->readyQueue, stoi(totalMemSize), memorySizes);
                 
                 // loop till user exits
                 cout << "\nEnter [0] to go back." << endl;

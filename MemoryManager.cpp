@@ -11,7 +11,7 @@
 using namespace std;
 
 // inherit from the ProcessManager
-MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : ProcessManager(queue) {
+MemoryManager::MemoryManager(CustomQueue* queue, int totalMemorySize, vector<int> memorySizes) : totalMemorySize(totalMemorySize),ProcessManager(queue) {
     // update the process vector to have the correct order
     this->updateProcessVector();
 
@@ -40,15 +40,12 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
     int originalN = n;
 
     int time = 0, totalBurstTime = 0, totalWaitTime = 0, executedProcesses = 0, numFrags = 0,
-        totalMemory = 0, maxMemoryUsed = 0, maxMemoryTime = 0;
+        maxMemoryUsed = 0, maxMemoryTime = 0;
 
     vector<int> burstTimes, arrivalTimes, inMemory, waitTimes;
 
     // sort process vector first by arrival time, then priority
     sortProcessVector();
-
-    // determine a total memory
-    for (auto m : curMemory) totalMemory += get<0>(m);
 
     // initialize burst times and arrival times
     for (auto p : *(this->processVector)) {
@@ -122,7 +119,7 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
             curMemoryUsed += get<0>(*m);
         }  // end memory for loop
 
-        curMemoryUsed = totalMemory - curMemoryUsed;
+        curMemoryUsed = this->totalMemorySize - curMemoryUsed;
 
         // go through the remaining processes to be loaded into memory
         for (int i = 0; i < arrivalTimes.size(); i++) {
@@ -216,10 +213,10 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
 
     cout << "Blocking probability: " << 100 - (int)(n * 1.0 / originalN * 100) << "%" << endl;
     cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
-    cout << "Maximum memory utilization: " << (int)(maxMemoryUsed * 1.0 / totalMemory * 100)
+    cout << "Maximum memory utilization: " << (int)(maxMemoryUsed * 1.0 / this->totalMemorySize * 100)
          << "% occurs at t=" << maxMemoryTime << endl;
 
     cout << "--------------------------------------------------------------------"
             "---------------------------------------------------------"
-         << endl << endl;
+         << endl << endl << endl;
 }
