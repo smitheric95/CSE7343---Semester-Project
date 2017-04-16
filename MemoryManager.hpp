@@ -28,5 +28,5 @@ private:
     
 public:
     MemoryManager(CustomQueue* queue, std::vector<int> memorySizes);
-    void firstFit();
+    void calculateMemoryUsage(Mode mode, std::string title);
 };

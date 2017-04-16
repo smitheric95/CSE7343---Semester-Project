@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <vector>
 
+enum Mode { SJF, FCFS, Priority, RoundRobin, FirstFit, BestFit, WorstFit };
+
 class ProcessManager {
 protected:
     CustomQueue* queue;
@@ -22,7 +24,7 @@ public:
     ~ProcessManager();
     
     void updateProcessVector();
-    void sortProcessVector(Mode m);
+    void sortProcessVector(Mode m=FCFS);
     ProcessControlBlock* getPCB(int index);
 };
 

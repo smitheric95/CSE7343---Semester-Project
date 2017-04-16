@@ -183,7 +183,6 @@ void Controller::init() {
                 
                 // initialize memory
                 MemoryManager mainMemory(this->readyQueue, memorySizes);
-                mainMemory.firstFit();
                 
                 // loop till user exits
                 cout << "\nEnter [0] to go back." << endl;

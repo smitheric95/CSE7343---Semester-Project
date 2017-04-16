@@ -15,33 +15,19 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
     // update the process vector to have the correct order
     this->updateProcessVector();
 
-    /* FOR TESTING ONLY */
-    static const int arr[] = {300,600,350,200,750,125};
-    // static const int arr[] = {300,600,350,200,125,900,1,400,399,239,3329,2343,234,9999, 1999,
-    // 1222, 1111, 9999, 3333,664,82,33};
-    vector<int> testingMemorySizes(arr, arr + sizeof(arr) / sizeof(arr[0]));
-
-    // add each memory
-    //    for (auto blockSize : memorySizes)
-    /*************************/
-
-    for (auto blockSize : testingMemorySizes)
+    for (auto blockSize : memorySizes)
         memory.push_back(
             pair<int, vector<ProcessControlBlock*>>(blockSize, vector<ProcessControlBlock*>()));
 
-    //    for (int i = 0; i < this->processVector->size(); i++) {
-    //        get<1>(this->memory[i]).push_back(this->processVector->at(i));
-    //    }
-    //
-    //    for (auto m : memory) {
-    //        cout << get<0>(m) << ": ";
-    //        for (auto i : get<1>(m)) cout << i->getPID() << endl;
-    //    }
+    calculateMemoryUsage(FirstFit, "First Fit");
+    calculateMemoryUsage(BestFit, "Best Fit");
+    calculateMemoryUsage(WorstFit, "Worst Fit");
 }
 
-void MemoryManager::firstFit() {
-    cout << "--------------------------------------------------------- First Fit "
-            "---------------------------------------------------------"
+void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
+    cout << "--------------------------------------------------------- "
+         << title
+         << " ---------------------------------------------------------"
          << endl;
     // update the process vector to have the correct order
     this->updateProcessVector();
@@ -51,15 +37,15 @@ void MemoryManager::firstFit() {
 
     int time = 0, totalBurstTime = 0, totalWaitTime = 0, executedProcesses = 0, numFrags = 0,
         totalMemory = 0, maxMemoryUsed = 0, maxMemoryTime = 0;
-    
+
     vector<int> burstTimes, arrivalTimes, inMemory, waitTimes;
-    
+
     // sort process vector first by arrival time, then priority
-    sortProcessVector(FCFS);
-    
+    sortProcessVector();
+
     // determine a total memory
     for (auto m : memory) totalMemory += get<0>(m);
-    
+
     // initialize burst times and arrival times
     for (auto p : *(this->processVector)) {
         int curBurst = p->getBurstTime();
@@ -88,13 +74,13 @@ void MemoryManager::firstFit() {
             n--;
         }
     }
-    
+
     cout << endl;
 
     // there are still valid processes to be loaded into memory
     while (executedProcesses < n) {
         int j = 0, curMemoryUsed = 0;
-        
+
         // update each block of memory
         while (j < memory.size()) {
             std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
@@ -124,13 +110,13 @@ void MemoryManager::firstFit() {
                     p->setBurstTimeRemaining(p->getBurstTimeRemaining() - 1);
                 }
             }
-            
+
             j++;
             curMemoryUsed += get<0>(*m);
         }  // end memory for loop
-        
+
         curMemoryUsed = totalMemory - curMemoryUsed;
-        
+
         // go through the remaining processes to be loaded into memory
         for (int i = 0; i < arrivalTimes.size(); i++) {
             // if the process has arrived and it's not currently in memory
@@ -140,31 +126,35 @@ void MemoryManager::firstFit() {
                 // find a place in memory to fit the process
                 int processLocation = 0;
                 int j = 0;
-                
-                int processFit = 0000; // if mode == worst, current fit should be zero
+
+                // the best/worst fit (in memory units) of a process
+                int processFit = 0;
+                if (mode == BestFit)
+                    processFit = 10000;
+
                 bool locationFound = false;
-                
+
                 while (j < memory.size()) {
                     std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
                     int currentFit = (get<0>(*m) - curProcess->getMemorySpace());
-                                  
+
                     // if the process fits, add it to the memory block
-//                    if (get<0>(*m) >= curProcess->getMemorySpace())
-//                        processLocation = j;
-//                        break;
-                    
-                    // best fit
-                    // worst fit
-                    if (currentFit >= 0 && currentFit > processFit) {
+                    if (mode == FirstFit && get<0>(*m) >= curProcess->getMemorySpace()) {
+                        processLocation = j;
+                        locationFound = true;
+                        break;
+                    }
+                    // best/worst fit comparisons
+                    else if ((mode == BestFit && currentFit >= 0 && currentFit < processFit) ||
+                             (mode == WorstFit && currentFit >= 0 && currentFit > processFit)) {
                         processFit = currentFit;
                         processLocation = j;
                         locationFound = true;
                     }
-                    
-                    
+
                     j++;
                 }  // end while
-                
+
                 // a spot in memory was not found: fragmentation!
                 if (!locationFound) {
                     cout << "t=" << time << ": \t ";
@@ -176,52 +166,55 @@ void MemoryManager::firstFit() {
                 // add the process to memory
                 else {
                     std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[processLocation];
-                    
+
                     cout << "t=" << time << ": \t ";
                     cout << "Adding process P" << curProcess->getPID() << " to memory block "
-                    << processLocation + 1 << ".";
+                         << processLocation + 1 << ".";
                     get<1>(*m).push_back(curProcess);
-                    
+
                     // assume the process wil be completed
                     inMemory[i] = 1;
-                    
+
                     (*m).first -= curProcess->getMemorySpace();
-                    
-                    cout << "\t\t (Memory block " << processLocation + 1 << " now has " << (*m).first
-                    << " units of available space.)" << endl;
+
+                    cout << "\t\t (Memory block " << processLocation + 1 << " now has "
+                         << (*m).first << " units of available space.)" << endl;
                 }
             }  // end if
-        } // end for
+        }      // end for
 
         // check to see if this is the maximum amount of memory used
         if (curMemoryUsed > maxMemoryUsed) {
             maxMemoryUsed = curMemoryUsed;
-            maxMemoryTime = time-1;
+            maxMemoryTime = time - 1;
         }
-        
+
         // increment time
         time++;
     }  // end while
 
     // calculate total wait time
     for (int w : waitTimes) totalWaitTime += w;
-    
+
     // print stats
     cout << "--------------------------------------------------------------------"
             "---------------------------------------------------------"
          << endl;
-    
+
     cout << n << " processes were loaded into and out of memory with " << numFrags
          << " fragmentations." << endl;
-    
+
     if (originalN != n)
         cout << (originalN - n) << " processes weren't able to be completed." << endl;
-    
-    cout << "Blocking probability: " << 100 - (int)(n*1.0/originalN*100) << "%" << endl;
+
+    cout << "Blocking probability: " << 100 - (int)(n * 1.0 / originalN * 100) << "%" << endl;
     cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
-    cout << "Maximum memory utilization: " << (int)(maxMemoryUsed*1.0/totalMemory*100) << "% occurs at t=" << maxMemoryTime << endl;
-    
+    cout << "Maximum memory utilization: " << (int)(maxMemoryUsed * 1.0 / totalMemory * 100)
+         << "% occurs at t=" << maxMemoryTime << endl;
+
     cout << "--------------------------------------------------------------------"
-        "---------------------------------------------------------"
-        << endl;
+            "---------------------------------------------------------"
+         << "--------------------------------------------------------------------"
+            "---------------------------------------------------------"
+         << endl << endl << endl;
 }

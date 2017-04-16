@@ -15,9 +15,6 @@
 #include <limits> 
 #include "ProcessControlBlock.hpp"
 
-// scheduling algorithm
-enum Mode { SJF, FCFS, Priority, RoundRobin };
-
 class CustomQueue {
    private:
     ProcessControlBlock* head;
