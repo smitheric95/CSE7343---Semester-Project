@@ -144,7 +144,7 @@ void Controller::init() {
         else if (modeSelection == 4) {
             // ensure the ready queue isn't empty
             if (!this->readyQueue->isEmpty()) {
-                cout << "Please enter the total memory sized: <1-99999>:" << endl;
+                cout << "Please enter the total memory size: <1-99999>" << endl;
                 string totalMemSize;
                 cin >> totalMemSize;
                 

@@ -108,6 +108,7 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
                     get<1>(*m).erase(get<1>(*m).begin() + i);
                     executedProcesses++;
                     processesPerBlock--;
+                    i--;
                 }
                 // decrement the remaining burst time of the process
                 else {
