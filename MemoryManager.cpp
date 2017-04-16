@@ -141,7 +141,7 @@ void MemoryManager::firstFit() {
                 int j = 0;
                 while (j < memory.size()) {
                     std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
-
+                    
                     // if the process fits, add it to the memory block
                     if (get<0>(*m) >= curProcess->getMemorySpace()) {
                         cout << "t=" << time << ": \t ";
@@ -186,8 +186,8 @@ void MemoryManager::firstFit() {
     for (int w : waitTimes) totalWaitTime += w;
     
     // print stats
-    cout << "--------------------------------------------------------------------------------------"
-         << "----------------------------"
+    cout << "--------------------------------------------------------------------"
+            "---------------------------------------------------------"
          << endl;
     
     cout << n << " processes were loaded into and out of memory with " << numFrags
@@ -200,7 +200,7 @@ void MemoryManager::firstFit() {
     cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
     cout << "Maximum memory utilization: " << (int)(maxMemoryUsed*1.0/totalMemory*100) << "% occurs at t=" << maxMemoryTime << endl;
     
-    cout << "--------------------------------------------------------------------------------------"
-         << "----------------------------"
-         << endl;
+    cout << "--------------------------------------------------------------------"
+        "---------------------------------------------------------"
+        << endl;
 }
