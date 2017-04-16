@@ -25,6 +25,10 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
 }
 
 void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
+    
+    // copy memory over
+    std::vector<std::pair<int, std::vector<ProcessControlBlock*>>> curMemory = memory;
+    
     cout << "--------------------------------------------------------- "
          << title
          << " ---------------------------------------------------------"
@@ -44,31 +48,34 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
     sortProcessVector();
 
     // determine a total memory
-    for (auto m : memory) totalMemory += get<0>(m);
+    for (auto m : curMemory) totalMemory += get<0>(m);
 
     // initialize burst times and arrival times
     for (auto p : *(this->processVector)) {
         int curBurst = p->getBurstTime();
         burstTimes.push_back(curBurst);
         totalBurstTime += curBurst;
-
+        
         arrivalTimes.push_back(p->getArrivalTime());
-
+        
         // whether or not the process is in memory OR has completed
         // (0 for false, 1 for true)
         inMemory.push_back(0);
 
         waitTimes.push_back(0);  // how long a fragmented process has to wait
-
+        
+        // reset remaining burst times
+        p->setBurstTimeRemaining( p->getBurstTime() );
+        
         // ensure that all processes have enough memory
         int i = 0;
-        while (i < memory.size()) {
-            if (get<0>(memory[i]) >= p->getMemorySpace())
+        while (i < curMemory.size()) {
+            if (get<0>(curMemory[i]) >= p->getMemorySpace())
                 break;
             i++;
         }
         // the process can never be executed
-        if (i == memory.size()) {
+        if (i == curMemory.size()) {
             cout << "Not enough memory to execute the process P" << p->getPID() << endl;
             inMemory.back() = 1;
             n--;
@@ -82,8 +89,8 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
         int j = 0, curMemoryUsed = 0;
 
         // update each block of memory
-        while (j < memory.size()) {
-            std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
+        while (j < curMemory.size()) {
+            std::pair<int, std::vector<ProcessControlBlock*>>* m = &curMemory[j];
 
             // go through each process in the current block
             int processesPerBlock = (int)get<1>(*m).size();
@@ -95,7 +102,7 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
                 if (p->getBurstTimeRemaining() == 0) {
                     // update memory block's available space
                     (*m).first += p->getMemorySpace();
-                    cout << "t=" << time << ": \t ";
+                    cout << "t=" << time-1 << ": \t ";
                     cout << "Process P" << p->getPID() << " has completed. \t\t ";
                     cout << " \t (Memory block " << j + 1 << " now has " << (*m).first
                          << " units of available space.)" << endl;
@@ -134,8 +141,8 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
 
                 bool locationFound = false;
 
-                while (j < memory.size()) {
-                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
+                while (j < curMemory.size()) {
+                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &curMemory[j];
                     int currentFit = (get<0>(*m) - curProcess->getMemorySpace());
 
                     // if the process fits, add it to the memory block
@@ -165,7 +172,7 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
                 }
                 // add the process to memory
                 else {
-                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[processLocation];
+                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &curMemory[processLocation];
 
                     cout << "t=" << time << ": \t ";
                     cout << "Adding process P" << curProcess->getPID() << " to memory block "
@@ -214,7 +221,5 @@ void MemoryManager::calculateMemoryUsage(Mode mode, string title) {
 
     cout << "--------------------------------------------------------------------"
             "---------------------------------------------------------"
-         << "--------------------------------------------------------------------"
-            "---------------------------------------------------------"
-         << endl << endl << endl;
+         << endl << endl;
 }
