@@ -16,7 +16,7 @@ MemoryManager::MemoryManager(CustomQueue* queue, vector<int> memorySizes) : Proc
     this->updateProcessVector();
 
     /* FOR TESTING ONLY */
-    static const int arr[] = {300, 200, 350, 125};
+    static const int arr[] = {300,600,350,200,750,125};
     // static const int arr[] = {300,600,350,200,125,900,1,400,399,239,3329,2343,234,9999, 1999,
     // 1222, 1111, 9999, 3333,664,82,33};
     vector<int> testingMemorySizes(arr, arr + sizeof(arr) / sizeof(arr[0]));
@@ -131,46 +131,67 @@ void MemoryManager::firstFit() {
         
         curMemoryUsed = totalMemory - curMemoryUsed;
         
-        // go through the remaining processes to be "executed"
+        // go through the remaining processes to be loaded into memory
         for (int i = 0; i < arrivalTimes.size(); i++) {
             // if the process has arrived and it's not currently in memory
             if (arrivalTimes[i] <= time && inMemory[i] == 0) {
                 ProcessControlBlock* curProcess = this->processVector->at(i);
 
                 // find a place in memory to fit the process
+                int processLocation = 0;
                 int j = 0;
+                
+                int processFit = 0000; // if mode == worst, current fit should be zero
+                bool locationFound = false;
+                
                 while (j < memory.size()) {
                     std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[j];
-                    
+                    int currentFit = (get<0>(*m) - curProcess->getMemorySpace());
+                                  
                     // if the process fits, add it to the memory block
-                    if (get<0>(*m) >= curProcess->getMemorySpace()) {
-                        cout << "t=" << time << ": \t ";
-                        cout << "Adding process P" << curProcess->getPID() << " to memory block "
-                             << j + 1 << ".";
-                        get<1>(*m).push_back(curProcess);
-
-                        // assume the process wil be completed
-                        inMemory[i] = 1;
-
-                        (*m).first -= curProcess->getMemorySpace();
-
-                        cout << "\t\t (Memory block " << j + 1 << " now has " << (*m).first
-                             << " units of available space.)" << endl;
-                        break;
+//                    if (get<0>(*m) >= curProcess->getMemorySpace())
+//                        processLocation = j;
+//                        break;
+                    
+                    // best fit
+                    // worst fit
+                    if (currentFit >= 0 && currentFit > processFit) {
+                        processFit = currentFit;
+                        processLocation = j;
+                        locationFound = true;
                     }
+                    
+                    
                     j++;
                 }  // end while
-
+                
                 // a spot in memory was not found: fragmentation!
-                if (j == memory.size()) {
+                if (!locationFound) {
                     cout << "t=" << time << ": \t ";
                     cout << "Fragmentation. Not enough room to add P" << curProcess->getPID() << "."
                          << endl;
                     waitTimes[i] += 1;
                     numFrags++;
                 }
-            }  // end for
-        }
+                // add the process to memory
+                else {
+                    std::pair<int, std::vector<ProcessControlBlock*>>* m = &memory[processLocation];
+                    
+                    cout << "t=" << time << ": \t ";
+                    cout << "Adding process P" << curProcess->getPID() << " to memory block "
+                    << processLocation + 1 << ".";
+                    get<1>(*m).push_back(curProcess);
+                    
+                    // assume the process wil be completed
+                    inMemory[i] = 1;
+                    
+                    (*m).first -= curProcess->getMemorySpace();
+                    
+                    cout << "\t\t (Memory block " << processLocation + 1 << " now has " << (*m).first
+                    << " units of available space.)" << endl;
+                }
+            }  // end if
+        } // end for
 
         // check to see if this is the maximum amount of memory used
         if (curMemoryUsed > maxMemoryUsed) {
@@ -196,7 +217,7 @@ void MemoryManager::firstFit() {
     if (originalN != n)
         cout << (originalN - n) << " processes weren't able to be completed." << endl;
     
-    cout << "Blocking probability: " << (int)(n*1.0/originalN*100) << "%" << endl;
+    cout << "Blocking probability: " << 100 - (int)(n*1.0/originalN*100) << "%" << endl;
     cout << "Total wait time of fragmented processes: " << totalWaitTime << endl;
     cout << "Maximum memory utilization: " << (int)(maxMemoryUsed*1.0/totalMemory*100) << "% occurs at t=" << maxMemoryTime << endl;
     
