@@ -1,11 +1,11 @@
 #################################################
-# CSE7343 - Semester Project                    #
+# CSE7343 - Semester Project - Phase 2          #
 #                                               #
 # On my honor, I have neither given nor         #
 # received any unauthorized aid on this work.   #
 #                                               #
 # Eric Smith                                    #
-# March 29th, 2017                              #
+# April 19th, 2017                              #
 #                                               #
 #################################################
 
@@ -36,12 +36,21 @@ CustomQueue:
     - equivalent to a linked list of PCBs
     - can add, remove, and compare PCBs
 
-Scheduler:
-    - has a pointer to the Ready queue
-    - contains a vector of ProcessControlBlock pointers in the Ready queue for scheduling
-      (Note: Scheduling algorithms do not change the order of the Ready queue but its vector)
-	- has 4 scheduling algorithms (SJF, FCFS, Priority, Round Robin) based off its mode
+ProcessManager:
+    - contains modes for MemoryManager and Scheduler 
     - can sort process vector based off mode
+    - has a pointer to the Ready or Waiting queue
+    - contains a vector of ProcessControlBlock pointers in the Ready queue for scheduling
+
+MemoryManager:
+    - inherits from ProcessManager
+    - contains a table of available memory blocks and the proesses they contain
+    - calculates memory usage based off mode from MemoryManager (FirstFit, BestFit, WorstFit)
+
+Scheduler:
+    - now inherits from ProcessManager
+	- has 4 scheduling algorithms (SJF, FCFS, Priority, Round Robin) based off mode
+      (Note: Scheduling algorithms do not change the order of the Ready queue but its vector)
 
 Controller:
     - displays a basic UI for the user to navigate through
@@ -53,13 +62,9 @@ Controller:
 
 Note to the grader:
 
-I worked very hard on this program to ensure its quality was up to my standards.
-The entire project took me about a month, half of which was to minimize bugs.
-The program can handle a wide variety of user error and malicious use.
-I also thoroughly tested the program's memory usage with a tool called Valgrind.
-All dynamically allocated memory is accounted for, and there are no memory leaks
-or segmentation faults.
+Like Phase 1, Phase 2 of this program is very well organized. The Scheduler class from Phase 1
+was abstracted into a superclass called "ProcessManager" which is also the parent to the MemoryManager.1
 
-Please do your best to break the program.
+Just as much care was put into this phase of the project to ensure quality.
 
 - Eric
